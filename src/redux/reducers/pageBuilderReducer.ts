@@ -19,6 +19,16 @@ const cssViewShow = (state: boolean | null = false, action: any) => {
             return state;
     }
 }
+
+const iframeDocument = (state: boolean | null = false, action: any) => {
+    switch (action.type) {
+
+        case 'SET_IFRAME_DOCUMENT':
+            return action.iframeDocument;
+        default:
+            return state;
+    }
+}
   
-export { pageBuilder, cssViewShow };
+export { pageBuilder, cssViewShow, iframeDocument };
   

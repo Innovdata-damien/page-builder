@@ -3,10 +3,10 @@ import * as Buttons from './ui/Buttons';
 import { Options } from '../../../../PageBuilder';
 
 
-export default function (editor: EditorTinymce, pluginManager: AddOnManager, options: Options) {
+export default function (pluginManager: AddOnManager, options: Options) {
     
-    pluginManager.add('videoembed', () => {
-        Buttons.register(editor, options);
+    pluginManager.add('videoembed', (editor) => {
+        Buttons.register((editor as EditorTinymce), options);
     });
 
 }

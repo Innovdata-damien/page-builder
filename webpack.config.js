@@ -8,7 +8,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const BUILD = process.env.BUILD;
 const TYPE = process.env.TYPE;
-const banner = `${packageJson.name} v.${packageJson.version}`;
+const banner = `${packageJson.prodName} v.${packageJson.version}`;
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 module.exports = (env, argv) => {
@@ -93,8 +93,8 @@ module.exports = (env, argv) => {
         ),
         output: {
             path: path.join(__dirname, 'dist'),
-            filename: argv.mode === 'production' ? `${packageJson.name}.${packageJson.version + (BUILD === 'min' ? '.' + BUILD : '')}.js` : `${packageJson.name}.js`,
-            library: packageJson.name,
+            filename: argv.mode === 'production' ? `${packageJson.prodName + (BUILD === 'min' ? '.' + BUILD : '')}.js` : `${packageJson.prodName}.js`,
+            library: packageJson.prodName,
             libraryExport: 'default',
             libraryTarget: 'umd',
             globalObject: 'this',
@@ -152,7 +152,7 @@ module.exports = (env, argv) => {
 
         plugins: [
             new MiniCssExtractPlugin({
-                filename: `${packageJson.name}.${packageJson.version + (BUILD === 'min' ? '.' + BUILD : '')}.css`
+                filename: `${packageJson.prodName + (BUILD === 'min' ? '.' + BUILD : '')}.css`
             }),
             new webpack.BannerPlugin(banner),
             new webpack.DefinePlugin({

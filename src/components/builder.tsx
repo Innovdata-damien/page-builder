@@ -10,22 +10,25 @@ import uuid from 'uuid/v4';
 import { connect } from 'react-redux';
 import { setBlock } from '../redux/actions/blockAction';
 import { setMenuItem } from '../redux/actions/menuAction';
-import { setPageBuilder } from '../redux/actions/pageBuilderAction';
+import { setPageBuilder, setIframeDocument } from '../redux/actions/pageBuilderAction';
 
   
 const mapDispatchToProps = (dispatch: any) => ({
     setBlock: (blocks: Array<BodyType>) => dispatch(setBlock(blocks)),
     setMenuItem: (menuItems: Array<MenuType>) => dispatch(setMenuItem(menuItems)),
-    setPageBuilder: (pageBuilder: PageBuilder) => dispatch(setPageBuilder(pageBuilder))
+    setPageBuilder: (pageBuilder: PageBuilder) => dispatch(setPageBuilder(pageBuilder)),
+    setIframeDocument: (iframeDocument: Document) => dispatch(setIframeDocument(iframeDocument))
 });
 
 // Type for blocks
 
 type Props = {
+    iframeDocument: Document;
     pageBuilder: PageBuilder;
     setBlock: (blocks: Array<BodyType>) => void;
     setMenuItem: (menuItems: Array<MenuType>) => void;
     setPageBuilder: (pageBuilder: PageBuilder) => void;
+    setIframeDocument: (iframeDocument: Document) => void;
 };
 
 class Builder extends Component <Props>{
@@ -37,13 +40,13 @@ class Builder extends Component <Props>{
         // Append style from url
         
         if(this.props.pageBuilder.__options?.styleUrl){
-            const link = document.createElement('link');
+            const link = this.props.iframeDocument.createElement('link');
 
             link.id = `pg-build__style-${this.props.pageBuilder.__id}`;
             link.rel = 'stylesheet';
             link.href = this.props.pageBuilder.__options?.styleUrl;
     
-            document.getElementsByTagName('body')[0].appendChild(link);
+            this.props.iframeDocument.getElementsByTagName('body')[0].appendChild(link);
 
         }
 
@@ -59,6 +62,8 @@ class Builder extends Component <Props>{
         this.props.setBlock(this.props.pageBuilder.__options!.blocks);
         this.props.setMenuItem(this.props.pageBuilder.__options!.menuItems);
         this.props.setPageBuilder(this.props.pageBuilder);
+
+        this.props.setIframeDocument(this.props.iframeDocument);
 
     }
 

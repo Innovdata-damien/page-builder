@@ -1,6 +1,7 @@
 {
-  "name": "PageBuilder",
-  "version": "1.0.0",
+  "name": "page-builder-innovdata",
+  "prodName": "PageBuilder",
+  "version": "1.0.4",
   "description": "Editeur de page statique",
   "main": "index.js",
   "scripts": {
@@ -13,7 +14,7 @@
   },
   "files": [
     "dist",
-    "src",
+    "docs",
     "LICENSE",
     "package.json",
     "README.md"
@@ -27,6 +28,7 @@
     "@types/node": "^13.11.1",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
+    "@types/react-frame-component": "^4.1.1",
     "@types/react-modal": "^3.10.5",
     "@types/react-redux": "^7.1.7",
     "@types/tinymce": "^4.5.24",
@@ -60,15 +62,23 @@
     "@tinymce/tinymce-react": "^3.5.0",
     "antd": "^4.1.5",
     "js-beautify": "^1.11.0",
+    "lerna": "^3.20.2",
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "react-frame-component": "^4.1.1",
     "react-modal": "^3.11.2",
     "react-redux": "^7.2.0",
     "react-sortablejs": "^2.0.11",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "tinymce": "^5.2.2",
     "tippy.js": "^6.1.0",
     "typedoc": "^0.17.4"
-  }
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "author": "",
+  "license": "ISC"
 }

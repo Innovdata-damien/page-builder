@@ -23,6 +23,16 @@ const defaultBlocks: Array<BodyType> = [
                                 htmlContent: '<p>Text example ...</p>'
                             },
                         }
+                    },{
+                        id: uuid(),
+                        content: '<p>truc ...<img src="http://odrazia.localhost:8888/images/bloc-texte.png"></p>',
+                        design: {
+                            type: 'html',
+                            preview: 'Text',
+                            value: {
+                                htmlContent: '<p>Text example ...</p>'
+                            },
+                        }
                     }
                 ]
             }

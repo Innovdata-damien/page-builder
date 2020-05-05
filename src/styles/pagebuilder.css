@@ -253,7 +253,6 @@
 
 .pg-build__tab-item + label {
     box-shadow: 0 -1px 0 #eee inset;
-    border-radius: 6px 6px 0 0;
     cursor: pointer;
     display: block;
     text-decoration: none;
@@ -290,7 +289,6 @@
     left: 0;
     -webkit-transform: translateY(-3px);
     transform: translateY(-3px);
-    border-radius: 6px;
 }
 
 /* --- IMAGE --- */

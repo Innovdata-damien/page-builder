@@ -14,6 +14,9 @@ const loadCustomPlugins = (editor: EditorTinymce, options: Options) => {
     videoEmbed(editor, options);
     imagePlus(editor, options);
     codeEditor(editor, options);
+
+    console.log(editor)
+    console.log('----')
 }
 
 export default loadCustomPlugins;

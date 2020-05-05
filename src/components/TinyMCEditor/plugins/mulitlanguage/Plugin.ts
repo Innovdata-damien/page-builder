@@ -3,10 +3,10 @@ import * as Buttons from './ui/Buttons';
 import { Options } from '../../../../PageBuilder';
 
 
-export default function (editor: EditorTinymce, pluginManager: AddOnManager, options: Options) {
+export default function (pluginManager: AddOnManager, options: Options) {
     
-    pluginManager.add('multilanguage', () => {
-        Buttons.register(editor, options);
+    pluginManager.add('multilanguage', (editor) => {
+        Buttons.register((editor as EditorTinymce), options);
     });
 
 }

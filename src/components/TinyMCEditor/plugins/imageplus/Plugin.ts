@@ -17,10 +17,10 @@ import * as Buttons from './ui/Buttons';
 import { Options } from '../../../../PageBuilder';
 
 
-export default function (editor: EditorTinymce, pluginManager: AddOnManager, options: Options) {
+export default function (pluginManager: AddOnManager, options: Options) {
     
-    pluginManager.add('imageplus', () => {
-        Buttons.register(editor, options);
+    pluginManager.add('imageplus', (editor) => {
+        Buttons.register((editor as EditorTinymce), options);
     });
 
 }

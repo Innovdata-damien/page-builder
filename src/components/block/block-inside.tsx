@@ -6,6 +6,7 @@ import Modal from '../utility/modal-style';
 import { connect } from 'react-redux';
 
 type Props = {
+    iframeDocument: Document;
     cssViewShow: boolean;
     blockId: string;
     colId: string;
@@ -18,6 +19,7 @@ type State = {
 };
 
 const mapStateToProps = (state: any) => ({
+    iframeDocument: state.iframeDocument,
     cssViewShow: state.cssViewShow
 });
 
@@ -36,15 +38,15 @@ class BlockInside extends Component<Props,State> {
     }
 
     componentDidMount() {
-        document.addEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.addEventListener('mousedown', this._handleClickOutside);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.removeEventListener('mousedown', this._handleClickOutside);
     }
     
     _handleClickOutside = (e: any) =>  {
-        const blockElement = document.querySelector(`[data-draggable-id='${this.props.item.id}']`);
+        const blockElement = this.props.iframeDocument.querySelector(`[data-draggable-id='${this.props.item.id}']`);
 
         if(blockElement != null && !blockElement.contains(e.target)){
             this.setState({ blockClickedOutside: true });
