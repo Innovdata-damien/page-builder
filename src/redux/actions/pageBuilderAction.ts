@@ -12,10 +12,3 @@ export const toggleCssView = (cssViewShow: boolean) => ({
     type: 'TOGGLE_CSS_VIEW',
     cssViewShow
 });
-
-// Set Iframe document
-
-export const setIframeDocument = (iframeDocument: Document) => ({
-    type: 'SET_IFRAME_DOCUMENT',
-    iframeDocument
-});

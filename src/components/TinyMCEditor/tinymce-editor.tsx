@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import loadCustomPlugins from './plugins/loadCustomPlugins';
 import { ContentType, BodyType, ColumnType } from '../../types/blockType';
-//import { Editor } from '@tinymce/tinymce-react';
-import tinymce from 'tinymce';
-import 'tinymce/themes/silver';
+import { Editor } from '@tinymce/tinymce-react';
+//import tinymce from 'tinymce';
+//import 'tinymce/themes/silver';
 import '!style-loader!css-loader!tinymce/skins/ui/oxide/skin.min.css';
 import { PageBuilder } from '../../PageBuilder';
 
@@ -15,8 +15,7 @@ import getTemplate from './templates';
 
 const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
-    pageBuilder: state.pageBuilder,
-    iframeDocument: state.iframeDocument
+    pageBuilder: state.pageBuilder
 });
   
 const mapDispatchToProps = (dispatch: any) => ({
@@ -25,7 +24,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 type Props = {
-    iframeDocument: Document;
     blockId: string;
     colId: string;
     item: ContentType;
@@ -46,7 +44,6 @@ class TinyMCEditor  extends Component<Props> {
 
         this.options = {
             themes: 'silver',
-            contentDocument: this.props.iframeDocument,
             language: this.props.pageBuilder.__options?.language,
             setup: this._setupTinyMCEditor,
             init_instance_callback: this._initTinyMCEditor,
@@ -104,27 +101,13 @@ class TinyMCEditor  extends Component<Props> {
 
     }
 
-    componentDidMount(){
-
-        tinymce.init({
-            target: this.textEditor,
-            inline: true,
-            fixed_toolbar_container: this.props.iframeDocument.querySelector(`[data-draggable-id='${this.props.item.id}']`),
-            forced_root_block : 'p',
-            height: 400
-        })
-    }
-
     render() {
         return (
-            <>
-            <div ref={elem => this.textEditor = elem} className="truc"></div>
-            {/* <Editor
+            <Editor
                 initialValue={(this.props.item.content ? this.props.item.content : (this.props.item.design.type == 'html' ? this.props.item.design.value?.htmlContent : getTemplate(this.props.item.design.type, this.props.item.design.value || {})!.html))}
                 init={this.options}
                 onEditorChange={this._handleEditorChange}
-            /> */}
-            </>
+            />
         );
     }
 }

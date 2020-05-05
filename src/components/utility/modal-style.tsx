@@ -3,7 +3,7 @@ import { PageBuilder } from '../../PageBuilder';
 import Collapse from '@kunukn/react-collapse';
 import { FormInstance } from 'antd/lib/form';
 import Pickr from '@simonwep/pickr';
-import { BodyType } from 'types/blockType';
+import { BodyType } from '../../types/blockType';
 import * as CSS from 'csstype';
 import uuid from 'uuid/v4';
 import { InputNumber, Input, Select, Radio, Form } from 'antd';
@@ -42,8 +42,7 @@ import {
 
 const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
-    pageBuilder: state.pageBuilder,
-    iframeDocument: state.iframeDocument
+    pageBuilder: state.pageBuilder
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -51,7 +50,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 type Props = {
-    iframeDocument: Document;
     blocks: Array<BodyType>;
     blockId: string;
     colId?: string;
@@ -366,7 +364,7 @@ class Modal extends Component<Props, State> {
     }
 
     _handleClickOutside = (e: any) => {
-        const blockElement = this.props.iframeDocument.querySelector(`#${this.id}`);
+        const blockElement = document.querySelector(`#${this.id}`);
         
         if(blockElement != null && !blockElement.contains(e.target)){
             this.setState({ isOpen: false });
@@ -376,12 +374,12 @@ class Modal extends Component<Props, State> {
     }
 
     componentDidMount() {
-        this.props.iframeDocument.addEventListener('mousedown', this._handleClickOutside);
+        document.addEventListener('mousedown', this._handleClickOutside);
         this.props.onRef(this);
     }
 
     componentWillUnmount() {
-        this.props.iframeDocument.removeEventListener('mousedown', this._handleClickOutside);
+        document.removeEventListener('mousedown', this._handleClickOutside);
         this.props.onRef(undefined);
     }
 
@@ -430,7 +428,7 @@ class Modal extends Component<Props, State> {
                                 <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'style' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('style')}>Style</div>
 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'style'}>
-                                    <StyleCollapse iframeDocument={this.props.iframeDocument} _handleChangeStyle={this._handleChangeStyle} formRef={this.formRef.current} blockStyle={formInitialValues}/>
+                                    <StyleCollapse _handleChangeStyle={this._handleChangeStyle} formRef={this.formRef.current} blockStyle={formInitialValues}/>
                                 </Collapse>
 
                             </div>
@@ -692,7 +690,6 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
 
 
 type StyleCollapseProps = {
-    iframeDocument: Document;
     blockStyle: FormValues;
     formRef: FormInstance | null;
     _handleChangeStyle: () => void;
@@ -712,10 +709,10 @@ class StyleCollapse extends Component<StyleCollapseProps, StyleCollapseState> {
     }
 
     componentDidMount(){
-        this.props.iframeDocument.querySelectorAll('.pg-build__modal-style-row .color-picker').forEach((elm: any)=>{
+        document.querySelectorAll('.pg-build__modal-style-row .color-picker').forEach((elm: any)=>{
             pickrOptions.el = elm;
             pickrOptions.default = elm.getAttribute('defaultcolor');
-            pickrOptions.container = this.props.iframeDocument.getElementsByClassName('pg-build__modal-style')[0];
+            pickrOptions.container = (document.getElementsByClassName('pg-build__modal-style')[0] as any);
             console.log(pickrOptions)
 
             const pickr = Pickr.create(pickrOptions)
