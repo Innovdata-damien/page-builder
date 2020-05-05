@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <title>View</title>
+    </head>
+
+    <body>
+        <div id="container"></div>
+    </body>
+    <script src="./PageBuilder.1.0.0.js"></script>
+
+    <script>
+        var pageBuilder = new PageBuilder({
+            container: document.getElementById('container'),
+            menuPosition: 'right',
+            language: 'en',
+            styleUrl: './PageBuilder.1.0.0.css',
+            imageUrlLoader: function(resolve, reject){
+                resolve('http://odrazia.localhost:8888/images/bloc-video.png');
+            }
+        });
+        console.log(pageBuilder.getHtml());
+        console.log(pageBuilder.getJson());
+    </script>
+
+</html>
