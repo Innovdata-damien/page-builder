@@ -156,6 +156,7 @@ const open = function (editor: EditorTinymce, _options: Options) {
     editor.windowManager.open(
         dialogSpec(editor, getInitialData(editor))
     );
+    console.log('linkplus')
 };
   
 export {

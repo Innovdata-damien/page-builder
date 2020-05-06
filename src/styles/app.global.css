@@ -142,7 +142,7 @@
     position: relative;
     margin-top: 35px;
     border: 1px solid #e5e5e5;
-    background: #fff;
+    /* background: #fff; */
 }
 
 .pg-build .pg-build__body .pg-build__block:after{
@@ -161,9 +161,9 @@
 }
 
 .pg-build  .pg-build__body .pg-build__block .pg-build__block-tool{
+    z-index: 3;
     top: -26px;
     position: absolute;
-    z-index: 1;
 }
 
 .pg-build.pg-build__left  .pg-build__body .pg-build__block .pg-build__block-tool{
@@ -267,7 +267,7 @@
 }
 
 .pg-build .pg-build__body .pg-build__block .pg-build__block-inside{
-    background: #fff;
+    /* background: #fff; */
     transition: .3s border;
     position: relative;
     margin-top: 5px;
@@ -293,6 +293,7 @@
 
 
 .pg-build  .pg-build__body .pg-build__block-inside .pg-build__block-inside-tool{
+    z-index: 3;
     transition: .3s opacity;
     top: -1px;
     position: absolute;

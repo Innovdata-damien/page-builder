@@ -4,7 +4,7 @@ import { ContentType, BodyType, ColumnType } from '../../types/blockType';
 import { Editor } from '@tinymce/tinymce-react';
 //import tinymce from 'tinymce';
 //import 'tinymce/themes/silver';
-import '!style-loader!css-loader!tinymce/skins/ui/oxide/skin.min.css';
+//import '!style-loader!css-loader!tinymce/skins/ui/oxide/skin.min.css';
 import { PageBuilder } from '../../PageBuilder';
 
 // Redux
@@ -49,7 +49,7 @@ class TinyMCEditor  extends Component<Props> {
             init_instance_callback: this._initTinyMCEditor,
             plugins: 'codeeditor imageplus linkplus multilanguage componenthtml videoembed powerpaste casechange importcss tinydrive searchreplace directionality advcode visualblocks visualchars fullscreen image media mediaembed codesample table charmap hr nonbreaking toc insertdatetime advlist lists checklist wordcount tinymcespellchecker a11ychecker textpattern noneditable help formatpainter permanentpen charmap tinycomments mentions quickbars emoticons advtable',
             menubar: '',
-            toolbar: (this.props.item.design.value?.toolbar || this.props.item.design.value?.toolbar == '' ? this.props.item.design.value?.toolbar : 'codeeditor imageplus linkplus multilanguage componenthtml videoembed undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify |  numlist bullist checklist | forecolor backcolor permanentpen | charmap emoticons'),
+            toolbar: (this.props.item.design.value?.toolbar || this.props.item.design.value?.toolbar == '' ? this.props.item.design.value?.toolbar : ' codeeditor imageplus linkpluss multilanguage componenthtml videoembed undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify |  numlist bullist checklist | forecolor backcolor permanentpen | charmap emoticons'),
             importcss_append: true,
             height: 400,
             autosave_ask_before_unload: false,
@@ -65,7 +65,8 @@ class TinyMCEditor  extends Component<Props> {
             a11y_advanced_options: true,
             inline: true,
             fixed_toolbar_container: `[data-draggable-id='${this.props.item.id}']`,
-            forced_root_block : 'p'
+            forced_root_block : 'p',
+            extended_valid_elements: 'button[class|target|href|dir<ltr?rtl|disabled<disabled|id|lang|name|onclick|style|title|type|value]'
         };
 
     }
@@ -80,8 +81,7 @@ class TinyMCEditor  extends Component<Props> {
 
     }
 
-    _initTinyMCEditor = (editor: any) => {
-        console.log(editor.windowManager)
+    _initTinyMCEditor = (_editor: any) => {
     };
 
     _handleEditorChange = (content: any) => {

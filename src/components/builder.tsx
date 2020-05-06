@@ -4,8 +4,6 @@ import Body from './body';
 import {PageBuilder} from '../PageBuilder';
 import { BodyType, MenuType } from '../types/blockType';
 import uuid from 'uuid/v4';
-
-
 // Redux
 import { connect } from 'react-redux';
 import { setBlock } from '../redux/actions/blockAction';

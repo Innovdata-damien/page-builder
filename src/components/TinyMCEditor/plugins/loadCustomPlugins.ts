@@ -8,6 +8,7 @@ import { Options } from '../../../PageBuilder';
 import EditorTinymce from 'tinymce';
 
 const loadCustomPlugins = (editor: EditorTinymce, options: Options) => {
+    
     linkPlus(editor, options);
     multiLanguage(editor, options);
     componentHtml(editor, options);
@@ -15,8 +16,6 @@ const loadCustomPlugins = (editor: EditorTinymce, options: Options) => {
     imagePlus(editor, options);
     codeEditor(editor, options);
 
-    console.log(editor)
-    console.log('----')
 }
 
 export default loadCustomPlugins;

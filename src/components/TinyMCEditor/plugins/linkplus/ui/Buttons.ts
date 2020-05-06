@@ -4,7 +4,7 @@ import * as Dialog from './Dialog';
 
 const register = function (editor: EditorTinymce, options: Options) {
     
-    editor.ui.registry.addToggleButton('linkplus', {
+    editor.ui.registry.addToggleButton('linkpluss', {
         icon: 'link',
         tooltip: 'Link',
         onAction: () => {
