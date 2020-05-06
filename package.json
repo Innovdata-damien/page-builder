@@ -1,7 +1,7 @@
 {
   "name": "page-builder-innovdata",
   "prodName": "PageBuilder",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "Editeur de page statique",
   "main": "index.js",
   "scripts": {
@@ -65,7 +65,6 @@
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-frame-component": "^4.1.1",
     "react-modal": "^3.11.2",
     "react-redux": "^7.2.0",
     "react-sortablejs": "^2.0.11",
