@@ -1,4 +1,5 @@
 import { AriaAttributes, DOMAttributes } from 'react';
+import { PageBuilderInstance } from 'utils/utils';
 
 declare module '*.png' {
     const value: any;
@@ -11,9 +12,11 @@ declare module 'react' {
         defaultcolor?: string;
     }
 }
-
-interface Window {
-    [key:string]: any;
+declare global {
+    interface Window {
+        _PageBuilderInstances: Array<PageBuilderInstance>;
+        [key:string]: any;
+    }
 }
 
 declare module '*.html' {

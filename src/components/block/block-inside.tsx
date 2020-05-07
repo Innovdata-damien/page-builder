@@ -10,6 +10,7 @@ type Props = {
     blockId: string;
     colId: string;
     item: ContentType;
+    iframeDocument: Document;
 };
 
 type State = {
@@ -18,7 +19,8 @@ type State = {
 };
 
 const mapStateToProps = (state: any) => ({
-    cssViewShow: state.cssViewShow
+    cssViewShow: state.cssViewShow,
+    iframeDocument: state.iframeDocument
 });
 
 class BlockInside extends Component<Props,State> {
@@ -36,15 +38,15 @@ class BlockInside extends Component<Props,State> {
     }
 
     componentDidMount() {
-        document.addEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.addEventListener('mousedown', this._handleClickOutside);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.removeEventListener('mousedown', this._handleClickOutside);
     }
     
     _handleClickOutside = (e: any) =>  {
-        const blockElement = document.querySelector(`[data-draggable-id='${this.props.item.id}']`);
+        const blockElement = this.props.iframeDocument.querySelector(`[data-draggable-id='${this.props.item.id}']`);
 
         if(blockElement != null && !blockElement.contains(e.target)){
             this.setState({ blockClickedOutside: true });

@@ -16,7 +16,8 @@ import Modal from '../utility/modal-style';
 
 const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
-    cssViewShow: state.cssViewShow
+    cssViewShow: state.cssViewShow,
+    iframeDocument: state.iframeDocument
 });
   
 const mapDispatchToProps = (dispatch: any) => ({
@@ -51,6 +52,7 @@ const BlockToolbar = (props: PropsBlockToolbar) => {
 type Props = {
     cssViewShow: boolean;
     blockId: string;
+    iframeDocument: Document;
     item: BodyType;
     duplicateBlock: (blockId: string) => void;
     removeBlock: (blockId: string) => void;
@@ -78,15 +80,15 @@ class Block extends Component<Props, State> {
     }
 
     componentDidMount() {
-        document.addEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.addEventListener('mousedown', this._handleClickOutside);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.removeEventListener('mousedown', this._handleClickOutside);
     }
     
     _handleClickOutside = (e: any) => {
-        const blockElement = document.querySelector(`[data-draggable-id='${this.props.item.id}']`);
+        const blockElement = this.props.iframeDocument.querySelector(`[data-draggable-id='${this.props.item.id}']`);
 
         if(blockElement != null && !blockElement.contains(e.target)){
             this.setState({ blockClickedOutside: true });

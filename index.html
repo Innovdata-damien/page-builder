@@ -9,12 +9,34 @@
 
     <body>
         <div id="container"></div>
+        <div id="truc"></div>
     </body>
     <script src="./dist/PageBuilder.js"></script>
 
     <script>
         var pageBuilder = new PageBuilder({
             container: document.getElementById('container'),
+            menuPosition: 'right',
+            language: 'en',
+            styleUrl: 'http://virtus:8888/styles/css/pagebuilder-custom.css',
+            languagesList: [
+                {
+                    code: 'en',
+                    name: 'English'
+                },
+                {
+                    code: 'fr',
+                    name: 'Français'
+                }
+            ],
+            imageUrlLoader: function(resolve, reject){
+                resolve('http://odrazia.localhost:8888/images/bloc-video.png');
+            }
+        });
+
+
+        var pageBuilderSecond = new PageBuilder({
+            container: document.getElementById('truc'),
             menuPosition: 'right',
             language: 'en',
             styleUrl: 'http://virtus:8888/styles/css/pagebuilder-custom.css',

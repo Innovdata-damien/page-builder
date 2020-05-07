@@ -8,6 +8,4 @@ function configureStore() {
     );
 }
 
-const store = configureStore();
-
-export default store;
+export default configureStore;

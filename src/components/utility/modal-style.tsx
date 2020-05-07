@@ -42,7 +42,8 @@ import {
 
 const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
-    pageBuilder: state.pageBuilder
+    pageBuilder: state.pageBuilder,
+    iframeDocument: state.iframeDocument
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -57,6 +58,7 @@ type Props = {
     onRef: (ref: any) => void;
     updateListBody: (blocks: Array<BodyType>) => void;
     pageBuilder: PageBuilder;
+    iframeDocument: Document;
 };
 
 type State = {
@@ -364,7 +366,7 @@ class Modal extends Component<Props, State> {
     }
 
     _handleClickOutside = (e: any) => {
-        const blockElement = document.querySelector(`#${this.id}`);
+        const blockElement = this.props.iframeDocument.querySelector(`#${this.id}`);
         
         if(blockElement != null && !blockElement.contains(e.target)){
             this.setState({ isOpen: false });
@@ -374,12 +376,12 @@ class Modal extends Component<Props, State> {
     }
 
     componentDidMount() {
-        document.addEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.addEventListener('mousedown', this._handleClickOutside);
         this.props.onRef(this);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this._handleClickOutside);
+        this.props.iframeDocument.removeEventListener('mousedown', this._handleClickOutside);
         this.props.onRef(undefined);
     }
 
@@ -428,7 +430,7 @@ class Modal extends Component<Props, State> {
                                 <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'style' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('style')}>Style</div>
 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'style'}>
-                                    <StyleCollapse _handleChangeStyle={this._handleChangeStyle} formRef={this.formRef.current} blockStyle={formInitialValues}/>
+                                    <StyleCollapse iframeDocument={this.props.iframeDocument} _handleChangeStyle={this._handleChangeStyle} formRef={this.formRef.current} blockStyle={formInitialValues}/>
                                 </Collapse>
 
                             </div>
@@ -690,6 +692,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
 
 
 type StyleCollapseProps = {
+    iframeDocument: Document;
     blockStyle: FormValues;
     formRef: FormInstance | null;
     _handleChangeStyle: () => void;
@@ -709,11 +712,13 @@ class StyleCollapse extends Component<StyleCollapseProps, StyleCollapseState> {
     }
 
     componentDidMount(){
-        document.querySelectorAll('.pg-build__modal-style-row .color-picker').forEach((elm: any)=>{
+        this.props.iframeDocument.querySelectorAll('.pg-build__modal-style-row .color-picker').forEach((elm: any)=>{
+            
             pickrOptions.el = elm;
             pickrOptions.default = elm.getAttribute('defaultcolor');
-            pickrOptions.container = (document.getElementsByClassName('pg-build__modal-style')[0] as any);
-            console.log(pickrOptions)
+            pickrOptions.container = (this.props.iframeDocument.getElementsByClassName('pg-build__modal-style')[0] as any);
+
+console.log(pickrOptions.container)
 
             const pickr = Pickr.create(pickrOptions)
             .on('change', (color: Pickr.HSVaColor) => {

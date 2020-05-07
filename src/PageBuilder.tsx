@@ -5,9 +5,9 @@ import ReactDOM from 'react-dom';
 import Root from './components/root';
 import { BodyType, MenuType } from './types/blockType';
 import { defaultBlocks, defaultMenuItems } from './utils/default-data';
-import { getHtmlFromBlockState } from './utils/utils';
+import { getHtmlFromBlockState, getPageBuilderInstance, PageBuilderInstance } from './utils/utils';
 import uuid from 'uuid/v4';
-import store from './redux/store';
+//import store from './redux/store';
 import js_beautify from 'js-beautify';
 
 //redux
@@ -157,18 +157,30 @@ export class PageBuilder{
     
 
     public getHtml(): string {
-        if(this.__options?.container && this.__initialized)
-            return js_beautify.html(getHtmlFromBlockState(store.getState().blocks));
-        else
-            return '';
+        const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
+
+        if(pagebuilderInstance)
+            if(this.__options?.container && this.__initialized)
+                return js_beautify.html(getHtmlFromBlockState(pagebuilderInstance.store.getState().blocks));
+
+        
+        return '';
     }
 
 
     public getJson(): Array<BodyType> {
-        if(this.__options?.container && this.__initialized)
-            return store.getState().blocks;
-        else
-            return [];
+
+        const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
+console.log(pagebuilderInstance)
+        if(pagebuilderInstance)
+            if(this.__options?.container && this.__initialized)
+                return pagebuilderInstance.store.getState().blocks;
+
+        return [];
+        // if(this.__options?.container && this.__initialized)
+        //     return store.getState().blocks;
+        // else
+        //     return [];
     }
 
     //Build PageBuilder
@@ -181,13 +193,13 @@ export class PageBuilder{
                 <Root pageBuilder={this}/>
                 ,this.__options.container
             );
-            this.__options.container.classList.add('pg-build');
+            // this.__options.container.classList.add('pg-build');
 
-            if(this.__options.menuPosition == 'right'){
-                this.__options.container.classList.add('pg-build__right');
-            }else{
-                this.__options.container.classList.add('pg-build__left');
-            }
+            // if(this.__options.menuPosition == 'right'){
+            //     this.__options.container.classList.add('pg-build__right');
+            // }else{
+            //     this.__options.container.classList.add('pg-build__left');
+            // }
 
         }else{
             console.error('Undefined Page builder container');
@@ -205,16 +217,16 @@ export class PageBuilder{
 
             ReactDOM.unmountComponentAtNode(this.__options.container);
             this.__initialized = false;
-            this.__options.container.classList.remove('pg-build');
-            this.__options.container.classList.remove('pg-build__right');
-            this.__options.container.classList.remove('pg-build__left');
+            // this.__options.container.classList.remove('pg-build');
+            // this.__options.container.classList.remove('pg-build__right');
+            // this.__options.container.classList.remove('pg-build__left');
 
         }
     }
 
     public toggleCssView(type: boolean = false){
 
-        const { dispatch } = store
+        //const { dispatch } = store
         const actions = bindActionCreators({toggleCssView}, dispatch);
         actions.toggleCssView(type);
         

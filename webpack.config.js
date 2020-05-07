@@ -5,6 +5,7 @@ const path = require('path');
 const { TypedCssModulesPlugin } = require('typed-css-modules-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+//const CompressionPlugin = require('compression-webpack-plugin');
 
 const BUILD = process.env.BUILD;
 const TYPE = process.env.TYPE;
@@ -119,7 +120,17 @@ module.exports = (env, argv) => {
                     test: /\.global\.css$/,
                     use: [
                         {
-                            loader: 'style-loader'
+                            loader: 'style-loader',
+                            options: {
+                                insert: (element) => {
+
+                                    if(!window.pageBuilderCss)
+                                        window.pageBuilderCss = [];
+
+                                    window.pageBuilderCss.push(element);
+
+                                },
+                            }
                         },
                         {
                             loader: 'css-loader',
@@ -162,7 +173,8 @@ module.exports = (env, argv) => {
             }),
             new TypedCssModulesPlugin({
                 globPattern: 'src/**/*.css',
-            })
+            }),
+            //new CompressionPlugin()
         ],
         optimization: {
             minimizer: [new OptimizeCSSAssetsPlugin({})],
