@@ -1,15 +1,12 @@
 {
   "name": "page-builder-innovdata",
   "prodName": "PageBuilder",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Editeur de page statique",
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --open --hot --mode development",
-    "build-min-css": "cross-env BUILD=min TYPE=css webpack --mode production",
-    "build-min-js": "cross-env BUILD=min webpack --mode production",
-    "build-js": "cross-env webpack --mode production",
-    "build": "cross-env yarn build-min-js && yarn build-js && yarn build-min-css",
+    "build": "cross-env webpack --mode production",
     "docs": "typedoc --options typedoc.json src"
   },
   "files": [
@@ -36,7 +33,6 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-html-import-require-to-string": "^0.0.3",
-    "compression-webpack-plugin": "^3.1.0",
     "cross-env": "^7.0.2",
     "css-loader": "^3.4.2",
     "csstype": "^2.6.10",
@@ -53,14 +49,15 @@
     "url-loader": "^4.0.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "webpack-obfuscator": "^0.28.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@icon/micon": "^3.0.168-alpha.2",
+    "@innovdata-damien/pickr": "^1.6.3",
+    "@innovdata-damien/tinymce-react": "^3.6.3",
     "@kunukn/react-collapse": "^2.2.8",
-    "@simonwep/pickr": "^1.5.1",
-    "@tinymce/tinymce-react": "^3.5.0",
     "antd": "^4.1.5",
     "js-beautify": "^1.11.0",
     "lodash": "^4.17.15",
