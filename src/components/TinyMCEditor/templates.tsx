@@ -126,7 +126,7 @@ const Carousel = (props: CarouselProps) => {
                         }
                     </ul>
                 </div>
-                {props.values.arrow && 
+                {arrow && 
                     (<div data-glide-el="controls">
                         <button className="carousel__arrow carousel__arrow--prev glide__arrow glide__arrow--prev" data-glide-dir="<">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
@@ -143,7 +143,7 @@ const Carousel = (props: CarouselProps) => {
                 {props.values.indicators && 
                     <div className="carousel__bullets glide__bullets" data-glide-el="controls[nav]">
                     {
-                        Slides.map((value, i)=>(<button className="carousel__bullet glide__bullet" data-glide-dir={`=${i}`}></button>))
+                        Slides.map((_value, i)=>(<button className="carousel__bullet glide__bullet" data-glide-dir={`=${i}`}></button>))
                     }
                     </div>
                 }

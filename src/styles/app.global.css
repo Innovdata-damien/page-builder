@@ -425,6 +425,10 @@
     display: none !important;
 }
 
+.pg-build .tox .tox-collection__item-icon{
+    width: auto;
+}
+
 .pg-build .mce-content-body{
     padding: 0 5px;
     min-height: 124px;

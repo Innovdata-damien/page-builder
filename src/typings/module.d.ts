@@ -22,8 +22,3 @@ declare global {
         [key:string]: any;
     }
 }
-
-declare module '*.html' {
-    const value: string;
-    export default value
-}

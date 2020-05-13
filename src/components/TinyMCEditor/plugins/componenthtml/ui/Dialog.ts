@@ -9,7 +9,6 @@ const getIframe = (editor: EditorTinymce) => {
     return { iframe, iframeDocument };
 };
 
-const carousselChange = ['nbrframe'];
 
 //Change
 const onChange = (editor: EditorTinymce, options: Options) => (dialogApi : any, details: any) => {

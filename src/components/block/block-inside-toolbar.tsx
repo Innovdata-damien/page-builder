@@ -95,17 +95,19 @@ class BlockInsideToolbar extends Component<Props, State> {
         return (
             <>
 
-                <a onMouseDown={this.props._handleMouseDown} className="pg-build__block-inside-tool-move"><i className="mi mi-SIPMove"></i></a>
-                <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props._showModalStyle()}><i className="mi mi-Edit"></i></a>
-                <Dropdown getPopupContainer={()=> this.props.blockInsideRef as HTMLElement} overlay={
+                {this.props.item.design.moveable != false && <a onMouseDown={this.props._handleMouseDown} className="pg-build__block-inside-tool-move"><i className="mi mi-SIPMove"></i></a>}
+                {this.props.item.design.cssCustomizable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props._showModalStyle()}><i className="mi mi-Edit"></i></a>}
+                {this.props.item.design.canAddClass != false &&
+                    <Dropdown getPopupContainer={()=> this.props.blockInsideRef as HTMLElement} overlay={
 
-                    <DropdownMenuClass _handleMouseDown={this.props._handleMouseDown} addClassToBlockInside={this.props.addClassToBlockInside} item={this.props.item} pageBuilder={this.props.pageBuilder} blockId={this.props.blockId}  colId={this.props.colId}/>
+                        <DropdownMenuClass _handleMouseDown={this.props._handleMouseDown} addClassToBlockInside={this.props.addClassToBlockInside} item={this.props.item} pageBuilder={this.props.pageBuilder} blockId={this.props.blockId}  colId={this.props.colId}/>
 
-                } placement="bottomCenter">
-                    <a onMouseDown={this.props._handleMouseDown}><i className="mi mi-AsteriskBadge12"></i></a>
-                </Dropdown>
-                <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.duplicateBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Copy"></i></a>
-                <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.removeBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Delete"></i></a>
+                    } placement="bottomCenter">
+                        <a onMouseDown={this.props._handleMouseDown}><i className="mi mi-AsteriskBadge12"></i></a>
+                    </Dropdown>
+                }
+                {this.props.item.design.duplicable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.duplicateBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Copy"></i></a>}
+                {this.props.item.design.removeable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.removeBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Delete"></i></a>}
 
             </>
         );

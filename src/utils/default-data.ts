@@ -17,6 +17,7 @@ const defaultBlocks: Array<BodyType> = [
                         id: uuid(),
                         content: '<p>truc ...<img src="http://odrazia.localhost:8888/images/bloc-texte.png"></p>',
                         design: {
+                            moveable: false,
                             type: 'html',
                             preview: 'Text',
                             value: {
@@ -27,6 +28,7 @@ const defaultBlocks: Array<BodyType> = [
                         id: uuid(),
                         content: '<p>truc ...<img src="http://odrazia.localhost:8888/images/bloc-texte.png"></p>',
                         design: {
+                            editable: false,
                             type: 'html',
                             preview: 'Text',
                             value: {

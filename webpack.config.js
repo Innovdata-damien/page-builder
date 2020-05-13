@@ -57,7 +57,7 @@ module.exports = (env, argv) => {
         ]
     );
 
-    const pageBuilderCssRules = (argv.mode === 'production' ? [
+    const pageBuilderCssRules = (BUILD === 'css' ? [
         {
             test: path.resolve('src/styles/pagebuilder.css'),
             use: [

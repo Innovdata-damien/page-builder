@@ -92,7 +92,7 @@ export const updateListBody = (blocks: Array<BodyType>) => ({
 
         if(blockAdded != -1){
 
-            let block = action.blocks[blockAdded];
+            let block = {...action.blocks[blockAdded]};
             let columns = [12];
 
             block.columns = [];
@@ -114,10 +114,9 @@ export const updateListBody = (blocks: Array<BodyType>) => ({
                     size: columns[i],
                     contents: []
                 });
-                console.log(block)
             }
 
-
+            action.blocks[blockAdded] = block;
         }
 
         return [...action.blocks];

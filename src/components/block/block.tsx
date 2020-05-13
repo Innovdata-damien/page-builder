@@ -71,14 +71,19 @@ type PropsBlockToolbar = {
 const BlockToolbar = (props: PropsBlockToolbar) => {
 
     return  <div className="pg-build__block-tool">
+                
+                
+                {props.item.design.moveable != false && <a className="pg-build__block-tool-move"><i className="mi mi-SIPMove"></i></a>}
+                {props.item.design.cssCustomizable != false && <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>}
 
-                <a className="pg-build__block-tool-move"><i className="mi mi-SIPMove"></i></a>
-                <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>
-                <Dropdown getPopupContainer={()=> props.blockRef as HTMLElement} overlay={<DropdownMenuClass addClassToBlock={props.addClassToBlock} item={props.item} pageBuilder={props.pageBuilder}/>} placement="bottomCenter">
-                    <a><i className="mi mi-AsteriskBadge12"></i></a>
-                </Dropdown>
-                <a onClick={() => props.duplicateBlock(props.item.id)}><i className="mi mi-Copy"></i></a>
-                <a onClick={() => props.removeBlock(props.item.id)}><i className="mi mi-Delete"></i></a>
+                {props.item.design.canAddClass != false &&
+                    <Dropdown getPopupContainer={()=> props.blockRef as HTMLElement} overlay={<DropdownMenuClass addClassToBlock={props.addClassToBlock} item={props.item} pageBuilder={props.pageBuilder}/>} placement="bottomCenter">
+                        <a><i className="mi mi-AsteriskBadge12"></i></a>
+                    </Dropdown>
+                }
+
+                {props.item.design.duplicable != false && <a onClick={() => props.duplicateBlock(props.item.id)}><i className="mi mi-Copy"></i></a>}
+                {props.item.design.removeable != false && <a onClick={() => props.removeBlock(props.item.id)}><i className="mi mi-Delete"></i></a>}
 
             </div>;
 };

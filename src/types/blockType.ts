@@ -5,6 +5,12 @@ export interface DesignType  {
     preview: string;
     number?: number;
     value?: DesignValueType;
+    cssCustomizable?: boolean;
+    removeable?: boolean;
+    moveable?: boolean;
+    duplicable?: boolean;
+    canAddClass?: boolean;
+    editable?: boolean;
 }
 
 export interface DesignValueType  {

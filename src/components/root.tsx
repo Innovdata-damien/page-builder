@@ -50,7 +50,7 @@ export default class Root extends Component <Props>{
                     (item) => {
                         return (
                             <Provider store={this.store}>
-                                {/* <script src="https://unpkg.com/@glidejs/glide"></script> */}
+                                {/* <script src="https://unpkg.com/@glidejs/glide@3.4.1/dist/glide.js"></script> */}
                                 <Builder iframeDocument={item.document} iframeWindow={item.window} pageBuilder={this.props.pageBuilder}/>
                             </Provider>
                         )

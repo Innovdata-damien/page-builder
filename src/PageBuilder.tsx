@@ -66,7 +66,17 @@ export interface Options {
     /**
      * List of classes for blocks
     */
-    blockClassList?: Array <BlockClassList>
+    blockClassList?: Array <BlockClassList>;
+    
+    /**
+     * Templator for translation vars
+    */
+    translateTemplator?: TranslateTemplator;
+
+    /**
+     * Templator for translation vars
+    */
+    translationVars?: TranslationVars;
 }
 
 export interface ComponentsList {
@@ -88,6 +98,16 @@ export interface BlockClassList {
     type?: 'block' | 'block-inside';
 }
 
+export interface TranslateTemplator {
+    start: string;
+    end: string;
+}
+
+export interface TranslationVars {
+    value: string;
+    text: string;
+}
+
 export class PageBuilder{
 
     __initialized: boolean;
@@ -106,20 +126,15 @@ export class PageBuilder{
     //Change options
     public setOptions(options: Options){
 
-        this.__options = {
-            language: options.language || 'en',
-            container: options.container || null,
-            menuPosition: options.menuPosition || 'right',
-            stylesUrl: options.stylesUrl || '',
-            blocks: options.blocks || defaultBlocks,
-            menuItems: options.menuItems || defaultMenuItems,
-            languagesList: options.languagesList || [
-                {
-                    code: 'en',
-                    name: 'English'
-                }
-            ],
-            componentsList: options.componentsList || [
+        this.__options = Object.assign({
+            language: 'en',
+            container: null,
+            menuPosition: 'right',
+            stylesUrl: '',
+            blocks: defaultBlocks,
+            menuItems: defaultMenuItems,
+            languagesList:[{ code: 'en', name: 'English' }],
+            componentsList: [
                 {
                     type: 'card',
                     name: 'Card',
@@ -156,7 +171,7 @@ export class PageBuilder{
                     type: 'carousel',
                     name: 'Carousel',
                     description: 'Carousel'
-                },
+                }
             ],
             blockClassList: [
                 {
@@ -170,14 +185,14 @@ export class PageBuilder{
                     type: 'block-inside'
                 }
             ],
-            imageUrlLoader: options.imageUrlLoader || function(_resolve, reject) {
+            translateTemplator: { start: "{{'", end: "'|trans}}" },
+            imageUrlLoader: function(_resolve: any, reject: any) {
                 reject(null);
             }
-        };
+        }, options);
+
         
     }
-
-    
 
     public getHtml(): string {
         const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
@@ -204,7 +219,7 @@ export class PageBuilder{
     //Build PageBuilder
     public init(){
 
-        if(this.__options?.container){
+        if(this.__options?.container && !this.__initialized){
 
             this.__initialized = true;
             ReactDOM.render(
@@ -212,6 +227,8 @@ export class PageBuilder{
                 ,this.__options.container
             );
 
+        }else if(this.__initialized){
+            console.error('Page builder is already initialized');
         }else{
             console.error('Undefined Page builder container');
         }
@@ -221,13 +238,19 @@ export class PageBuilder{
     //Destroy PageBuilder
     public destroy(){
         if(this.__options?.container){
-            
-            if(this.__options?.stylesUrl)
-                document.querySelector(`#pg-build__style-${this.__id}`)!.remove();
 
             ReactDOM.unmountComponentAtNode(this.__options.container);
             this.__initialized = false;
 
+        }
+    }
+
+    public update(){
+        if(this.__initialized){
+            this.destroy();
+            this.init();
+        }else{
+            console.error('Page builder cannot be initialized, because it was not yet initialized');
         }
     }
 
