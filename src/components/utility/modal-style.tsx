@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { PageBuilder } from '../../PageBuilder';
 import Collapse from '@kunukn/react-collapse';
 import { FormInstance } from 'antd/lib/form';
-import Pickr from '@simonwep/pickr';
+import Pickr from '@innovdata-damien/pickr';
 import { BodyType } from '../../types/blockType';
 import * as CSS from 'csstype';
 import uuid from 'uuid/v4';
@@ -32,7 +32,6 @@ const sizeUnite: Array<string>= [
     '%'
 ];
 
-const selectContainer = () => (document.querySelector('.pg-build__modal-style') as HTMLElement);
 
 // Redux
 import { connect } from 'react-redux';
@@ -43,7 +42,8 @@ import {
 const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
     pageBuilder: state.pageBuilder,
-    iframeDocument: state.iframeDocument
+    iframeDocument: state.iframeDocument,
+    iframeWindow: state.iframeWindow
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -59,6 +59,7 @@ type Props = {
     updateListBody: (blocks: Array<BodyType>) => void;
     pageBuilder: PageBuilder;
     iframeDocument: Document;
+    iframeWindow: Window;
 };
 
 type State = {
@@ -167,6 +168,7 @@ class Modal extends Component<Props, State> {
 
     formDefaultValue?: FormValues;
     id: string;
+    modalRef?: HTMLDivElement | null;
     formRef = React.createRef<FormInstance>();
     
 
@@ -239,7 +241,6 @@ class Modal extends Component<Props, State> {
             maxHeight_unite: 'px',
             maxHeight_type: 'unset',
         }
-
         
     }
 
@@ -329,8 +330,6 @@ class Modal extends Component<Props, State> {
                 newStyle[newStyleName] = formData[styleName];
 
         });
-
-        console.log(newStyle)
         
         const newState: Array<BodyType> = [...this.props.blocks];
         if(this.props.colId && this.props.blockInsideId){
@@ -393,7 +392,7 @@ class Modal extends Component<Props, State> {
         return (
             <>
             {this.state.isOpen &&
-                <div id={this.id} className={`pg-build__modal-style ${(this.props.pageBuilder.__options?.menuPosition == 'right' ? 'pg-build__modal-style-left' : 'pg-build__modal-style-right')}`}>
+                <div ref={elem => this.modalRef = elem} id={this.id} className={`pg-build__modal-style ${(this.props.pageBuilder.__options?.menuPosition == 'right' ? 'pg-build__modal-style-left' : 'pg-build__modal-style-right')}`}>
                     <div className="pg-build__modal-style-head">
                         <h5>Modal title</h5>
                         <button onClick={()=>this._toggleModal(false)}><i className="mi mi-Clear"></i></button>
@@ -408,7 +407,7 @@ class Modal extends Component<Props, State> {
                                 <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'position' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('position')}>Position</div>
                                 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'position'}>
-                                    <PositionCollapse/>
+                                    <PositionCollapse modalRef={this.modalRef}/>
                                 </Collapse>
 
                             </div>
@@ -419,7 +418,7 @@ class Modal extends Component<Props, State> {
                                 <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'dimension' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('dimension')}>Dimension</div>
 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'dimension'}>
-                                    <DimensionCollapse blockStyle={formInitialValues}/>
+                                    <DimensionCollapse modalRef={this.modalRef} blockStyle={formInitialValues}/>
                                 </Collapse>
 
                             </div>
@@ -430,7 +429,7 @@ class Modal extends Component<Props, State> {
                                 <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'style' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('style')}>Style</div>
 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'style'}>
-                                    <StyleCollapse iframeDocument={this.props.iframeDocument} _handleChangeStyle={this._handleChangeStyle} formRef={this.formRef.current} blockStyle={formInitialValues}/>
+                                    <StyleCollapse modalRef={this.modalRef} iframeDocument={this.props.iframeDocument} iframeWindow={this.props.iframeWindow} _handleChangeStyle={this._handleChangeStyle} formRef={this.formRef.current} blockStyle={formInitialValues}/>
                                 </Collapse>
 
                             </div>
@@ -447,9 +446,10 @@ class Modal extends Component<Props, State> {
 
 
 type PositionCollapseProps = {
+    modalRef?: HTMLDivElement | null;
 }
 
-const PositionCollapse = (_props: PositionCollapseProps) => {
+const PositionCollapse = (props: PositionCollapseProps) => {
     const radioStyle = {
         display: 'block'
     };
@@ -463,7 +463,7 @@ const PositionCollapse = (_props: PositionCollapseProps) => {
     
     return (
         <>
-            <PaddingMarginGrid/>
+            <PaddingMarginGrid modalRef={props.modalRef}/>
             <Form.Item label="Margin position" name="margin">
                 <Radio.Group>
                     {
@@ -478,6 +478,7 @@ const PositionCollapse = (_props: PositionCollapseProps) => {
 };
 
 type DimensionCollapseProps = {
+    modalRef?: HTMLDivElement | null;
     blockStyle: FormValues;
 }
 
@@ -533,7 +534,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                         <InputNumber/>
                     </Form.Item>
                     <Form.Item name="width_unite">
-                        <Select getPopupContainer={selectContainer}>
+                        <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                             }
@@ -559,7 +560,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                         <InputNumber/>
                     </Form.Item>
                     <Form.Item name="minWidth_unite">
-                        <Select getPopupContainer={selectContainer}>
+                        <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                             }
@@ -586,7 +587,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                         <InputNumber/>
                     </Form.Item>
                     <Form.Item name="maxWidth_unite">
-                        <Select size="small" getPopupContainer={selectContainer}>
+                        <Select size="small" getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                             }
@@ -613,7 +614,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                         <InputNumber/>
                     </Form.Item>
                     <Form.Item name="height_unite">
-                        <Select getPopupContainer={selectContainer}>
+                        <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                             }
@@ -640,7 +641,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                         <InputNumber/>
                     </Form.Item>
                     <Form.Item name="minHeight_unite">
-                        <Select getPopupContainer={selectContainer}>
+                        <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                             }
@@ -667,7 +668,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                         <InputNumber/>
                     </Form.Item>
                     <Form.Item name="maxHeight_unite">
-                        <Select size="small" getPopupContainer={selectContainer}>
+                        <Select size="small" getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                             }
@@ -693,9 +694,11 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
 
 type StyleCollapseProps = {
     iframeDocument: Document;
+    iframeWindow: Window;
     blockStyle: FormValues;
     formRef: FormInstance | null;
     _handleChangeStyle: () => void;
+    modalRef?: HTMLDivElement | null;
 }
 
 type StyleCollapseState = {
@@ -717,8 +720,8 @@ class StyleCollapse extends Component<StyleCollapseProps, StyleCollapseState> {
             pickrOptions.el = elm;
             pickrOptions.default = elm.getAttribute('defaultcolor');
             pickrOptions.container = (this.props.iframeDocument.getElementsByClassName('pg-build__modal-style')[0] as any);
-
-console.log(pickrOptions.container)
+            pickrOptions.document = this.props.iframeDocument;
+            pickrOptions.elementInstance = this.props.iframeWindow.Element;
 
             const pickr = Pickr.create(pickrOptions)
             .on('change', (color: Pickr.HSVaColor) => {
@@ -757,7 +760,7 @@ console.log(pickrOptions.container)
                 </Form.Item>
 
                 <Form.Item label="Border style" name="borderStyle">
-                    <Select getPopupContainer={selectContainer}>
+                    <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                         {
                             borderStyle.map((item, index) => (<Option key={index} value={item.value}>{item.name}</Option>))
                         }
@@ -777,7 +780,7 @@ console.log(pickrOptions.container)
                                             <InputNumber style={{ width: '60px' }}  size="small"/>
                                         </Form.Item>
                                         <Form.Item name={`${styleName}_unite`}>
-                                            <Select size="small" getPopupContainer={selectContainer}>
+                                            <Select size="small" getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                                                 {
                                                     sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                                                 }
@@ -813,8 +816,11 @@ console.log(pickrOptions.container)
     
 }
 
+type PaddingMarginGridProps = {
+    modalRef?: HTMLDivElement | null;
+}
 
-const PaddingMarginGrid = () => {
+const PaddingMarginGrid = (props: PaddingMarginGridProps) => {
     return(
         <div className="pg-build__modal-style-row pg-build__content-size-box">
             <div className="margin-box-content">
@@ -829,7 +835,7 @@ const PaddingMarginGrid = () => {
                                             <InputNumber size="small"/>
                                         </Form.Item>
                                         <Form.Item name={`${styleName}_unite`}>
-                                            <Select size="small" getPopupContainer={selectContainer}>
+                                            <Select size="small" getPopupContainer={()=> props.modalRef as HTMLElement}>
                                                 {
                                                     sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
                                                 }

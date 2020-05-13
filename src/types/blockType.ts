@@ -20,6 +20,7 @@ export interface BodyType {
     style?: CSS.Properties;
     design: DesignType;
     columns: Array<ColumnType>;
+    class?: string;
 }
 
 export interface ColumnType {
@@ -33,6 +34,7 @@ export interface ContentType {
     style?: CSS.Properties;
     content?: string;
     design: DesignType;
+    class?: string;
 }
 
 // ------------- MENU

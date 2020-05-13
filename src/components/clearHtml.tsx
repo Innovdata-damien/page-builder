@@ -19,7 +19,7 @@ class ClearHtml extends Component <Props>{
                 {this.props.blocks.map((block: BodyType) => {
 
                     return (
-                        <div id={uuid()} key={uuid()} className="pg-build__row" style={block.style || {}}>
+                        <div id={uuid()} key={uuid()} className={`pg-build__row ${block.class || ''}`} style={block.style || {}}>
                             {
                                 block.columns.map((column: ColumnType) => {
                                     
@@ -27,7 +27,7 @@ class ClearHtml extends Component <Props>{
                                         <div key={uuid()} className={`pg-build__col pg-build__col-${column.size}`}>
                                             {
                                                 column.contents.map((blockInside: ContentType) => {
-                                                    return <div key={uuid()} dangerouslySetInnerHTML={{ __html: blockInside.content || '' }} ></div>;
+                                                    return <div key={uuid()} style={blockInside.style || {}} className={blockInside.class || ''} dangerouslySetInnerHTML={{ __html: blockInside.content || '' }} ></div>;
                                                 })
                                             }
                                         </div>

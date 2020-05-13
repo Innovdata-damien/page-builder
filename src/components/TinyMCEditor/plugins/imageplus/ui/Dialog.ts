@@ -58,7 +58,7 @@ const dialogSpec = (editor: EditorTinymce, initialData = {}, options: Options) =
                     {
                         type: 'button',
                         name: 'button_docmanager',
-                        text: 'hello',
+                        text: 'Doc manager',
                         icon: 'gallery',
                         primary: true
                     }

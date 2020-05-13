@@ -1,24 +1,11 @@
 import EditorTinymce from 'tinymce';
 import { Options } from '../../../../../PageBuilder';
 import js_beautify from 'js-beautify';
-import monacoEditorHTML from 'monaco-editor.html'
-// import * as ace from 'brace';
-// import 'brace/mode/javascript';
-// import 'brace/theme/monokai';
+import monacoEditorHTML from 'monaco-editor.html';
 
-// //Change
-// const onChange = (editor: EditorTinymce, options: Options) => (dialogApi : any, details: any) => {
-//     if(details.name == 'component')
-//         dialogApi.block('Loading...'),
-//         updateDialog(dialogApi, dialogApi.getData().component, editor, options);
-//     else if(details.name == 'number')
-//         dialogApi.setData({ preview: componentData(dialogApi.getData().component, options, dialogApi.getData())!.content});
-// };
 
-// Get iframe
-
-const getIframe = () => {
-    let iframe: any = document.querySelector('.tox-dialog__body iframe');
+const getIframe = (editor: EditorTinymce) => {
+    let iframe: any = editor.contentWindow.document.querySelector('.tox-dialog__body iframe');
     var iframeDocument = iframe!.contentDocument || iframe!.contentWindow.document;
 
     return { iframe, iframeDocument };
@@ -28,8 +15,7 @@ const getIframe = () => {
 
 const onSubmit = (editor: EditorTinymce, _options: Options) => (api: any) => {
 
-
-    editor.setContent(getIframe().iframeDocument.monacoEditor.getValue());
+    editor.setContent(getIframe(editor).iframeDocument.monacoEditor.getValue());
     // editor.execCommand('mceInsertContent', false, componentData(api.getData().component, options, api.getData())!.content);
     api.close();
 };
@@ -147,13 +133,14 @@ const getInitialData = (_editor: EditorTinymce) => {
 
 
 const open = function (editor: EditorTinymce, options: Options) {
-
+    window.truc = editor;
+    
     const dialogApi: any = editor.windowManager.open(dialogSpec([], getInitialData(editor), editor, options));
     dialogApi.block('Loading...');
 
-    getIframe().iframe.onload = function() {
+    getIframe(editor).iframe.onload = function() {
         dialogApi.unblock();
-        getIframe().iframeDocument.monacoEditor.setValue(js_beautify.html(editor.getContent()));
+        getIframe(editor).iframeDocument.monacoEditor.setValue(js_beautify.html(editor.getContent()));
     };
     
 };

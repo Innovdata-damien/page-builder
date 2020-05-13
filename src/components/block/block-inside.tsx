@@ -26,6 +26,7 @@ const mapStateToProps = (state: any) => ({
 class BlockInside extends Component<Props,State> {
 
     modalStyle?: any;
+    blockInsideRef?: HTMLDivElement | null;
 
     constructor(props: Props) {
         super(props);
@@ -76,11 +77,11 @@ class BlockInside extends Component<Props,State> {
 
     render() {
         return (
-            <div data-sticky-container className={'pg-build__block-inside ' + (!this.state.blockClickedOutside ? 'pg-build__block-inside-active' : '')} onFocus={this._handleInside} onBlur={this._handleFocusOut} onClick={this._handleInside} data-draggable-id={this.props.item.id}>
-                <div style={this.props.cssViewShow ? this.props.item.style || {} : {}}>
+            <div ref={elem => this.blockInsideRef = elem} data-sticky-container className={'pg-build__block-inside ' + (!this.state.blockClickedOutside ? 'pg-build__block-inside-active' : '')} onFocus={this._handleInside} onBlur={this._handleFocusOut} onClick={this._handleInside} data-draggable-id={this.props.item.id}>
+                <div className={this.props.cssViewShow ? this.props.item.class : ''}  style={this.props.cssViewShow ? this.props.item.style || {} : {}}>
                     <div className="pg-build__block-inside-tool">
                         
-                        <BlockInsideToolbar _showModalStyle={this._showModalStyle} blockId={this.props.blockId} colId={this.props.colId} item={this.props.item} _handleMouseDown={this._handleMouseDown}/>
+                        <BlockInsideToolbar blockInsideRef={this.blockInsideRef} _showModalStyle={this._showModalStyle} blockId={this.props.blockId} colId={this.props.colId} item={this.props.item} _handleMouseDown={this._handleMouseDown}/>
                         
                     </div>
                     <Modal onRef={ref => (this.modalStyle = ref)} blockId={this.props.blockId} colId={this.props.colId} blockInsideId={this.props.item.id}/>

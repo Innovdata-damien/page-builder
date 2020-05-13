@@ -19,3 +19,10 @@ export const setIframeDocument = (iframeDocument: Document) => ({
     type: 'SET_IFRAME_DOCUMENT',
     iframeDocument
 });
+
+// Set Iframe window
+
+export const setIframeWindow = (iframeWindow: Window) => ({
+    type: 'SET_IFRAME_WINDOW',
+    iframeWindow
+});

@@ -15,12 +15,18 @@ const blocks = (state: Array<BodyType> = [], action: any) => {
             case 'UPDATE_LIST_BODY':
                 return action.payload(state, action);
 
+            case 'ADD_CLASS_BLOCK':
+                return action.payload(state, action);
+
             case 'REMOVE_BLOCK_INSIDE':
                 return action.payload(state, action);
 
             case 'DUPLICATE_BLOCK_INSIDE':
                 return action.payload(state, action);
 
+            case 'ADD_CLASS_BLOCK_INSIDE':
+                return action.payload(state, action);
+    
             case 'UPDATE_LIST_BLOCK_INSIDE':
                 return action.payload(state, action);
 
@@ -30,4 +36,3 @@ const blocks = (state: Array<BodyType> = [], action: any) => {
 }
   
 export default blocks
-  

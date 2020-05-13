@@ -1,7 +1,7 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~@icon/micon/micon.css';
 @import '~tippy.js/dist/tippy.css';
-@import '~@simonwep/pickr/dist/themes/nano.min.css';
+@import '~@innovdata-damien/pickr/dist/themes/nano.min.css';
 @import '~antd/dist/antd.css';
 /* @import'~@kunukn/react-collapse/dist/Collapse.umd.css'; */
 
@@ -10,7 +10,7 @@
 .pg-build{
     font-size: 14px;
     margin: 8px;
-    border: 1px solid #e5e5e5;
+    /* border: 1px solid #e5e5e5; */
     overflow-x: hidden;
     overflow-y: auto;
     font-family: "Open Sans", sans-serif;
@@ -99,12 +99,12 @@
 }
 
 .pg-build.pg-build__right .pg-build__menu-toggle{
-    left: -34px;
+    left: -32px;
     border-right: 0;
 }
 
 .pg-build.pg-build__left .pg-build__menu-toggle{
-    right: -34px;
+    right: -32px;
     border-left: 0;
 }
 
@@ -273,7 +273,7 @@
     margin-top: 5px;
     margin-bottom: 5px;
     border: 1px dotted #e5e5e5;
-    min-height: 150px;
+    min-height: 180px;
     /* padding: 5px; */
 }
 
@@ -427,7 +427,7 @@
 
 .pg-build .mce-content-body{
     padding: 0 5px;
-    min-height: 100px;
+    min-height: 124px;
 }
 
 .pg-build .mce-content-body div.mce-resizehandle{
@@ -464,6 +464,14 @@
     position: relative;
     padding-left: 10px;
     background-color: transparent;
+}
+
+.pg-build .tox .tox-dialog__body-content{
+    max-height: 557px; 
+}
+
+.pg-build .tox .tox-dialog__body-content iframe{
+    height: 420px!important;
 }
 
 
@@ -773,4 +781,24 @@
 .pg-build .pg-build__body.pg-build__cssView .mce-content-body img[data-mce-selected],
 .pg-build .pg-build__body.pg-build__cssView .mce-content-body table[data-mce-selected]{
     outline: none;
+}
+
+/* --- DROPDOWN --- */
+
+.pg-build .pg-build__body .ant-dropdown,
+.pg-build .pg-build__body .ant-dropdown:active{
+    border: 1px solid rgba(211, 211, 211, 0.39);
+    box-shadow: rgba(0, 0, 0, 0.03) 0 0 10px 0px;
+}
+
+.pg-build .pg-build__body .ant-dropdown .ant-menu-item{
+    background-color: #fff!important;
+}
+
+.pg-build .pg-build__body .ant-dropdown a{
+    color: rgba(0, 0, 0, 0.65)!important;
+}
+
+.pg-build .pg-build__body .ant-dropdown .ant-menu-item.pg-build__ant-menu-item-selected{
+    background-color: rgba(0,0,0,0.05)!important;
 }

@@ -310,8 +310,207 @@
     border-radius: 50%!important;
 }
 
-/* --- MODAL --- */
+/* --- CAROUSEL --- */
 
-.pg-build__modal-style{
-    
+.pg-build__carousel .glide__slide{
+    background-color: #f9f9f9;
+    padding: 10px;
+}
+
+.pg-build__carousel .carousel__arrow {
+    outline: none!important;
+    border-color:transparent;
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    margin-top: -9px;
+    border-radius: 50%;
+    background-color: #fff;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+    -webkit-box-shadow: 0 .5rem 4rem 0 rgba(0,0,0,.5);
+    box-shadow: 0 .5rem 4rem 0 rgba(0,0,0,.5)
+}
+
+.pg-build__carousel .carousel__arrow path{
+    fill: #000;
+}
+
+.pg-build__carousel .carousel__arrow:hover {
+    background-color: #f2f2f2;
+}
+
+.pg-build__carousel .carousel__arrow--next {
+    right: 1.5rem
+}
+
+.pg-build__carousel .carousel__arrow--next svg{
+    margin-left: -4px;
+}
+
+.pg-build__carousel .carousel__arrow--prev {
+    left: 1.5rem
+}
+
+.pg-build__carousel .carousel__arrow--prev svg{
+    margin-left: -4px;
+}
+
+.pg-build__carousel .carousel__bullets {
+    position: absolute;
+    z-index: 2;
+    bottom: 1.5rem;
+    left: 50%;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    list-style: none;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%)
+}
+
+.pg-build__carousel .carousel__bullet {
+    background-color: #000;
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    cursor: pointer;
+    line-height: 0;
+    margin: 0 .25em
+}
+
+.pg-build__carousel .carousel__bullet:focus {
+    outline: none;
+}
+
+.pg-build__carousel .carousel__bullet[class*=active] {
+    background-color: #555555;
+}
+
+.pg-build__carousel.glide {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box
+}
+
+.pg-build__carousel.glide * {
+    box-sizing: inherit
+}
+
+.pg-build__carousel .glide__track {
+    overflow: hidden
+}
+
+.pg-build__carousel .glide__slides {
+    position: relative;
+    width: 100%;
+    list-style: none;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    touch-action: pan-Y;
+    overflow: hidden;
+    padding: 0;
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    will-change: transform
+}
+
+.pg-build__carousel .glide__slides--dragging {
+    user-select: none
+}
+
+.pg-build__carousel .glide__slide {
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    white-space: normal;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent
+}
+
+.pg-build__carousel .glide__slide a {
+    user-select: none;
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -ms-user-select: none
+}
+
+.pg-build__carousel .glide__arrows {
+    -webkit-touch-callout: none;
+    user-select: none
+}
+
+.pg-build__carousel .glide__bullets {
+    -webkit-touch-callout: none;
+    user-select: none
+}
+
+.pg-build__carousel .glide--rtl {
+    direction: rtl
+}
+
+/* --- CONTAINER --- */
+
+.pg-build__container {
+    width: 100%;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+  
+@media (min-width: 576px) {
+    .pg-build__container {
+        max-width: 540px;
+    }
+}
+  
+@media (min-width: 768px) {
+    .pg-build__container {
+        max-width: 720px;
+    }
+}
+  
+@media (min-width: 992px) {
+    .pg-build__container {
+        max-width: 960px;
+    }
+}
+  
+@media (min-width: 1200px) {
+    .pg-build__container {
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 576px) {
+    .pg-build__container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .pg-build__container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .pg-build__container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .pg-build__container {
+        max-width: 1140px;
+    }
 }

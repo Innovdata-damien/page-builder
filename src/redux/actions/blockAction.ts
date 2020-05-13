@@ -55,6 +55,22 @@ export const duplicateBlock = (blockId: string) => ({
     blockId
 });
 
+//Add class to block 
+
+export const addClassToBlock = (blockId: string, className: string) => ({
+    type: 'ADD_CLASS_BLOCK',
+    blockId,
+    className,
+    payload: (state: any, action: any) => {
+
+        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
+        const data = state[blockIndex];
+
+        data.class = action.className;
+
+        return state;
+    }
+});
 
 //Remove block
 
@@ -155,12 +171,32 @@ export const duplicateBlockInside = (blockId: string, colId: string, blockInside
 });
 
 
+//Add class to block inside 
+
+export const addClassToBlockInside = (blockId: string, colId: string, blockInsideId: string, className: string) => ({
+    type: 'ADD_CLASS_BLOCK_INSIDE',
+    blockId,
+    colId,
+    blockInsideId,
+    className,
+    payload: (state: any, action: any) => {
+
+        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
+        let colIndex = state[blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
+        let blockInsideIndex = state[blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
+
+        const data = state[blockIndex].columns[colIndex].contents[blockInsideIndex];
+        data.class = action.className;
+
+        return state;
+    }
+});
+
 //Remove block inside
 
 export const removeBlockInside = (blockId: string, colId: string, blockInsideId: string) => ({
     type: 'REMOVE_BLOCK_INSIDE',
     payload : (state: any, action: any) => {
-
 
         let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
         let colIndex = state[blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);

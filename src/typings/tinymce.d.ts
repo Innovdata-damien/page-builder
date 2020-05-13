@@ -65,6 +65,7 @@ declare module 'tinymce' {
             PluginManager: AddOnManager;
             
         };
+        contentWindow: Window;
         selection: Selection;
         windowManager: WindowManager;
         ui: {

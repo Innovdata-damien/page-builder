@@ -12,6 +12,10 @@ declare module 'react' {
         defaultcolor?: string;
     }
 }
+
+// declare module '@glidejs/glide' {
+// }
+
 declare global {
     interface Window {
         _PageBuilderInstances: Array<PageBuilderInstance>;

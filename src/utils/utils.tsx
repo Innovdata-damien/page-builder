@@ -52,7 +52,7 @@ const setPageBuilderInstance = (pageBuilderInstance: PageBuilderInstance) => {
         window._PageBuilderInstances = [];
         
     let indexOfInstance: number;
-    if(indexOfInstance = window._PageBuilderInstances.findIndex((pageBuilderInstance)=> pageBuilderInstance.pageBuilder.__id == pageBuilderInstance.pageBuilder.__id))
+    if((indexOfInstance = window._PageBuilderInstances.findIndex((item)=> item.pageBuilder.__id == pageBuilderInstance.pageBuilder.__id)) != -1)
         window._PageBuilderInstances[indexOfInstance] = pageBuilderInstance;
     else
         window._PageBuilderInstances.push(pageBuilderInstance);
@@ -60,9 +60,13 @@ const setPageBuilderInstance = (pageBuilderInstance: PageBuilderInstance) => {
 };
 
 const getPageBuilderInstance = (id: string | number) => {
-    // console.log(window._PageBuilderInstances)
-    // console.log(window._PageBuilderInstances.find((pageBuilderInstance)=> { console.log(pageBuilderInstance.pageBuilder.__id);return pageBuilderInstance.pageBuilder.__id == id}))
     return window._PageBuilderInstances.find((pageBuilderInstance)=> pageBuilderInstance.pageBuilder.__id == id) || null;
 };
 
-export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance };
+const decodeHTML = (htmlEncoded: string) => {
+    var elem = document.createElement('textarea');
+    elem.innerHTML = htmlEncoded;
+    return elem.value;
+}
+
+export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance, decodeHTML };

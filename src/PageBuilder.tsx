@@ -46,7 +46,7 @@ export interface Options {
     /**
      * Url of website style
     */
-    styleUrl: string;
+    stylesUrl: string;
 
     /**
      * List of languages availables
@@ -62,6 +62,11 @@ export interface Options {
      * Img url loader for document manager
     */
     imageUrlLoader: (resolve: (value: string) => void, reject: (value: string | null ) => void) => void;
+
+    /**
+     * List of classes for blocks
+    */
+    blockClassList?: Array <BlockClassList>
 }
 
 export interface ComponentsList {
@@ -75,6 +80,12 @@ export interface ComponentsList {
 export interface LanguagesList {
     code: string;
     name: string;
+}
+
+export interface BlockClassList {
+    label: string;
+    class: string;
+    type?: 'block' | 'block-inside';
 }
 
 export class PageBuilder{
@@ -99,7 +110,7 @@ export class PageBuilder{
             language: options.language || 'en',
             container: options.container || null,
             menuPosition: options.menuPosition || 'right',
-            styleUrl: options.styleUrl || '',
+            stylesUrl: options.stylesUrl || '',
             blocks: options.blocks || defaultBlocks,
             menuItems: options.menuItems || defaultMenuItems,
             languagesList: options.languagesList || [
@@ -147,6 +158,18 @@ export class PageBuilder{
                     description: 'Carousel'
                 },
             ],
+            blockClassList: [
+                {
+                    label: 'Container',
+                    class: 'pg-build__container',
+                    type: 'block'
+                },
+                {
+                    label: 'Content',
+                    class: 'pg-build__content',
+                    type: 'block-inside'
+                }
+            ],
             imageUrlLoader: options.imageUrlLoader || function(_resolve, reject) {
                 reject(null);
             }
@@ -171,16 +194,11 @@ export class PageBuilder{
     public getJson(): Array<BodyType> {
 
         const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
-console.log(pagebuilderInstance)
         if(pagebuilderInstance)
             if(this.__options?.container && this.__initialized)
                 return pagebuilderInstance.store.getState().blocks;
 
         return [];
-        // if(this.__options?.container && this.__initialized)
-        //     return store.getState().blocks;
-        // else
-        //     return [];
     }
 
     //Build PageBuilder
@@ -193,13 +211,6 @@ console.log(pagebuilderInstance)
                 <Root pageBuilder={this}/>
                 ,this.__options.container
             );
-            // this.__options.container.classList.add('pg-build');
-
-            // if(this.__options.menuPosition == 'right'){
-            //     this.__options.container.classList.add('pg-build__right');
-            // }else{
-            //     this.__options.container.classList.add('pg-build__left');
-            // }
 
         }else{
             console.error('Undefined Page builder container');
@@ -210,24 +221,20 @@ console.log(pagebuilderInstance)
     //Destroy PageBuilder
     public destroy(){
         if(this.__options?.container){
-
             
-            if(this.__options?.styleUrl)
+            if(this.__options?.stylesUrl)
                 document.querySelector(`#pg-build__style-${this.__id}`)!.remove();
 
             ReactDOM.unmountComponentAtNode(this.__options.container);
             this.__initialized = false;
-            // this.__options.container.classList.remove('pg-build');
-            // this.__options.container.classList.remove('pg-build__right');
-            // this.__options.container.classList.remove('pg-build__left');
 
         }
     }
 
     public toggleCssView(type: boolean = false){
 
-        //const { dispatch } = store
-        const actions = bindActionCreators({toggleCssView}, dispatch);
+        const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
+        const actions = bindActionCreators({toggleCssView}, pagebuilderInstance!.store.dispatch);
         actions.toggleCssView(type);
         
     }

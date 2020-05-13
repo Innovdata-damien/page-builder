@@ -5,10 +5,9 @@ const path = require('path');
 const { TypedCssModulesPlugin } = require('typed-css-modules-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-//const CompressionPlugin = require('compression-webpack-plugin');
+const JavaScriptObfuscator = require('webpack-obfuscator');
 
 const BUILD = process.env.BUILD;
-const TYPE = process.env.TYPE;
 const banner = `${packageJson.prodName} v.${packageJson.version}`;
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
@@ -72,7 +71,17 @@ module.exports = (env, argv) => {
             test: path.resolve('src/styles/pagebuilder.css'),
             use: [
                 {
-                    loader: 'style-loader'
+                    loader: 'style-loader',
+                    options: {
+                        insert: (element) => {
+
+                            if(!window.pageBuilderCss)
+                                window.pageBuilderCss = [];
+                                
+                            window.pageBuilderCss.push(element);
+
+                        },
+                    }
                 },
                 {
                     loader: 'css-loader',
@@ -94,7 +103,7 @@ module.exports = (env, argv) => {
         ),
         output: {
             path: path.join(__dirname, 'dist'),
-            filename: argv.mode === 'production' ? `${packageJson.prodName + (BUILD === 'min' ? '.' + BUILD : '')}.js` : `${packageJson.prodName}.js`,
+            filename: `${packageJson.prodName}.min.js`,
             library: packageJson.prodName,
             libraryExport: 'default',
             libraryTarget: 'umd',
@@ -163,7 +172,7 @@ module.exports = (env, argv) => {
 
         plugins: [
             new MiniCssExtractPlugin({
-                filename: `${packageJson.prodName + (BUILD === 'min' ? '.' + BUILD : '')}.css`
+                filename: `${packageJson.prodName}.min.css`
             }),
             new webpack.BannerPlugin(banner),
             new webpack.DefinePlugin({
@@ -174,11 +183,12 @@ module.exports = (env, argv) => {
             new TypedCssModulesPlugin({
                 globPattern: 'src/**/*.css',
             }),
-            //new CompressionPlugin()
+            new JavaScriptObfuscator ({
+                rotateUnicodeArray: true
+            })
         ],
         optimization: {
-            minimizer: [new OptimizeCSSAssetsPlugin({})],
-            minimize: BUILD === 'min'
+            minimizer: [new OptimizeCSSAssetsPlugin({})]
         },
         devServer: {
             contentBase: path.resolve(__dirname, './'),
