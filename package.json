@@ -1,12 +1,14 @@
 {
   "name": "page-builder-innovdata",
   "prodName": "PageBuilder",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Editeur de page statique",
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --open --hot --mode development",
-    "build": "cross-env webpack --mode production",
+    "build-css": "cross-env BUILD=css webpack --mode production",
+    "build-js": "cross-env webpack --mode production",
+    "build": "yarn build-css && yarn build-js",
     "docs": "typedoc --options typedoc.json src"
   },
   "files": [
