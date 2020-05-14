@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { ReactSortable } from 'react-sortablejs';
 import { BodyType, ColumnType, ContentType } from '../../types/blockType';
+import ModalColumnEditor from '../utility/modal-column-editor';
 import BlockInside from './block-inside';
 import { Menu, Dropdown } from 'antd';
 
@@ -65,6 +66,7 @@ type PropsBlockToolbar = {
     removeBlock: (blockId: string) => void;
     addClassToBlock: (blockId: string, className: string) => void;
     _showModalStyle: () => void;
+    _showModalColumnEditor: () => void;
 }
 
 
@@ -73,17 +75,18 @@ const BlockToolbar = (props: PropsBlockToolbar) => {
     return  <div className="pg-build__block-tool">
                 
                 
-                {props.item.design.moveable != false && <a className="pg-build__block-tool-move"><i className="mi mi-SIPMove"></i></a>}
-                {props.item.design.cssCustomizable != false && <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.moveable != false && <a className="pg-build__block-tool-move"><i className="mi mi-SIPMove"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.cssCustomizable != false && <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.editable != false &&  <a onClick={props._showModalColumnEditor}><i className="mi mi-AspectRatio"></i></a>}
 
-                {props.item.design.canAddClass != false &&
+                {typeof props.item.design == "undefined" || props.item.design.canAddClass != false &&
                     <Dropdown getPopupContainer={()=> props.blockRef as HTMLElement} overlay={<DropdownMenuClass addClassToBlock={props.addClassToBlock} item={props.item} pageBuilder={props.pageBuilder}/>} placement="bottomCenter">
                         <a><i className="mi mi-AsteriskBadge12"></i></a>
                     </Dropdown>
                 }
 
-                {props.item.design.duplicable != false && <a onClick={() => props.duplicateBlock(props.item.id)}><i className="mi mi-Copy"></i></a>}
-                {props.item.design.removeable != false && <a onClick={() => props.removeBlock(props.item.id)}><i className="mi mi-Delete"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.duplicable != false && <a onClick={() => props.duplicateBlock(props.item.id)}><i className="mi mi-Copy"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.removeable != false && <a onClick={() => props.removeBlock(props.item.id)}><i className="mi mi-Delete"></i></a>}
 
             </div>;
 };
@@ -104,6 +107,7 @@ type Props = {
 
 type State = {
     blockClickedOutside: boolean;
+    modalColumnEditorVisible: boolean;
 };
 
 class Block extends Component<Props, State> {
@@ -116,7 +120,8 @@ class Block extends Component<Props, State> {
         super(props);
 
         this.state = {
-            blockClickedOutside: true
+            blockClickedOutside: true,
+            modalColumnEditorVisible: false
         };
 
         this.openStyleModal = false;
@@ -148,14 +153,21 @@ class Block extends Component<Props, State> {
         this.modalStyle._toggleModal(true);
     }
 
+    _showModalColumnEditor = () => {
+        this.setState({
+            modalColumnEditorVisible: true,
+        });
+    }
+
     render() {
         
         return (
             <div ref={elem => this.blockRef = elem} onFocus={this._handleInside} onBlur={()=>this.setState({ blockClickedOutside: true })} onClick={this._handleInside} data-draggable-id={this.props.item.id} className={'pg-build__block ' + (!this.state.blockClickedOutside ? 'pg-build__block-active' : '') }>
                 <div className={this.props.cssViewShow ? this.props.item.class : ''} style={this.props.cssViewShow ? this.props.item.style || {} : {}}>
-                    <BlockToolbar pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock}/>
+                    <BlockToolbar pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _showModalColumnEditor={this._showModalColumnEditor} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock}/>
                     
                     <Modal onRef={ref => (this.modalStyle = ref)} blockId={this.props.item.id} />
+                    <ModalColumnEditor visible={this.state.modalColumnEditorVisible} blockRef={this.blockRef}/>
 
                     <div className="pg-build__row">
                         {this.props.item.columns.map((column: ColumnType) => {

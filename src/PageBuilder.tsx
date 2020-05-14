@@ -63,6 +63,12 @@ export interface Options {
     */
     imageUrlLoader: (resolve: (value: string) => void, reject: (value: string | null ) => void) => void;
 
+
+    /**
+     * Callback of adding translation var
+    */
+    addTranslationVarCallback: (data: any) => void;
+
     /**
      * List of classes for blocks
     */
@@ -74,9 +80,9 @@ export interface Options {
     translateTemplator?: TranslateTemplator;
 
     /**
-     * Templator for translation vars
+     * Translation vars list
     */
-    translationVars?: TranslationVars;
+    translationVars?: Array<string>;
 }
 
 export interface ComponentsList {
@@ -101,11 +107,6 @@ export interface BlockClassList {
 export interface TranslateTemplator {
     start: string;
     end: string;
-}
-
-export interface TranslationVars {
-    value: string;
-    text: string;
 }
 
 export class PageBuilder{
@@ -188,7 +189,9 @@ export class PageBuilder{
             translateTemplator: { start: "{{'", end: "'|trans}}" },
             imageUrlLoader: function(_resolve: any, reject: any) {
                 reject(null);
-            }
+            },
+            addTranslationVarCallback: function(_data: any) {
+            },
         }, options);
 
         

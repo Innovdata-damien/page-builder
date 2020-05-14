@@ -161,7 +161,7 @@
 }
 
 .pg-build  .pg-build__body .pg-build__block .pg-build__block-tool{
-    z-index: 3;
+    z-index: 10;
     top: -26px;
     position: absolute;
 }
@@ -293,7 +293,7 @@
 
 
 .pg-build  .pg-build__body .pg-build__block-inside .pg-build__block-inside-tool{
-    z-index: 3;
+    z-index: 10;
     transition: .3s opacity;
     top: -1px;
     position: absolute;
@@ -427,6 +427,12 @@
 
 .pg-build .tox .tox-collection__item-icon{
     width: auto;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: auto;
+    white-space: nowrap;
+    display: inline-block;
 }
 
 .pg-build .mce-content-body{
@@ -478,6 +484,13 @@
     height: 420px!important;
 }
 
+.pg-build [data-trad-vars]{
+    background-color: rgba(231,76,60,0.25);
+}
+
+.pg-build .tox :not(svg):not(rect){
+    z-index: 10;
+}
 
 /* --- STYLE MODAL --- */
 

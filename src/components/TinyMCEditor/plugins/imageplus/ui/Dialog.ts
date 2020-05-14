@@ -40,7 +40,7 @@ const toImageDom = (data: any) => (
 // Dialog spec
 
 const dialogSpec = (editor: EditorTinymce, initialData = {}, options: Options) => ({
-    title: 'Insert/Edit Link',
+    title: 'Insert/Edit Image',
     initialData: initialData,
     body: {
 
