@@ -1,4 +1,4 @@
-import { BodyType, ContentType, ColumnType } from '../../types/blockType';
+import { BodyType, ContentType, ColumnType, ColumnDetail } from '../../types/blockType';
 import { addAfter } from '../../utils/utils';
 import uuid from 'uuid/v4';
 
@@ -93,27 +93,48 @@ export const updateListBody = (blocks: Array<BodyType>) => ({
         if(blockAdded != -1){
 
             let block = {...action.blocks[blockAdded]};
-            let columns = [12];
+            let columns: any = [12];
 
             block.columns = [];
-
-            if(block.design!.value)
-                if(block.design!.value!.columnSize)
-                    columns = block.design.value.columnSize;
-
-            let calcColSize = columns.reduce((x, y) => x + y);
-
-            if(calcColSize < 12)
-                columns.push(12 - calcColSize);
             
+            if(block.design!.value)
+                if(block.design!.value!.columnDetails)
+                    columns = block.design.value.columnDetails;
+
+
+            // let calcColSize = columns.reduce((x, y) => x + y);
+
+            // if(calcColSize < 12)
+            //     columns.push(12 - calcColSize);
             
             for (var i = 0; i < columns.length; i++) {
 
+                let columnDetails = null;
+
+                if(columns[i].size){
+                    columnDetails = columns[i];
+                }else{
+                    columnDetails = {
+                        size: {
+                            pc: columns[i],
+                            tablet: 12,
+                            mobile: 12
+                        },
+                        hide: {
+                            pc: false,
+                            tablet: false,
+                            mobile: false
+                        }
+                    }
+                }
+
                 block.columns.push({
                     id: uuid(),
-                    size: columns[i],
+                    //size: columns[i],
+                    detail: columnDetails,
                     contents: []
                 });
+
             }
 
             action.blocks[blockAdded] = block;

@@ -14,10 +14,28 @@ export interface DesignType  {
 }
 
 export interface DesignValueType  {
-    columnSize?: Array<1|2|3|4|5|6|7|8|9|10|11|12>; 
+    columnDetails?: Array<1|2|3|4|5|6|7|8|9|10|11|12> | Array<ColumnDetail>; 
     htmlContent?: string;
     toolbar?: string;
 }
+
+export interface ColumnDetail  {
+    size: ColumnDetailSize;
+    hide: ColumnDetailHide;
+}
+
+export interface ColumnDetailSize{
+    pc: 1|2|3|4|5|6|7|8|9|10|11|12;
+    tablet: 1|2|3|4|5|6|7|8|9|10|11|12;
+    mobile: 1|2|3|4|5|6|7|8|9|10|11|12;
+}
+
+export interface ColumnDetailHide{
+    pc: boolean;
+    tablet: boolean;
+    mobile: boolean;
+}
+
 
 // ------------- BODY
 
@@ -31,7 +49,8 @@ export interface BodyType {
 
 export interface ColumnType {
     id: string;
-    size: number;
+    // size: number;
+    detail: ColumnDetail;
     contents: Array<ContentType>;
 }
 

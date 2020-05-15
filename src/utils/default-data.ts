@@ -11,7 +11,18 @@ const defaultBlocks: Array<BodyType> = [
         columns: [
             {
                 id: uuid(),
-                size: 12,
+                detail: {
+                    size: {
+                        pc: 12,
+                        tablet: 12,
+                        mobile: 12
+                    },
+                    hide : {
+                        pc: false,
+                        tablet: false,
+                        mobile: false
+                    }
+                },
                 contents: [
                     {
                         id: uuid(),
@@ -63,7 +74,40 @@ const defaultMenuItems: Array<MenuType> = [
                     type: 'column',
                     preview: 'Column left',
                     value: {
-                        columnSize: [8, 4]
+                        columnDetails: [8, 4]
+                    }
+                }
+            },
+            {
+                id: uuid(),
+                design: {
+                    type: 'column',
+                    preview: 'Column x2 and tablet',
+                    value: {
+                        columnDetails: [{
+                            size: {
+                                pc: 6,
+                                tablet: 6,
+                                mobile: 12
+                            },
+                            hide : {
+                                pc: false,
+                                tablet: false,
+                                mobile: false
+                            }
+                        },
+                        {
+                            size: {
+                                pc: 6,
+                                tablet: 6,
+                                mobile: 12
+                            },
+                            hide : {
+                                pc: false,
+                                tablet: false,
+                                mobile: false
+                            }
+                        }]
                     }
                 }
             },
@@ -73,7 +117,7 @@ const defaultMenuItems: Array<MenuType> = [
                     type: 'column',
                     preview: 'Column right',
                     value: {
-                        columnSize: [4, 8]
+                        columnDetails: [4, 8]
                     }
                 }
             },
@@ -83,7 +127,7 @@ const defaultMenuItems: Array<MenuType> = [
                     type: 'column',
                     preview: 'Column x2',
                     value: {
-                        columnSize: [6, 6]
+                        columnDetails: [6, 6]
                     }
                 }
             },
@@ -93,7 +137,7 @@ const defaultMenuItems: Array<MenuType> = [
                     type: 'column',
                     preview: 'Column x12',
                     value: {
-                        columnSize: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        columnDetails: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                     }
                 }
             },
@@ -139,5 +183,6 @@ const defaultMenuItems: Array<MenuType> = [
         ]
     }
 ];
+
 
 export {defaultBlocks, defaultMenuItems};

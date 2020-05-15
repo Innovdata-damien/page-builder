@@ -7,6 +7,7 @@ import { Menu, Dropdown } from 'antd';
 
 // Redux
 import { connect } from 'react-redux';
+import { toggleMenu } from '../../redux/actions/menuAction';
 import {
     setBlock,
     removeBlock,
@@ -30,7 +31,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     removeBlock: (blockId: string) => dispatch(removeBlock(blockId)),
     duplicateBlock: (blockId: string) => dispatch(duplicateBlock(blockId)),
     updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => dispatch(updateListBlockInside(blocksInside, blockId, colId)),
-    addClassToBlock: (blockId: string, className: string) => dispatch(addClassToBlock(blockId, className))
+    addClassToBlock: (blockId: string, className: string) => dispatch(addClassToBlock(blockId, className)),
+    handleToggleMenu: (type: boolean) => dispatch(toggleMenu(type))
 });
 
 //Dropdown menu class
@@ -66,7 +68,7 @@ type PropsBlockToolbar = {
     removeBlock: (blockId: string) => void;
     addClassToBlock: (blockId: string, className: string) => void;
     _showModalStyle: () => void;
-    _showModalColumnEditor: () => void;
+    _setVisibilityOfModalColumnEditor: (type: boolean) => void;
 }
 
 
@@ -77,7 +79,7 @@ const BlockToolbar = (props: PropsBlockToolbar) => {
                 
                 {typeof props.item.design == "undefined" || props.item.design.moveable != false && <a className="pg-build__block-tool-move"><i className="mi mi-SIPMove"></i></a>}
                 {typeof props.item.design == "undefined" || props.item.design.cssCustomizable != false && <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>}
-                {typeof props.item.design == "undefined" || props.item.design.editable != false &&  <a onClick={props._showModalColumnEditor}><i className="mi mi-AspectRatio"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.editable != false &&  <a onClick={()=>props._setVisibilityOfModalColumnEditor(true)}><i className="mi mi-AspectRatio"></i></a>}
 
                 {typeof props.item.design == "undefined" || props.item.design.canAddClass != false &&
                     <Dropdown getPopupContainer={()=> props.blockRef as HTMLElement} overlay={<DropdownMenuClass addClassToBlock={props.addClassToBlock} item={props.item} pageBuilder={props.pageBuilder}/>} placement="bottomCenter">
@@ -103,6 +105,7 @@ type Props = {
     removeBlock: (blockId: string) => void;
     updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => void;
     addClassToBlock: (blockId: string, className: string) => void;
+    handleToggleMenu: (type: boolean) => void;
 };
 
 type State = {
@@ -153,9 +156,10 @@ class Block extends Component<Props, State> {
         this.modalStyle._toggleModal(true);
     }
 
-    _showModalColumnEditor = () => {
+    _setVisibilityOfModalColumnEditor = (type: boolean) => {
+        this.props.handleToggleMenu(false);
         this.setState({
-            modalColumnEditorVisible: true,
+            modalColumnEditorVisible: type,
         });
     }
 
@@ -164,16 +168,16 @@ class Block extends Component<Props, State> {
         return (
             <div ref={elem => this.blockRef = elem} onFocus={this._handleInside} onBlur={()=>this.setState({ blockClickedOutside: true })} onClick={this._handleInside} data-draggable-id={this.props.item.id} className={'pg-build__block ' + (!this.state.blockClickedOutside ? 'pg-build__block-active' : '') }>
                 <div className={this.props.cssViewShow ? this.props.item.class : ''} style={this.props.cssViewShow ? this.props.item.style || {} : {}}>
-                    <BlockToolbar pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _showModalColumnEditor={this._showModalColumnEditor} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock}/>
+                    <BlockToolbar pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock}/>
                     
                     <Modal onRef={ref => (this.modalStyle = ref)} blockId={this.props.item.id} />
-                    <ModalColumnEditor visible={this.state.modalColumnEditorVisible} blockRef={this.blockRef}/>
+                    <ModalColumnEditor blockId={this.props.item.id} block={this.props.item} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} visible={this.state.modalColumnEditorVisible} blockRef={this.blockRef}/>
 
                     <div className="pg-build__row">
                         {this.props.item.columns.map((column: ColumnType) => {
 
                             return(
-                                <ReactSortable handle=".pg-build__block-inside-tool-move" key={column.id} className={'pg-build__col pg-build__col-' + column.size} list={column.contents} setList={newState =>
+                                <ReactSortable handle=".pg-build__block-inside-tool-move" key={column.id} className={'pg-build__col pg-build__col-' + column.detail.size.pc} list={column.contents} setList={newState =>
                                     this.props.updateListBlockInside(
                                         newState,
                                         this.props.item.id,
