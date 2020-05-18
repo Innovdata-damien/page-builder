@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ContentType } from '../../types/blockType';
+import { ContentType, BodyType, ColumnType } from '../../types/blockType';
 import { Menu, Dropdown } from 'antd';
 import { PageBuilder } from 'PageBuilder';
 
@@ -9,17 +9,21 @@ import { connect } from 'react-redux';
 import {
     removeBlockInside,
     duplicateBlockInside,
-    addClassToBlockInside
+    addClassToBlockInside,
+    moveBlockInside
 } from '../../redux/actions/blockAction';
+import { BlockPosition } from 'utils/utils';
 
 const mapStateToProps = (state: any) => ({
-    pageBuilder: state.pageBuilder
+    pageBuilder: state.pageBuilder,
+    blocks: state.blocks
 });
   
 const mapDispatchToProps = (dispatch: any) => ({
     removeBlockInside: (blockId: string, colId: string, blockInsideId: string) => dispatch(removeBlockInside(blockId, colId, blockInsideId)),
     duplicateBlockInside: (blockId: string, colId: string, blockInsideId: string) => dispatch(duplicateBlockInside(blockId, colId, blockInsideId)),
-    addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string) => dispatch(addClassToBlockInside(blockId, colId, blockInsideId, className))
+    addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string) => dispatch(addClassToBlockInside(blockId, colId, blockInsideId, className)),
+    moveBlockInside: (blockId: string, colId: string, blockInsideId: string, position: BlockPosition) => dispatch(moveBlockInside(blockId, colId, blockInsideId, position)),
 });
 
 
@@ -54,6 +58,7 @@ const DropdownMenuClass = (props: PropsDropdownMenuClass) => (
 type Props = {
     colId: string;
     blockId: string;
+    blocks: Array<BodyType>;
     blockInsideRef?: HTMLDivElement | null;
     item: ContentType;
     pageBuilder: PageBuilder;
@@ -61,6 +66,7 @@ type Props = {
     removeBlockInside: (blockId: string, colId: string, blockInsideId: string) => void;
     duplicateBlockInside: (blockId: string, colId: string, blockInsideId: string) => void;
     addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string) => void;
+    moveBlockInside: (blockId: string, colId: string, blockInsideId: string, position: BlockPosition) => void;
     _handleMouseDown: any;
 };
 
@@ -68,6 +74,25 @@ type State = {
 
 };
 
+const getContentList = (blocks: Array<BodyType>): Array<ContentType> => {
+    const contentList: Array<ContentType> = [];
+
+    blocks.forEach((block)=>{
+        block.columns.forEach((column)=>{
+            column.contents.forEach((content)=>{
+                contentList.push(content);
+            })
+        })
+    })
+
+    return contentList;
+}
+
+const getInsideBlockIndex = (blocks: Array<BodyType>, blockId: string, colId: string, blockInsideId: string): number =>{
+
+    let blockInsideIndex = getContentList(blocks).findIndex((item: ContentType) => item.id === blockInsideId);
+    return blockInsideIndex;
+}
 
 class BlockInsideToolbar extends Component<Props, State> {
 
@@ -92,6 +117,9 @@ class BlockInsideToolbar extends Component<Props, State> {
 
     render () {
 
+        const blockInsideIndexOfContentList = getInsideBlockIndex(this.props.blocks, this.props.blockId, this.props.colId, this.props.item.id);
+        const contentListLength = getContentList(this.props.blocks).length;
+
         return (
             <>
 
@@ -109,6 +137,8 @@ class BlockInsideToolbar extends Component<Props, State> {
                 {typeof this.props.item.design == "undefined" || this.props.item.design.duplicable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.duplicateBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Copy"></i></a>}
                 {typeof this.props.item.design == "undefined" || this.props.item.design.removeable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.removeBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Delete"></i></a>}
 
+                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'up')}><i className="mi mi-Up"></i></a>}
+                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'down')}><i className="mi mi-Down"></i></a>}
             </>
         );
     }

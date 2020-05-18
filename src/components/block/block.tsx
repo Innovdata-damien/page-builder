@@ -4,8 +4,6 @@ import { BodyType, ColumnType, ContentType } from '../../types/blockType';
 import ModalColumnEditor from '../utility/modal-column-editor';
 import BlockInside from './block-inside';
 import { Menu, Dropdown } from 'antd';
-
-// Redux
 import { connect } from 'react-redux';
 import { toggleMenu } from '../../redux/actions/menuAction';
 import {
@@ -13,10 +11,12 @@ import {
     removeBlock,
     duplicateBlock,
     updateListBlockInside,
-    addClassToBlock
+    addClassToBlock,
+    moveBlock
 } from '../../redux/actions/blockAction';
 import Modal from '../utility/modal-style';
 import { PageBuilder } from 'PageBuilder';
+import { BlockPosition } from '../../utils/utils';
 
 
 const mapStateToProps = (state: any) => ({
@@ -32,7 +32,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     duplicateBlock: (blockId: string) => dispatch(duplicateBlock(blockId)),
     updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => dispatch(updateListBlockInside(blocksInside, blockId, colId)),
     addClassToBlock: (blockId: string, className: string) => dispatch(addClassToBlock(blockId, className)),
-    handleToggleMenu: (type: boolean) => dispatch(toggleMenu(type))
+    handleToggleMenu: (type: boolean) => dispatch(toggleMenu(type)),
+    moveBlock: (blockId: string, position: BlockPosition) => dispatch(moveBlock(blockId, position))
 });
 
 //Dropdown menu class
@@ -61,6 +62,7 @@ const DropdownMenuClass = (props: PropsDropdownMenuClass) => (
 //Block toolbar
 
 type PropsBlockToolbar = {
+    blocks: Array<BodyType>;
     item: BodyType;
     blockRef?: HTMLDivElement | null;
     pageBuilder: PageBuilder;
@@ -69,8 +71,12 @@ type PropsBlockToolbar = {
     addClassToBlock: (blockId: string, className: string) => void;
     _showModalStyle: () => void;
     _setVisibilityOfModalColumnEditor: (type: boolean) => void;
+    moveBlock: (blockId: string, position: BlockPosition) => void;
 }
 
+const getBlockIndex = (blocks: Array<BodyType>, blockId: string): number => {
+    return blocks.findIndex((item: BodyType) => item.id == blockId);
+};
 
 const BlockToolbar = (props: PropsBlockToolbar) => {
 
@@ -90,12 +96,16 @@ const BlockToolbar = (props: PropsBlockToolbar) => {
                 {typeof props.item.design == "undefined" || props.item.design.duplicable != false && <a onClick={() => props.duplicateBlock(props.item.id)}><i className="mi mi-Copy"></i></a>}
                 {typeof props.item.design == "undefined" || props.item.design.removeable != false && <a onClick={() => props.removeBlock(props.item.id)}><i className="mi mi-Delete"></i></a>}
 
+                {(typeof props.item.design == "undefined" || props.item.design.moveable != false && getBlockIndex(props.blocks, props.item.id) != 0) && <a onClick={() => props.moveBlock(props.item.id, 'up')}><i className="mi mi-Up"></i></a>}
+                {(typeof props.item.design == "undefined" || props.item.design.moveable != false && getBlockIndex(props.blocks, props.item.id) != (props.blocks.length - 1)) && <a onClick={() => props.moveBlock(props.item.id, 'down')}><i className="mi mi-Down"></i></a>}
+
             </div>;
 };
 
 // Block
 
 type Props = {
+    blocks: Array<BodyType>;
     cssViewShow: boolean;
     blockId: string;
     iframeDocument: Document;
@@ -106,6 +116,7 @@ type Props = {
     updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => void;
     addClassToBlock: (blockId: string, className: string) => void;
     handleToggleMenu: (type: boolean) => void;
+    moveBlock: (blockId: string, position: BlockPosition) => void;
 };
 
 type State = {
@@ -168,7 +179,7 @@ class Block extends Component<Props, State> {
         return (
             <div ref={elem => this.blockRef = elem} onFocus={this._handleInside} onBlur={()=>this.setState({ blockClickedOutside: true })} onClick={this._handleInside} data-draggable-id={this.props.item.id} className={'pg-build__block ' + (!this.state.blockClickedOutside ? 'pg-build__block-active' : '') }>
                 <div className={this.props.cssViewShow ? this.props.item.class : ''} style={this.props.cssViewShow ? this.props.item.style || {} : {}}>
-                    <BlockToolbar pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock}/>
+                    <BlockToolbar blocks={this.props.blocks} pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock} moveBlock={this.props.moveBlock}/>
                     
                     <Modal onRef={ref => (this.modalStyle = ref)} blockId={this.props.item.id} />
                     <ModalColumnEditor blockId={this.props.item.id} block={this.props.item} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} visible={this.state.modalColumnEditorVisible} blockRef={this.blockRef}/>

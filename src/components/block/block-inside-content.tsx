@@ -32,7 +32,7 @@ export default class BlockInsideContent extends Component<Props, State> {
             this.content = <TinyMCEditor blockId={this.props.blockId} colId={this.props.colId} item={this.props.item}/>;
         else
             this.content = <div dangerouslySetInnerHTML={{__html:(this.props.item.content ? this.props.item.content : ( this.props.item.design.type == 'html' ? this.props.item.design.value?.htmlContent : getTemplate(this.props.item.design.type, this.props.item.design.value || {})!.html || '') ) || ''}}></div>;
-
+            
         return this.content;
     }
 }

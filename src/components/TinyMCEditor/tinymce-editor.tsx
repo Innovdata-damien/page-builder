@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import loadCustomPlugins from './plugins/loadCustomPlugins';
 import { ContentType, BodyType, ColumnType } from '../../types/blockType';
+//import tinymce from '@innovdata-damien/tinymce/js/tinymce/tinymce';
+import tinymce from 'tinymce';
+console.log(window.tinymce)
 import { Editor } from '@innovdata-damien/tinymce-react';
-//import tinymce from 'tinymce';
 //import 'tinymce/themes/silver';
 //import '!style-loader!css-loader!tinymce/skins/ui/oxide/skin.min.css';
 import { PageBuilder } from '../../PageBuilder';
@@ -110,6 +112,7 @@ class TinyMCEditor  extends Component<Props> {
                 init={this.options}
                 onEditorChange={this._handleEditorChange}
                 win={this.props.iframeWindow}
+                tinymceScriptSrc="https://unpkg.com/@innovdata-damien/tinymce@5.5.4/js/tinymce/tinymce.js"
             />
         );
     }

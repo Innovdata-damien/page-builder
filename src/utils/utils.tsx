@@ -4,13 +4,35 @@ import PageBuilder from 'index';
 
 // Add a value in array after another value by index
 
-const addAfter = function(array: Array<any>, index: number, newItem: any) {
+const addAfter = (array: Array<any>, index: number, newItem: any) => {
     return [
         ...array.slice(0, index),
         newItem,
         ...array.slice(index)
     ];
 }
+
+type BlockPosition = 'up' | 'down';
+
+const moveToPosition = (array: Array<any>, index: number, position: BlockPosition) => {
+
+    let tmp = array[index];
+
+    if(position == 'up')
+        array[index] = array[index - 1],
+        array[index - 1] = tmp;
+    else if(position == 'down')
+        array[index] = array[index + 1],
+        array[index + 1] = tmp;
+
+    return array;
+    // let arr = this.state.arr;
+    // // SWAP array content
+    // let tmp = arr[index];
+    // arr[index] = arr[index + 1]; // put more conditions to handle edge cases
+    // arr[index + 1] = tmp;
+    // this.setState({arr: arr});
+  }
 
 const parseHtml = (html: string) => {
     const element = new DOMParser().parseFromString(html, 'text/html');
@@ -69,4 +91,4 @@ const decodeHTML = (htmlEncoded: string) => {
     return elem.value;
 }
 
-export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance, decodeHTML };
+export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance, decodeHTML, BlockPosition, moveToPosition };

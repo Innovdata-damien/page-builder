@@ -13,9 +13,69 @@ const defaultBlocks: Array<BodyType> = [
                 id: uuid(),
                 detail: {
                     size: {
-                        pc: 12,
-                        tablet: 12,
-                        mobile: 12
+                        pc: 6,
+                        tablet: 6,
+                        mobile: 6
+                    },
+                    hide : {
+                        pc: false,
+                        tablet: false,
+                        mobile: false
+                    }
+                },
+                contents: [
+                ]
+            },
+            {
+                id: uuid(),
+                detail: {
+                    size: {
+                        pc: 6,
+                        tablet: 6,
+                        mobile: 6
+                    },
+                    hide : {
+                        pc: false,
+                        tablet: false,
+                        mobile: false
+                    }
+                },
+                contents: [
+                ]
+            }
+        ]
+    },
+    {
+        id: uuid(),
+        design: {
+            type: 'column',
+            preview: 'Column'
+        },
+        columns: [
+            {
+                id: uuid(),
+                detail: {
+                    size: {
+                        pc: 6,
+                        tablet: 6,
+                        mobile: 6
+                    },
+                    hide : {
+                        pc: false,
+                        tablet: false,
+                        mobile: false
+                    }
+                },
+                contents: [
+                ]
+            },
+            {
+                id: uuid(),
+                detail: {
+                    size: {
+                        pc: 6,
+                        tablet: 6,
+                        mobile: 6
                     },
                     hide : {
                         pc: false,
@@ -28,7 +88,6 @@ const defaultBlocks: Array<BodyType> = [
                         id: uuid(),
                         content: '<p>truc ...<img src="http://odrazia.localhost:8888/images/bloc-texte.png"></p>',
                         design: {
-                            moveable: false,
                             type: 'html',
                             preview: 'Text',
                             value: {
@@ -39,7 +98,6 @@ const defaultBlocks: Array<BodyType> = [
                         id: uuid(),
                         content: '<p>truc ...<img src="http://odrazia.localhost:8888/images/bloc-texte.png"></p>',
                         design: {
-                            editable: false,
                             type: 'html',
                             preview: 'Text',
                             value: {
@@ -47,6 +105,49 @@ const defaultBlocks: Array<BodyType> = [
                             },
                         }
                     }
+                ]
+            }
+        ]
+    },
+    {
+        id: uuid(),
+        design: {
+            type: 'column',
+            preview: 'Column'
+        },
+        columns: [
+            {
+                id: uuid(),
+                detail: {
+                    size: {
+                        pc: 6,
+                        tablet: 6,
+                        mobile: 6
+                    },
+                    hide : {
+                        pc: false,
+                        tablet: false,
+                        mobile: false
+                    }
+                },
+                contents: [
+                ]
+            },
+            {
+                id: uuid(),
+                detail: {
+                    size: {
+                        pc: 6,
+                        tablet: 6,
+                        mobile: 6
+                    },
+                    hide : {
+                        pc: false,
+                        tablet: false,
+                        mobile: false
+                    }
+                },
+                contents: [
                 ]
             }
         ]

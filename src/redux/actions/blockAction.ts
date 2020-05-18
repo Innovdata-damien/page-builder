@@ -1,5 +1,5 @@
 import { BodyType, ContentType, ColumnType, ColumnDetail } from '../../types/blockType';
-import { addAfter } from '../../utils/utils';
+import { addAfter, BlockPosition, moveToPosition } from '../../utils/utils';
 import uuid from 'uuid/v4';
 
 // ---------- Block ---------- 
@@ -24,13 +24,15 @@ export const duplicateBlock = (blockId: string) => ({
         const data = {...state[blockIndex]};
         var newState: Array<any> = addAfter(state, blockIndex, data);
         
-        console.log(newState)
         // Update id
         
         var newBlockState: any = {};
         newBlockState.id = uuid();
         newBlockState.style = {...newState[(blockIndex + 1)].style || {}};
+        newBlockState.design = {...newState[(blockIndex + 1)].design || {}};
         newBlockState.columns = [];
+
+        console.log(newState)
 
         newState[(blockIndex + 1)].columns.forEach((column: any) => {
 
@@ -145,6 +147,22 @@ export const updateListBody = (blocks: Array<BodyType>) => ({
     blocks
 });
 
+//Move block to position up / down
+
+export const moveBlock = (blockId: string, position: BlockPosition) => ({
+    type: 'MOVE_BLOCK',
+    payload: (state: any, action: any) => {
+
+        const blockIndex = state.findIndex((item: BodyType) => item.id == action.blockId);
+        const newBlocksState = moveToPosition(state, blockIndex, position);
+        console.log(newBlocksState)
+
+        return [...newBlocksState];
+    },
+    blockId,
+    position
+});
+
 
 // ---------- Block Inside ---------- 
 
@@ -230,4 +248,91 @@ export const removeBlockInside = (blockId: string, colId: string, blockInsideId:
     blockId,
     colId,
     blockInsideId
+});
+
+//Move block inside to position up / down
+
+export const moveBlockInside = (blockId: string, colId: string, blockInsideId: string, position: BlockPosition) => ({
+    type: 'MOVE_BLOCK_INSIDE',
+    payload: (state: Array<BodyType>, action: any) => {
+
+        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
+        let colIndex = state[blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
+        let blockInsideIndex = state[blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
+
+
+        // Get content length by block and col
+        const contentLengthByBlockAndCol: any = {};
+        const newState = [...state]
+
+        state.forEach((block, indexBlock)=>{
+
+            if(!contentLengthByBlockAndCol[indexBlock]){
+                contentLengthByBlockAndCol[indexBlock] = {}
+            }
+
+            block.columns.forEach((column, indexCol)=>{
+
+                contentLengthByBlockAndCol[indexBlock][indexCol] = column.contents.length;
+            
+            });
+        });
+
+        let blockInsideNewIndex = blockInsideIndex;
+
+        if(position == 'up'){
+            blockInsideNewIndex -= 1;
+        }else if(position == 'down'){
+            blockInsideNewIndex += 1;
+        }
+
+        if(blockInsideNewIndex > -1 && blockInsideNewIndex < contentLengthByBlockAndCol[blockIndex][colIndex]){
+            // In same col
+            moveToPosition(newState[blockIndex].columns[colIndex].contents, blockInsideIndex, position);
+        }else if(blockInsideNewIndex <= -1){
+
+            if((colIndex - 1) >= 0){
+                // In prev col
+
+                let nbrContent = contentLengthByBlockAndCol[blockIndex][colIndex - 1];
+
+                newState[blockIndex].columns[colIndex - 1].contents[nbrContent] = newState[blockIndex].columns[colIndex].contents[blockInsideIndex];
+                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+
+            }else if((blockIndex - 1) >= 0){
+                // In prev block
+
+                let nbrCol = newState[blockIndex - 1].columns.length;
+                let nbrContent = contentLengthByBlockAndCol[blockIndex - 1][nbrCol - 1];
+
+                newState[blockIndex - 1].columns[nbrCol - 1].contents[nbrContent] = newState[blockIndex].columns[colIndex].contents[blockInsideIndex];
+                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+
+            }
+
+        }else if(blockInsideNewIndex >= contentLengthByBlockAndCol[blockIndex][colIndex]){
+
+            if((colIndex + 1) <= (newState[blockIndex].columns.length - 1)){
+                // In next col
+
+                newState[blockIndex].columns[colIndex + 1].contents.unshift(newState[blockIndex].columns[colIndex].contents[blockInsideIndex]);
+                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+
+            }else if((blockIndex + 1) <= (newState.length - 1)){
+                // In next block
+
+
+                newState[blockIndex + 1].columns[0].contents.unshift(newState[blockIndex].columns[colIndex].contents[blockInsideIndex]);
+                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+
+            }
+
+        }
+
+        return newState;
+    },
+    blockId,
+    colId,
+    blockInsideId,
+    position
 });

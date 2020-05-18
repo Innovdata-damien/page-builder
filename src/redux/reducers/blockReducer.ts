@@ -18,6 +18,9 @@ const blocks = (state: Array<BodyType> = [], action: any) => {
             case 'ADD_CLASS_BLOCK':
                 return action.payload(state, action);
 
+            case 'MOVE_BLOCK':
+                return action.payload(state, action);
+
             case 'REMOVE_BLOCK_INSIDE':
                 return action.payload(state, action);
 
@@ -25,6 +28,9 @@ const blocks = (state: Array<BodyType> = [], action: any) => {
                 return action.payload(state, action);
 
             case 'ADD_CLASS_BLOCK_INSIDE':
+                return action.payload(state, action);
+
+            case 'MOVE_BLOCK_INSIDE':
                 return action.payload(state, action);
     
             case 'UPDATE_LIST_BLOCK_INSIDE':
