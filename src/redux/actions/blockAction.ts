@@ -1,4 +1,4 @@
-import { BodyType, ContentType, ColumnType, ColumnDetail } from '../../types/blockType';
+import { BodyType, ContentType, ColumnType, ColumnDetail, BlockMenuType } from '../../types/blockType';
 import { addAfter, BlockPosition, moveToPosition } from '../../utils/utils';
 import uuid from 'uuid/v4';
 
@@ -86,6 +86,54 @@ type UpdateListBodyAction = {
     blocks: Array<BodyType>;
 }
 
+const formateBlockContainer = (block: BodyType):BodyType => {
+    let columns: any = [12];
+
+    block.columns = [];
+    
+    if(block.design!.value)
+        if(block.design!.value!.columnDetails)
+            columns = block.design.value.columnDetails;
+
+
+    // let calcColSize = columns.reduce((x, y) => x + y);
+
+    // if(calcColSize < 12)
+    //     columns.push(12 - calcColSize);
+    
+    for (var i = 0; i < columns.length; i++) {
+
+        let columnDetails = null;
+
+        if(columns[i].size){
+            columnDetails = columns[i];
+        }else{
+            columnDetails = {
+                size: {
+                    pc: columns[i],
+                    tablet: 12,
+                    mobile: 12
+                },
+                hide: {
+                    pc: false,
+                    tablet: false,
+                    mobile: false
+                }
+            }
+        }
+
+        block.columns.push({
+            id: uuid(),
+            //size: columns[i],
+            detail: columnDetails,
+            contents: []
+        });
+
+    }
+
+    return block;
+}
+
 export const updateListBody = (blocks: Array<BodyType>) => ({
     type: 'UPDATE_LIST_BODY',
     payload: (_state: any, action: UpdateListBodyAction) => {
@@ -94,50 +142,7 @@ export const updateListBody = (blocks: Array<BodyType>) => ({
 
         if(blockAdded != -1){
 
-            let block = {...action.blocks[blockAdded]};
-            let columns: any = [12];
-
-            block.columns = [];
-            
-            if(block.design!.value)
-                if(block.design!.value!.columnDetails)
-                    columns = block.design.value.columnDetails;
-
-
-            // let calcColSize = columns.reduce((x, y) => x + y);
-
-            // if(calcColSize < 12)
-            //     columns.push(12 - calcColSize);
-            
-            for (var i = 0; i < columns.length; i++) {
-
-                let columnDetails = null;
-
-                if(columns[i].size){
-                    columnDetails = columns[i];
-                }else{
-                    columnDetails = {
-                        size: {
-                            pc: columns[i],
-                            tablet: 12,
-                            mobile: 12
-                        },
-                        hide: {
-                            pc: false,
-                            tablet: false,
-                            mobile: false
-                        }
-                    }
-                }
-
-                block.columns.push({
-                    id: uuid(),
-                    //size: columns[i],
-                    detail: columnDetails,
-                    contents: []
-                });
-
-            }
+            let block = formateBlockContainer({...action.blocks[blockAdded]});
 
             action.blocks[blockAdded] = block;
         }
@@ -336,3 +341,35 @@ export const moveBlockInside = (blockId: string, colId: string, blockInsideId: s
     blockInsideId,
     position
 });
+
+// ---------- Block + Block inside ---------- 
+
+// Add new block & block inside by double clicking
+
+export const doubleClickMenuBlock = (item: BlockMenuType) => ({
+    type: 'DOUBLE_CLICK_ADD_CONTAINER_CONTENT_BLOCKS',
+    payload: (state: Array<BodyType>, action: any) => {
+
+        const itemClone: any = {...item};
+        const newState = [...state];
+
+        itemClone.id = uuid();
+
+        if(itemClone.design.type == 'column'){
+            let block = formateBlockContainer({...itemClone});
+            newState.push(block);
+        }else{
+            let lastBlock = newState[(newState.length - 1)];
+            if(lastBlock) {
+                let lastCol = lastBlock.columns[(lastBlock.columns.length - 1)];
+                if(lastCol) {
+                    lastCol.contents.push(itemClone);
+                }
+            }
+        }
+
+        return newState;
+    },
+    item
+});
+

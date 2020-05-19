@@ -918,6 +918,11 @@
   dependencies:
     prop-types "^15.6.2"
 
+"@innovdata-damien/tinymce@^5.2.2":
+  version "5.2.2"
+  resolved "https://npm.pkg.github.com/download/@innovdata-damien/tinymce/5.2.2/085bc39a058461303a4568484c0784f54c002193c0b67b5e1f343c34816f827e#197a8be65556444ba4be93e9818ce45f233e8847"
+  integrity sha512-CfXr19fKIxWufr3hauGAmZjAij1fSMmhEFMnskfn5N4iyYsEGO44sDVRTjqW8rIXKi9Nk5R5RSxuiscnbJnLiQ==
+
 "@kunukn/react-collapse@^2.2.8":
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/@kunukn/react-collapse/-/react-collapse-2.2.8.tgz#d955b1e850838cf4bf080813cac0fefdda7347a1"

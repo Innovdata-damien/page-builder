@@ -35,6 +35,9 @@ const blocks = (state: Array<BodyType> = [], action: any) => {
     
             case 'UPDATE_LIST_BLOCK_INSIDE':
                 return action.payload(state, action);
+    
+            case 'DOUBLE_CLICK_ADD_CONTAINER_CONTENT_BLOCKS':
+                return action.payload(state, action);
 
             default:
                 return state

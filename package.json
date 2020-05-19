@@ -59,6 +59,7 @@
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@icon/micon": "^3.0.168-alpha.2",
     "@innovdata-damien/pickr": "^1.6.3",
+    "@innovdata-damien/tinymce": "^5.2.2",
     "@innovdata-damien/tinymce-react": "^3.6.3",
     "@kunukn/react-collapse": "^2.2.8",
     "antd": "^4.1.5",

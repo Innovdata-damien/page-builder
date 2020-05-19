@@ -26,7 +26,7 @@
     position: fixed;
     border-left: 1px solid rgba(211, 211, 211, 0.39);
     box-shadow: rgba(0, 0, 0, 0.03) 0 0 10px 0px;
-    width: 310px;
+    width: 285px;
     top: 0;
     bottom: 0;
 }
@@ -109,11 +109,11 @@
 }
 
 .pg-build.pg-build__right .pg-build__menu{
-    transform: translateX(305px);
+    transform: translateX(280px);
 }
 
 .pg-build.pg-build__left .pg-build__menu{
-    transform: translateX(-305px);
+    transform: translateX(-280px);
 }
 
 .pg-build.pg-build__left .pg-build__menu.pg-build__menu-active,
@@ -128,7 +128,7 @@
 /* --- BODY --- */
 
 .pg-build .pg-build__body{
-    padding: 45px;
+    padding: 45px 25px;
 }
 
 .pg-build .pg-build__body .pg-build__body-child{

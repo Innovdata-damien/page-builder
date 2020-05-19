@@ -5,6 +5,7 @@ import { PageBuilder } from '../PageBuilder';
 import configureStore from '../redux/store';
 import Frame, { FrameContextConsumer } from 'react-frame-component';
 import { setPageBuilderInstance } from '../utils/utils';
+//import tinymce from '@innovdata-damien/tinymce';
 
 // Type for blocks
 type Props = {
@@ -48,12 +49,16 @@ export default class Root extends Component <Props>{
                 {
                     // Callback is invoked with iframe's window and document instances
                     (item) => {
+                        
+                        //item.window.tinymce = tinymce;
+
                         return (
                             <Provider store={this.store}>
                                 {/* <script src="https://unpkg.com/@glidejs/glide@3.4.1/dist/glide.js"></script> */}
                                 <Builder iframeDocument={item.document} iframeWindow={item.window} pageBuilder={this.props.pageBuilder}/>
                             </Provider>
                         )
+
                     }
                 }
                 </FrameContextConsumer>

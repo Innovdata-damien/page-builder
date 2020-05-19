@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import loadCustomPlugins from './plugins/loadCustomPlugins';
 import { ContentType, BodyType, ColumnType } from '../../types/blockType';
 //import tinymce from '@innovdata-damien/tinymce/js/tinymce/tinymce';
-import tinymce from 'tinymce';
-console.log(window.tinymce)
 import { Editor } from '@innovdata-damien/tinymce-react';
 //import 'tinymce/themes/silver';
 //import '!style-loader!css-loader!tinymce/skins/ui/oxide/skin.min.css';
@@ -51,7 +49,7 @@ class TinyMCEditor  extends Component<Props> {
             language: this.props.pageBuilder.__options?.language,
             setup: this._setupTinyMCEditor,
             init_instance_callback: this._initTinyMCEditor,
-            plugins: 'codeeditor imageplus translationvars linkplus multilanguage componenthtml videoembed powerpaste casechange importcss tinydrive searchreplace directionality advcode visualblocks visualchars fullscreen image media mediaembed codesample table charmap hr nonbreaking toc insertdatetime advlist lists checklist wordcount tinymcespellchecker a11ychecker textpattern noneditable help formatpainter permanentpen charmap tinycomments mentions quickbars emoticons advtable',
+            plugins: 'codeeditor imageplus translationvars linkplus multilanguage componenthtml videoembed importcss searchreplace directionality visualblocks visualchars fullscreen image media codesample table charmap hr nonbreaking toc insertdatetime advlist lists wordcount textpattern noneditable help charmap quickbars emoticons',
             menubar: '',
             toolbar: (this.props.item.design.value?.toolbar || this.props.item.design.value?.toolbar == '' ? this.props.item.design.value?.toolbar : ' codeeditor translationvars imageplus linkplus multilanguage componenthtml videoembed undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify |  numlist bullist checklist | forecolor backcolor permanentpen | charmap emoticons'),
             importcss_append: true,
@@ -64,7 +62,6 @@ class TinyMCEditor  extends Component<Props> {
             toolbar_mode: 'sliding',
             spellchecker_dialog: true,
             spellchecker_whitelist: ['Ephox', 'Moxiecode'],
-            tinycomments_mode: 'embedded',
             contextmenu: '',
             a11y_advanced_options: true,
             inline: true,
@@ -112,7 +109,7 @@ class TinyMCEditor  extends Component<Props> {
                 init={this.options}
                 onEditorChange={this._handleEditorChange}
                 win={this.props.iframeWindow}
-                tinymceScriptSrc="https://unpkg.com/@innovdata-damien/tinymce@5.5.4/js/tinymce/tinymce.js"
+                tinymceScriptSrc="https://www.unpkg.com/@innovdata-damien/tinymce@5.2.2/tinymce.min.js"
             />
         );
     }

@@ -74,24 +74,37 @@ type State = {
 
 };
 
-const getContentList = (blocks: Array<BodyType>): Array<ContentType> => {
-    const contentList: Array<ContentType> = [];
+const checkBlockInsidePosition = (blocks: Array<BodyType>, blockId: string, colId: string, blockInsideId: string, type: BlockPosition): boolean => {
 
-    blocks.forEach((block)=>{
-        block.columns.forEach((column)=>{
-            column.contents.forEach((content)=>{
-                contentList.push(content);
+    let tab: any = {};
+
+    blocks.forEach((block, indexBlock)=>{
+
+        if(indexBlock == 0) tab['first_block'] = block.id;
+        if(indexBlock == (blocks.length - 1)) tab['last_block'] = block.id;
+        
+        block.columns.forEach((column, indexCol)=>{
+
+            if(indexCol == 0 && indexBlock == 0) tab['first_col'] = column.id;
+            if(indexCol == (block.columns.length - 1)) tab['last_col'] = column.id;
+
+            column.contents.forEach((content, indexContent)=>{
+
+                if(indexContent == 0 && indexCol == 0 && indexBlock == 0) tab['first_content'] = content.id;
+                if(indexContent == (column.contents.length - 1)) tab['last_content'] = content.id;
+                //contentList.push(content);
             })
         })
-    })
+    });
 
-    return contentList;
-}
 
-const getInsideBlockIndex = (blocks: Array<BodyType>, blockId: string, colId: string, blockInsideId: string): number =>{
+    if(type == 'up' && tab['first_block'] == blockId && tab['first_col'] == colId && tab['first_content'] == blockInsideId )
+        return false;
+    else if(type == 'down' && tab['last_block'] == blockId && tab['last_col'] == colId && tab['last_content'] == blockInsideId )
+        return false;
+    else
+        return true;
 
-    let blockInsideIndex = getContentList(blocks).findIndex((item: ContentType) => item.id === blockInsideId);
-    return blockInsideIndex;
 }
 
 class BlockInsideToolbar extends Component<Props, State> {
@@ -116,9 +129,8 @@ class BlockInsideToolbar extends Component<Props, State> {
     }
 
     render () {
-
-        const blockInsideIndexOfContentList = getInsideBlockIndex(this.props.blocks, this.props.blockId, this.props.colId, this.props.item.id);
-        const contentListLength = getContentList(this.props.blocks).length;
+        const btnMoveableUp = checkBlockInsidePosition(this.props.blocks, this.props.blockId, this.props.colId, this.props.item.id, 'up');
+        const btnMoveableDown = checkBlockInsidePosition(this.props.blocks, this.props.blockId, this.props.colId, this.props.item.id, 'down');
 
         return (
             <>
@@ -137,8 +149,8 @@ class BlockInsideToolbar extends Component<Props, State> {
                 {typeof this.props.item.design == "undefined" || this.props.item.design.duplicable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.duplicateBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Copy"></i></a>}
                 {typeof this.props.item.design == "undefined" || this.props.item.design.removeable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.removeBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Delete"></i></a>}
 
-                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'up')}><i className="mi mi-Up"></i></a>}
-                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'down')}><i className="mi mi-Down"></i></a>}
+                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && btnMoveableUp) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'up')}><i className="mi mi-Up"></i></a>}
+                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && btnMoveableDown) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'down')}><i className="mi mi-Down"></i></a>}
             </>
         );
     }
