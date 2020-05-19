@@ -1,4 +1,4 @@
-import { BodyType, ContentType, ColumnType, ColumnDetail, BlockMenuType } from '../../types/blockType';
+import { BodyType, ContentType, ColumnType, BlockMenuType } from '../../types/blockType';
 import { addAfter, BlockPosition, moveToPosition } from '../../utils/utils';
 import uuid from 'uuid/v4';
 
@@ -31,8 +31,6 @@ export const duplicateBlock = (blockId: string) => ({
         newBlockState.style = {...newState[(blockIndex + 1)].style || {}};
         newBlockState.design = {...newState[(blockIndex + 1)].design || {}};
         newBlockState.columns = [];
-
-        console.log(newState)
 
         newState[(blockIndex + 1)].columns.forEach((column: any) => {
 
@@ -160,7 +158,6 @@ export const moveBlock = (blockId: string, position: BlockPosition) => ({
 
         const blockIndex = state.findIndex((item: BodyType) => item.id == action.blockId);
         const newBlocksState = moveToPosition(state, blockIndex, position);
-        console.log(newBlocksState)
 
         return [...newBlocksState];
     },
@@ -350,7 +347,7 @@ export const doubleClickMenuBlock = (item: BlockMenuType) => ({
     type: 'DOUBLE_CLICK_ADD_CONTAINER_CONTENT_BLOCKS',
     payload: (state: Array<BodyType>, action: any) => {
 
-        const itemClone: any = {...item};
+        const itemClone: any = {...action.item};
         const newState = [...state];
 
         itemClone.id = uuid();

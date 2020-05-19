@@ -746,8 +746,12 @@
 .pg-build .pg-build__body.pg-build__cssView .pg-build__block,
 .pg-build .pg-build__body.pg-build__cssView .pg-build__block .pg-build__col,
 .pg-build .pg-build__body.pg-build__cssView .pg-build__block .pg-build__block-inside{
-    border: 0;
+    border: 0!important;
     margin: 0;
+}
+
+.pg-build .pg-build__body.pg-build__cssView .mce-content-body{
+    min-height: auto;
 }
 
 .pg-build .pg-build__cssView .tox .tox-pop,
