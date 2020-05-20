@@ -1,15 +1,16 @@
 {
   "name": "page-builder-innovdata",
   "prodName": "PageBuilder",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Editeur de page statique",
-  "main": "index.js",
+  "main": "dist/PageBuilder.min.js",
   "scripts": {
     "dev": "webpack-dev-server --open --hot --mode development",
     "build-css": "cross-env BUILD=css webpack --mode production",
     "build-js": "cross-env webpack --mode production",
-    "build": "yarn build-css && yarn build-js",
-    "docs": "typedoc --options typedoc.json src"
+    "build": "yarn lint && yarn build-css && yarn build-js",
+    "docs": "typedoc --options typedoc.json src",
+    "lint": "eslint \"src/**/*.ts\""
   },
   "files": [
     "dist",
@@ -33,12 +34,15 @@
     "@types/react-redux": "^7.1.7",
     "@types/tinymce": "^4.5.24",
     "@types/uuid": "^7.0.2",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-html-import-require-to-string": "^0.0.3",
     "cross-env": "^7.0.2",
     "css-loader": "^3.4.2",
     "csstype": "^2.6.10",
+    "eslint": "^7.0.0",
     "file-loader": "^5.1.0",
     "gh-pages": "^2.2.0",
     "html-loader": "^0.5.5",
