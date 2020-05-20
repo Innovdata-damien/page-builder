@@ -1,18 +1,20 @@
 {
   "name": "page-builder-innovdata",
   "prodName": "PageBuilder",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Editeur de page statique",
   "main": "dist/PageBuilder.min.js",
   "scripts": {
     "dev": "webpack-dev-server --open --hot --mode development",
     "build-css": "cross-env BUILD=css webpack --mode production",
     "build-js": "cross-env webpack --mode production",
-    "build": "yarn lint && yarn build-css && yarn build-js",
+    "build": "yarn lint && yarn build-css && yarn build-js && yarn types",
+    "types": "tsc --emitDeclarationOnly && downlevel-dts . ts3.4",
     "docs": "typedoc --options typedoc.json src",
     "lint": "eslint \"src/**/*.ts\""
   },
   "files": [
+    "types",
     "dist",
     "docs",
     "LICENSE",
