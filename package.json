@@ -1,7 +1,7 @@
 {
     "name": "page-builder-innovdata",
     "prodName": "PageBuilder",
-    "version": "1.0.39",
+    "version": "1.0.40",
     "description": "Editeur de page statique",
     "main": "dist/PageBuilder.min.js",
     "scripts": {
