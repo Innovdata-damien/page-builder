@@ -19,6 +19,6 @@ declare module 'react' {
 declare global {
     interface Window {
         _PageBuilderInstances: Array<PageBuilderInstance>;
-        [key:string]: any;
+        [key: string]: any;
     }
 }

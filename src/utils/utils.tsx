@@ -91,4 +91,19 @@ const decodeHTML = (htmlEncoded: string) => {
     return elem.value;
 }
 
-export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance, decodeHTML, BlockPosition, moveToPosition };
+const objectSerializer = (_key: any, value: any) =>{
+    if (typeof value === 'function') {    
+        return value.toString();  
+    }   
+    return value;
+};
+
+const objectDeserializer = (_key: any, value: any) =>{
+    if (typeof value === 'string' && value.indexOf('function') === 0) {    
+        let functionTemplate = `(${value}).call(this)`;    
+        return new Function(functionTemplate);  
+    }  
+    return value;
+};
+
+export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance, decodeHTML, BlockPosition, moveToPosition, objectSerializer, objectDeserializer };

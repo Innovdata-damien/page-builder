@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import { ContentType, BodyType, ColumnType } from '../../types/blockType';
+import { ContentType, BodyType } from '../../types/blockType';
 import { Menu, Dropdown } from 'antd';
-import { PageBuilder } from 'PageBuilder';
+import { PageBuilder } from '../../PageBuilder';
 
 // Redux
 
@@ -12,7 +12,7 @@ import {
     addClassToBlockInside,
     moveBlockInside
 } from '../../redux/actions/blockAction';
-import { BlockPosition } from 'utils/utils';
+import { BlockPosition } from '../../utils/utils';
 
 const mapStateToProps = (state: any) => ({
     pageBuilder: state.pageBuilder,
