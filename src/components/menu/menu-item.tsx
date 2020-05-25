@@ -19,8 +19,6 @@ class MenuItem extends Component<Props> {
         super(props)
     }
 
-
-
     render() {
         return (
             <>

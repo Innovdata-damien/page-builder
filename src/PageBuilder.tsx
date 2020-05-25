@@ -2,14 +2,14 @@ import './styles/app.global.css';
 import './styles/pagebuilder.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import uuid from 'uuid/v4';
 import allowedDomains from './utils/allowedDomains.json';
 import { receiveMessage, ReceiveMessage, postMessageToWindow, PostMessage } from './Messaging';
 import { App } from './components/App';
-import { createStore } from './redux/store';
+import { Action, State, createStore } from './redux/store';
 import { Store } from 'redux';
-import { getHtmlFromBlockState, getPageBuilderInstance, PageBuilderInstance } from './utils/utils';
+import { getHtmlFromBlockState } from './utils/utils';
 import js_beautify from 'js-beautify';
+import { BlockType, MenuType } from './types/blockType';
 
 // import Root from './components/root';
 // import { BodyType, MenuType } from './types/blockType';
@@ -58,7 +58,9 @@ receiveMessage(function(e: MessageEvent, message: ReceiveMessage) {
 
 // Options types
 export interface Options {
-    
+    blocks: Array<BlockType>;
+    menuItems: Array<MenuType>;
+    menuPosition: 'right' | 'left';
 }
 
 // export interface Options {
@@ -153,12 +155,18 @@ export interface Options {
 //     end: string;
 // }
 
+export const optionsExtends = (options: Options): Options => (
+    Object.assign({
+        menuPosition: 'left'
+    }, options)
+)
+
 export class PageBuilder{
 
     __initialized: boolean;
     __id: string;
     __options?: Options;
-    __store?: Store
+    __store?: Store<State, Action>;;
 
     constructor (id: string, options: Options){
 
@@ -171,7 +179,7 @@ export class PageBuilder{
 
     //Change options
     public setOptions(options: Options){
-        this.__options = options;
+        this.__options = optionsExtends(options);
     }
 
     // public getHtml(): string {
@@ -197,7 +205,7 @@ export class PageBuilder{
             return {
                 method: 'sendJson',
                 instanceId: this.__id,
-                value: this.__store.getState().blocks
+                value: this.__store.getState().block.blocks
             };
     }
 
@@ -208,7 +216,7 @@ export class PageBuilder{
             return {
                 method: 'sendHtml',
                 instanceId: this.__id,
-                value: js_beautify.html(getHtmlFromBlockState(this.__store.getState().blocks))
+                value: js_beautify.html(getHtmlFromBlockState(this.__store.getState().block.blocks))
             };
     }
 
@@ -217,7 +225,9 @@ export class PageBuilder{
         this.__store = createStore();
 
         ReactDOM.render(
-            <App store={ this.__store }/>
+            <App
+            store={ this.__store }
+            pageBuilder={ this }/>
             , document.getElementById('root')
         );
 

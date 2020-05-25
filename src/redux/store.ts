@@ -1,22 +1,30 @@
 import { Dispatch, Store, combineReducers, createStore as createReduxStore } from 'redux';
 import { shallowEqual, useDispatch as useReduxDispatch, useSelector as useReduxSelector } from 'react-redux';
 import * as Block from './actions/Block';
+import * as PageBuilder from './actions/PageBuilder';
+import * as Menu from './actions/Menu';
 //import rootReducer from './reducers/rootReducer';
 
 
 // Types
 export interface State {
-    blocks: Block.State;
+    block: Block.State;
+    pageBuilder: PageBuilder.State;
+    menu: Menu.State;
 }
 
 export type Action = (
-    Block.Action
+    Block.Action |
+    PageBuilder.Action |
+    Menu.Action
 );
 
 // Reducer
 
 const reducer = combineReducers<State>({
-    blocks: Block.reducer
+    block: Block.reducer,
+    pageBuilder: PageBuilder.reducer,
+    menu: Menu.reducer
 });
 
 // Store

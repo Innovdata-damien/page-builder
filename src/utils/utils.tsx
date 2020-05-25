@@ -12,9 +12,9 @@ const addAfter = (array: Array<any>, index: number, newItem: any) => {
     ];
 }
 
-type BlockPosition = 'up' | 'down';
+export type BlockPosition = 'up' | 'down';
 
-const moveToPosition = (array: Array<any>, index: number, position: BlockPosition) => {
+export const moveToPosition = (array: Array<any>, index: number, position: BlockPosition) => {
 
     let tmp = array[index];
 
@@ -26,13 +26,8 @@ const moveToPosition = (array: Array<any>, index: number, position: BlockPositio
         array[index + 1] = tmp;
 
     return array;
-    // let arr = this.state.arr;
-    // // SWAP array content
-    // let tmp = arr[index];
-    // arr[index] = arr[index + 1]; // put more conditions to handle edge cases
-    // arr[index + 1] = tmp;
-    // this.setState({arr: arr});
-  }
+    
+}
 
 const parseHtml = (html: string) => {
     const element = new DOMParser().parseFromString(html, 'text/html');
@@ -106,4 +101,8 @@ const objectDeserializer = (_key: any, value: any) =>{
     return value;
 };
 
-export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance, decodeHTML, BlockPosition, moveToPosition, objectSerializer, objectDeserializer };
+export const getIndex = (array: Array<any>, id: string): number => {
+    return array.findIndex(item => item.id === id)
+}
+
+//export { addAfter, parseHtml, wrapElem, unwrapElem, getHtmlFromBlockState, setPageBuilderInstance, getPageBuilderInstance, decodeHTML, BlockPosition, moveToPosition, objectSerializer, objectDeserializer };

@@ -1,55 +1,97 @@
-import React, { Component } from 'react';
-import Block from './block/block';
+import React from 'react';
+import { Block } from './block/block';
+import { useSelector, useDispatch } from '../redux/store';
 import { ReactSortable } from 'react-sortablejs';
-import { BodyType } from '../types/blockType';
+import { BlockType } from '../types/blockType';
 
 
-// Redux
-import { connect } from 'react-redux';
-import {
-    updateListBody,
-} from '../redux/actions/blockAction';
+// // Redux
+// import { connect } from 'react-redux';
+// import {
+//     updateListBody,
+// } from '../redux/actions/blockAction';
 
 
-const mapStateToProps = (state: any) => ({
-    blocks: state.blocks,
-    cssViewShow: state.cssViewShow
-});
+// const mapStateToProps = (state: any) => ({
+//     blocks: state.blocks,
+//     cssViewShow: state.cssViewShow
+// });
 
-const mapDispatchToProps = (dispatch: any) => ({
-    updateListBody: (blocks: Array<BodyType>) => dispatch(updateListBody(blocks))
-});
+// const mapDispatchToProps = (dispatch: any) => ({
+//     updateListBody: (blocks: Array<BodyType>) => dispatch(updateListBody(blocks))
+// });
   
-// BODY
+// // BODY
 
-type Props = {
-    cssViewShow: boolean;
-    blocks: Array<BodyType>;
-    updateListBody: (blocks: Array<BodyType>) => void;
+// type Props = {
+//     cssViewShow: boolean;
+//     blocks: Array<BodyType>;
+//     updateListBody: (blocks: Array<BodyType>) => void;
+// };
+
+const Body = () => {
+    // Get state
+    const {
+        blocks,
+        cssViewShow
+    } = useSelector(( state ) => ({
+        blocks: state.block.blocks,
+        cssViewShow: state.pageBuilder.cssViewShow
+    }));
+
+    const dispatch = useDispatch();
+
+    return (
+        <div className={`pg-build__body ${cssViewShow ? 'pg-build__cssView' : ''}`}>
+
+            <ReactSortable
+                className="pg-build__body-child"
+                list={blocks}
+                handle=".pg-build__block-tool-move"
+                setList={(newState: Array<BlockType>) => dispatch({
+                    type: 'Block/SortableListBody',
+                    blocks: newState
+                })}
+                group="BODY"
+                animation={150}
+            >
+                <button onClick={()=>dispatch({
+                    type: 'Block/Set',
+                    blocks: []
+                })}>ffesf</button>
+            {blocks.map((block) => (<Block blockId={block.id} block={block} key={block.id}/>))}
+            </ReactSortable>
+
+        </div>
+    );
+
 };
 
-class Body extends Component <Props>{
+export { Body };
 
-    constructor(props: Props){
-        super(props);
-    }
-    render(){
-        return (
-            <div className={`pg-build__body ${this.props.cssViewShow ? 'pg-build__cssView' : ''}`}>
+// class Body extends Component <Props>{
 
-                <ReactSortable className="pg-build__body-child" list={this.props.blocks} handle=".pg-build__block-tool-move" setList={(newState: Array<BodyType>) => this.props.updateListBody(newState)} group="BODY" animation={150}>
-                {this.props.blocks.map((item: BodyType) => {
+//     constructor(props: Props){
+//         super(props);
+//     }
+//     render(){
+//         return (
+//             <div className={`pg-build__body ${this.props.cssViewShow ? 'pg-build__cssView' : ''}`}>
+
+//                 <ReactSortable className="pg-build__body-child" list={this.props.blocks} handle=".pg-build__block-tool-move" setList={(newState: Array<BodyType>) => this.props.updateListBody(newState)} group="BODY" animation={150}>
+//                 {this.props.blocks.map((item: BodyType) => {
                     
-                    return (
-                        <Block blockId={item.id} item={item} key={item.id}/>
-                    );
-                })}
-                </ReactSortable>
+//                     return (
+//                         <Block blockId={item.id} item={item} key={item.id}/>
+//                     );
+//                 })}
+//                 </ReactSortable>
 
-            </div>
-        );
+//             </div>
+//         );
         
-    }
-}
+//     }
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Body);
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Body);

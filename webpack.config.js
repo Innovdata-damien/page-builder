@@ -72,16 +72,16 @@ module.exports = (env, argv) => {
             use: [
                 {
                     loader: 'style-loader',
-                    options: {
-                        insert: (element) => {
+                    // options: {
+                    //     insert: (element) => {
 
-                            if(!window.pageBuilderCss)
-                                window.pageBuilderCss = [];
+                    //         if(!window.pageBuilderCss)
+                    //             window.pageBuilderCss = [];
                                 
-                            window.pageBuilderCss.push(element);
+                    //         window.pageBuilderCss.push(element);
 
-                        },
-                    }
+                    //     },
+                    // }
                 },
                 {
                     loader: 'css-loader',
@@ -130,16 +130,16 @@ module.exports = (env, argv) => {
                     use: [
                         {
                             loader: 'style-loader',
-                            options: {
-                                insert: (element) => {
+                            // options: {
+                            //     insert: (element) => {
 
-                                    if(!window.pageBuilderCss)
-                                        window.pageBuilderCss = [];
+                            //         if(!window.pageBuilderCss)
+                            //             window.pageBuilderCss = [];
 
-                                    window.pageBuilderCss.push(element);
+                            //         window.pageBuilderCss.push(element);
 
-                                },
-                            }
+                            //     },
+                            // }
                         },
                         {
                             loader: 'css-loader',

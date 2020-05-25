@@ -39,7 +39,7 @@ export interface ColumnDetailHide{
 
 // ------------- BODY
 
-export interface BodyType {
+export interface BlockType {
     id: string;
     style?: CSS.Properties;
     design: DesignType;

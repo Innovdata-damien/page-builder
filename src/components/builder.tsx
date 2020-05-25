@@ -1,7 +1,11 @@
 import React from 'react';
-import { useDispatch } from '../redux/store';
-// import Menu from './menu/menu';
-// import Body from './body';
+import { useDispatch, useSelector } from '../redux/store';
+import { PageBuilderStateListener } from './PageBuilderStateListener';
+import { PageBuilder } from '../PageBuilder';
+import { BlockStateListener } from '../components/BlockStateListener';
+import { MenuStateListener } from './MenuStateListener';
+import { Menu } from './menu/menu';
+import { Body } from './body';
 // import {PageBuilder} from '../PageBuilder';
 // import { BodyType, MenuType } from '../types/blockType';
 // import uuid from 'uuid/v4';
@@ -12,14 +16,32 @@ import { useDispatch } from '../redux/store';
 // import { setPageBuilder, setIframeDocument, setIframeWindow } from '../redux/actions/pageBuilderAction';
 
 type BuilderProps = {
-
+    pageBuilder: PageBuilder;
 }
 
 const Builder = (props: BuilderProps) => {
+    
+    const { pageBuilder } = props;
 
-    const dispatch = useDispatch();
+    const {
+        pageBuilderInstance
+    } = useSelector(( state ) => ({
+        pageBuilderInstance: state.pageBuilder.instance
+    }));
 
-    return(<div>efsfesf</div>);
+    return(
+        <div className={`pg-build pg-build__${pageBuilderInstance?.__options?.menuPosition}`}>
+            <PageBuilderStateListener pageBuilder={ pageBuilder } />
+            <BlockStateListener blocks={ pageBuilder.__options?.blocks || [] } />
+            <MenuStateListener menuItems={ pageBuilder.__options?.menuItems || [] } />
+            { pageBuilderInstance &&
+                <>
+                    <Menu/>
+                    <Body/>
+                </>
+            }
+        </div>
+    );
 };
 
 export { Builder };
