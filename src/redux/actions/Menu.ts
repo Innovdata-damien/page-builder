@@ -1,14 +1,17 @@
 import { Reducer } from 'redux';
 import { produce, setAutoFreeze } from 'immer';
-import { MenuType, BlockMenuType } from '../../types/blockType';
+import { MenuType, BlockMenuType, BlockType } from '../../types/blockType';
 
 setAutoFreeze(false);
 
 // ----------------------- TYPE STATE
 
+export type TabOpen = 'style' | 'blocks';
+
 export type State = {
     menuItems: Array<MenuType>;
     toggleVisibility: boolean;
+    tabOpen: TabOpen;
 }
 
 
@@ -27,14 +30,19 @@ export type Action =
     type: 'Menu/SortableListMenu';
     headId: string;
     menuItemsBlock: Array<BlockMenuType>;
-}
+} |
+{
+    type: 'Menu/ToggleTab';
+    tabOpen: TabOpen;
+} ;
 
 
 // ----------------------- INITIAL STATE
 
 export const initialState: State = {
     menuItems: [],
-    toggleVisibility: true
+    toggleVisibility: true,
+    tabOpen: 'blocks'
 }
 
 // ----------------------- REDUCER
@@ -49,6 +57,8 @@ export const reducer: Reducer<State, Action> = ( state = initialState, action ) 
             newState.toggleVisibility = action.toggleVisibility;
         } else if ( action.type === 'Menu/SortableListMenu' ) {
             newState.menuItems = sortableListMenu(state.menuItems, newState.menuItems, action.menuItemsBlock, action.headId);
+        } else if ( action.type === 'Menu/ToggleTab' ) {
+            newState.tabOpen = action.tabOpen;
         }
 
     });
@@ -59,7 +69,7 @@ export const reducer: Reducer<State, Action> = ( state = initialState, action ) 
 // ----------------------- REDUCER METHODS
 
 // Method for sortbale list
-export const sortableListMenu = (state: Array<MenuType>, draftState: Array<MenuType>, menuItemsBlock: Array<BlockMenuType>, headId: string) => {
+const sortableListMenu = (state: Array<MenuType>, draftState: Array<MenuType>, menuItemsBlock: Array<BlockMenuType>, headId: string) => {
 
     let headIndex = state.findIndex((item) => item.id === headId);
     draftState[headIndex].blocks = menuItemsBlock;

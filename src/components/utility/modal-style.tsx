@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {  } from 'react';
 import { PageBuilder } from '../../PageBuilder';
 import Collapse from '@kunukn/react-collapse';
 import { FormInstance } from 'antd/lib/form';
@@ -854,3 +854,22 @@ const PaddingMarginGrid = (props: PaddingMarginGridProps) => {
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Modal);
+
+// // ------------------------------ MODAL STYLE
+
+// type ModalStyleProps = {
+//     blockId: string;
+//     colId?: string;
+//     blockContentId?: string;
+//     onRef: (ref: any) => void;
+// }
+
+// const ModalStyle = (props: ModalStyleProps) => {
+//     return (
+//         <div>
+        
+//         </div>
+//     );
+// };
+
+// export { ModalStyle };

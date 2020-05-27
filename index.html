@@ -16,136 +16,22 @@
     <script>
             window.pageBuilderInstance = new PageBuilder('uuid()', {
                 menuPosition: 'right',
-                menuItems:[
-                {
-                    id: '9996',
-                    title: 'Colonnes',
-                    collapse: true,
-                    type: 'container',
-                    blocks:[
-                        {
-                            id: '9996fe',
-                            design: {
-                                type: 'column',
-                                preview: 'Column'
-                            }
-                        },
-                        {
-                            id: '999grd6',
-                            design: {
-                                type: 'column',
-                                preview: 'Column left',
-                                value: {
-                                    columnDetails: [8, 4]
-                                }
-                            }
-                        },
-                        {
-                            id: '999296',
-                            design: {
-                                type: 'column',
-                                preview: 'Column x2 and tablet',
-                                value: {
-                                    columnDetails: [{
-                                        size: {
-                                            pc: 6,
-                                            tablet: 6,
-                                            mobile: 12
-                                        },
-                                        hide : {
-                                            pc: false,
-                                            tablet: false,
-                                            mobile: false
-                                        }
-                                    },
-                                    {
-                                        size: {
-                                            pc: 6,
-                                            tablet: 6,
-                                            mobile: 12
-                                        },
-                                        hide : {
-                                            pc: false,
-                                            tablet: false,
-                                            mobile: false
-                                        }
-                                    }]
-                                }
-                            }
-                        },
-                        {
-                            id: 'fefes',
-                            design: {
-                                type: 'column',
-                                preview: 'Column right',
-                                value: {
-                                    columnDetails: [4, 8]
-                                }
-                            }
-                        },
-                        {
-                            id: '5923',
-                            design: {
-                                type: 'column',
-                                preview: 'Column x2',
-                                value: {
-                                    columnDetails: [6, 6]
-                                }
-                            }
-                        },
-                        {
-                            id: 'sefseg4',
-                            design: {
-                                type: 'column',
-                                preview: 'Column x12',
-                                value: {
-                                    columnDetails: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                                }
-                            }
-                        },
-                    ]
-                },
-                {
-                    id: '992sfs96',
-                    title: 'Contenus',
-                    collapse: true,
-                    type: 'content',
-                    blocks:[
-                        {
-                            id: 'fesfsngyj',
-                            design: {
-                                type: 'html',
-                                preview: 'Text',
-                                value: {
-                                    htmlContent: '<p>Text example ...</p>'
-                                },
-                            }
-                        },
-                        {
-                            id: '9ogyjlg996',
-                            design: {
-                                type: 'card',
-                                preview: 'Card'
-                            }
-                        },
-                        {
-                            id: '99sfsjkuk96',
-                            design: {
-                                type: 'breadcrumb',
-                                preview: 'Breadcrumb'
-                            }
-                        },
-                        {
-                            id: '999qdq6',
-                            design: {
-                                type: 'tab',
-                                preview: 'Tab'
-                            }
-                        }
-                    ]
-                }
-            ]
+                blockClassList: [
+                    {
+                        class: 'container',
+                        type: 'block'
+                    },
+                    {
+                        class: 'content',
+                        type: 'block-inside'
+                    },
+                    {
+                        class: 'test'
+                    }
+                ]
             });
+
+            
         //window.addEventListener('message',function(event) {
 
            // if (event.origin !== 'http://localhost:65500') return;

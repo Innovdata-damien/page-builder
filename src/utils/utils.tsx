@@ -4,7 +4,7 @@ import PageBuilder from 'index';
 
 // Add a value in array after another value by index
 
-const addAfter = (array: Array<any>, index: number, newItem: any) => {
+export const addAfter = (array: Array<any>, index: number, newItem: any) => {
     return [
         ...array.slice(0, index),
         newItem,
@@ -85,21 +85,6 @@ const decodeHTML = (htmlEncoded: string) => {
     elem.innerHTML = htmlEncoded;
     return elem.value;
 }
-
-const objectSerializer = (_key: any, value: any) =>{
-    if (typeof value === 'function') {    
-        return value.toString();  
-    }   
-    return value;
-};
-
-const objectDeserializer = (_key: any, value: any) =>{
-    if (typeof value === 'string' && value.indexOf('function') === 0) {    
-        let functionTemplate = `(${value}).call(this)`;    
-        return new Function(functionTemplate);  
-    }  
-    return value;
-};
 
 export const getIndex = (array: Array<any>, id: string): number => {
     return array.findIndex(item => item.id === id)

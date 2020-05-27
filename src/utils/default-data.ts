@@ -8,6 +8,7 @@ const defaultBlocks: Array<BodyType> = [
             type: 'column',
             preview: 'Column'
         },
+        class: 'container test',
         columns: [
             {
                 id: uuid(),

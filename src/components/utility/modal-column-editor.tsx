@@ -1,38 +1,15 @@
-import React, {Component} from 'react';
+import React, { useState } from 'react';
 import { Modal, InputNumber, Card } from 'antd';
-import { BodyType } from 'types/blockType';
-import swal from 'sweetalert';
+import { BlockType } from '../../types/blockType';
+import * as utils from '../../utils/utils';
+import { useDispatch } from '../../redux/store';
 import uuid from 'uuid/v4';
-import { connect } from 'react-redux';
-import { updateListBody } from '../../redux/actions/blockAction';
-import { BlockPosition, moveToPosition } from '../../utils/utils';
-
-const mapStateToProps = (state: any) => ({
-    blocks: state.blocks
-});
-  
-const mapDispatchToProps = (dispatch: any) => ({
-    updateListBody: (blocks: Array<BodyType>) => dispatch(updateListBody(blocks))
-});
+import swal from 'sweetalert';
 
 
-type Props = {
-    blocks: Array<BodyType>;
-    block: BodyType;
-    blockId: string;
-    blockRef?: HTMLDivElement | null;
-    visible: boolean;
-    _setVisibilityOfModalColumnEditor: (type: boolean) => void;
-    updateListBody: (blocks: Array<BodyType>) => void;
-}
-
+// ------------------------------ MODAL COLUMN EDITOR DATA
 
 type Device = 'pc' | 'tablet' | 'mobile';
-
-
-type State = {
-    block: BodyType;
-}
 
 const columnEditor: Array<{ iconClass: string; title: string; device: Device; }> = [
     {
@@ -52,19 +29,47 @@ const columnEditor: Array<{ iconClass: string; title: string; device: Device; }>
     }
 ];
 
-class ModalColumnEditor extends Component<Props, State> {
+// ------------------------------ MODAL COLUMN EDITOR
 
-    constructor(props: Props){
-        super(props)
+type ModalColumnEditorProps = {
+    blockRef: Element | null;
+    modalShow: boolean;
+    blockId: string;
+    setVisibilityOfModalColumnEditor: (type: boolean) => void;
+    block: BlockType;
+};
 
-        this.state = {
-            block: JSON.parse(JSON.stringify(props.block))
-        }
-    }
+const ModalColumnEditor = (props: ModalColumnEditorProps) => {
 
-    handleAddColumn = () => {
+    const { blockRef, modalShow, block, blockId, setVisibilityOfModalColumnEditor } = props;
+    
+    // Methods
 
-        const newBlockState = this.state.block;
+    const handleModalSubmit = () =>{
+
+        dispatch({
+            type: 'Block/EditBlock',
+            blockId: blockId,
+            block: blockEdit
+        })
+
+        setVisibilityOfModalColumnEditor(false);
+    };
+
+    const handleChangeColSize = (size: number | undefined, device: Device, colIndex: number) =>{
+        blockEdit.columns[colIndex].detail.size[device] = (size as any);
+        setBlockEdit({...blockEdit});
+    };
+
+    const changeColumnPlace = (position: utils.BlockPosition, colIndex: number) => {
+        const newBlockState = {...blockEdit};
+        newBlockState.columns = utils.moveToPosition(blockEdit.columns, colIndex, position);
+        setBlockEdit(newBlockState);
+    };
+
+    const handleAddColumn = () => {
+
+        const newBlockState = {...blockEdit};
         newBlockState.columns.push({
             id: uuid(),
             detail: {
@@ -82,153 +87,120 @@ class ModalColumnEditor extends Component<Props, State> {
             contents: []
         });
 
-        this.setState({ block: newBlockState });
+        setBlockEdit(newBlockState);
 
     }
 
-    changeColumnPlace = (position: BlockPosition, colIndex: number) => {
-        
-        const newBlockState = this.state.block;
-        newBlockState.columns = moveToPosition(this.state.block.columns, colIndex, position);
 
-        this.setState({ block: newBlockState });
-    };
 
-    componentDidUpdate(prevProps: Props){
-        if(prevProps.visible != this.props.visible)
-            this.setState({ block: JSON.parse(JSON.stringify(this.props.block)) });
-    }
-    
-    handleAlertRemoveColumn = (colIndex: number) => {
+    const handleAlertRemoveColumn = (colIndex: number) => {
 
-        if(this.state.block.columns.length > 1){
+        if(blockEdit.columns.length > 1){
 
-            if(this.state.block.columns[colIndex].contents.length > 0)
+            if(blockEdit.columns[colIndex].contents.length > 0)
                 swal('Are you sure to delete a column with contents ?', {
                     icon: 'error',
                     closeOnClickOutside: false,
                     buttons: ['Cancel', 'Yes']
                 }).then((value) => {
-                    if(value) this.handleRemoveColumn(colIndex);
+                    if(value) handleRemoveColumn(colIndex);
                 });
             else
-                this.handleRemoveColumn(colIndex);
+                handleRemoveColumn(colIndex);
 
         }else
             swal('You cannot delete a column in a container with only one column.', {
                 icon: 'error',
                 closeOnClickOutside: false
             });
-                
-
     }
 
-    handleRemoveColumn = (colIndex: number) => {
+    const handleRemoveColumn = (colIndex: number) => {
 
-        const newBlockState = this.state.block;
-
+        const newBlockState = {...blockEdit};
         newBlockState.columns = newBlockState.columns.filter((_el: any, key: number) => key != colIndex);
-
-        this.setState({
-            block: newBlockState
-        });
+        setBlockEdit(newBlockState);
     }
 
-    handleChangeColumnVisibility = (device: Device, colIndex: number) => {
 
-        const newBlockState = this.state.block;
+    const handleChangeColumnVisibility = (device: Device, colIndex: number) => {
 
+        const newBlockState = {...blockEdit};
         newBlockState.columns[colIndex].detail.hide[device] = !newBlockState.columns[colIndex].detail.hide[device];
-
-
-        this.setState({ block: newBlockState });
+        setBlockEdit(newBlockState);
     }
 
-    handleChangeColSize = (size: number | undefined, device: Device, colIndex: number) =>{
+    // State
+    const [blockEdit, setBlockEdit] = useState<BlockType>(JSON.parse(JSON.stringify(block)));
 
-        const newBlockState = this.state.block;
+    const dispatch = useDispatch();
+    
+    return (
+        <Modal
+            wrapClassName="pg-build__columnEditor"
+            title="Column editor"
+            visible={modalShow}
+            getContainer={()=>(blockRef as HTMLElement)}
+            onCancel={()=>setVisibilityOfModalColumnEditor(false)}
+            onOk={handleModalSubmit}
+            okText="Save change"
+            width={1000}
+        >
 
-        newBlockState.columns[colIndex].detail.size[device] = (size as any);
+            {columnEditor.map((item, index)=>(
 
+                <Card key={index} headStyle={{background: '#f2f2f2'}} title={
+                    <div className="pg-build__columnEditor-title">
+                        <i className={item.iconClass}></i>
+                        <span>{item.title}</span>
+                    </div>
+                }>
+                    <div className="pg-build__row">
 
-        this.setState({ block: newBlockState });
-    }
+                        {blockEdit.columns.map((column, indexCol)=> (
 
-    handleModalSubmit = () =>{
-        const newState: Array<BodyType> = [...this.props.blocks];
+                            <div
+                                key={uuid()}
+                                className={`pg-build__col pg-build__colEditor pg-build__col-${column.detail.size[item.device]}`}
+                            >
+                                <div className={`pg-build__col-content ${column.contents.length > 0 ? 'pg-build__col-contentFilled' : ''}`}>
 
-        newState.find((item)=>{
-            if(item.id == this.props.blockId){
-                item.columns = this.state.block.columns;
-            }
-        });
+                                    <InputNumber
+                                        onChange={(value)=> handleChangeColSize(value, item.device, indexCol)}
+                                        defaultValue={column.detail.size[item.device]}
+                                        className="pg-build__colSizer"
+                                        min={1}max={12}
+                                    />
 
-        this.props._setVisibilityOfModalColumnEditor(false);
-    }
-
-    render(){
-        
-        return (
-
-            <Modal
-                wrapClassName="pg-build__columnEditor"
-                title="Column editor"
-                visible={this.props.visible}
-                getContainer={()=>(this.props.blockRef as HTMLElement)}
-                onCancel={()=>this.props._setVisibilityOfModalColumnEditor(false)}
-                onOk={this.handleModalSubmit}
-                okText="Save change"
-                width={1000}
-            >
-
-                {columnEditor.map((item, index)=>(
-
-                    <Card key={index} headStyle={{background: '#f2f2f2'}} title={
-                        <div className="pg-build__columnEditor-title">
-                            <i className={item.iconClass}></i>
-                            <span>{item.title}</span>
-                        </div>
-                    }>
-                        <div className="pg-build__row">
-
-                            {this.state.block.columns.map((column, indexCol)=> (
-
-                                <div
-                                    key={indexCol}
-                                    className={`pg-build__col pg-build__colEditor pg-build__col-${column.detail.size[item.device]}`}
-                                >
-                                    <div className={`pg-build__col-content ${column.contents.length > 0 ? 'pg-build__col-contentFilled' : ''}`}>
-
-                                        <InputNumber
-                                            onChange={(value)=>this.handleChangeColSize(value, item.device, indexCol)}
-                                            defaultValue={column.detail.size[item.device]}
-                                            className="pg-build__colSizer"
-                                            min={1}max={12}
-                                        />
-
-                                    </div>
-
-                                    <div className="pg-build__colEditorToolbar">
-                                        {(item.device == 'pc' && indexCol != 0) && <a onClick={()=>this.changeColumnPlace('up', indexCol)}><i className="mi mi-Up"></i></a>}
-                                        {(item.device == 'pc' && indexCol != (this.state.block.columns.length - 1)) && <a onClick={()=>this.changeColumnPlace('down', indexCol)}><i className="mi mi-Down"></i></a>}
-                                        {item.device == 'pc' && <a onClick={this.handleAddColumn}><i className="mi mi-Add"></i></a>}
-                                        {(this.state.block.columns.length > 1 && item.device == 'pc') && <a onClick={()=>this.handleAlertRemoveColumn(indexCol)}><i className="mi mi-Delete"></i></a>}
-                                        <a onClick={()=>this.handleChangeColumnVisibility(item.device, indexCol)} className={`pg-build__colVisibilityTool ${column.detail.hide[item.device] ? 'pg-build__colVisibilityTool-hide' : ''}`}><i className="mi mi-RedEye"></i></a>
-                                    </div>
                                 </div>
 
-                            ))}
-
+                                <div className="pg-build__colEditorToolbar">
+                                    {(item.device == 'pc' && indexCol != 0) &&
+                                        <a onClick={()=>changeColumnPlace('up', indexCol)}><i className="mi mi-Up"></i></a>
+                                    }
+                                    {(item.device == 'pc' && indexCol != (blockEdit.columns.length - 1)) &&
+                                        <a onClick={()=>changeColumnPlace('down', indexCol)}><i className="mi mi-Down"></i></a>
+                                    }
+                                    {item.device == 'pc' &&
+                                        <a onClick={handleAddColumn}><i className="mi mi-Add"></i></a>
+                                    }
+                                    {(blockEdit.columns.length > 1 && item.device == 'pc') &&
+                                        <a onClick={()=>handleAlertRemoveColumn(indexCol)}><i className="mi mi-Delete"></i></a>
+                                    }
+                                    <a onClick={()=>handleChangeColumnVisibility(item.device, indexCol)} className={`pg-build__colVisibilityTool ${column.detail.hide[item.device] ? 'pg-build__colVisibilityTool-hide' : ''}`}><i className="mi mi-RedEye"></i></a>
+                                </div>
                             </div>
-                    </Card>
 
-                        
-                ))}
+                        ))}
 
+                        </div>
+                </Card>
 
-            </Modal>
-        );
-    }
-}
+                    
+            ))}
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModalColumnEditor);
+        </Modal>
+    );
+};
+
+export { ModalColumnEditor };

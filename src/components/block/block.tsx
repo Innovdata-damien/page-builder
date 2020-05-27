@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { BlockType } from '../../types/blockType';
 import { useSelector, useDispatch } from '../../redux/store';
 import * as utils from '../../utils/utils';
-// import { ReactSortable } from 'react-sortablejs';
+import { ReactSortable } from 'react-sortablejs';
+import { BlockInside } from './block-inside';
+import { Menu, Dropdown } from 'antd';
+import { ModalColumnEditor } from '../utility/modal-column-editor';
 // import { BodyType, ColumnType, ContentType } from '../../types/blockType';
-// import ModalColumnEditor from '../utility/modal-column-editor';
-// import BlockInside from './block-inside';
 // import { Menu, Dropdown } from 'antd';
 // import { connect } from 'react-redux';
 // import { toggleMenu } from '../../redux/actions/menuAction';
@@ -218,18 +219,21 @@ import * as utils from '../../utils/utils';
 type BlockToolbarProps = {
     blockId: string;
     block: BlockType;
+    setVisibilityOfModalColumnEditor: (type: boolean) => void;
 };
 
 const BlockToolbar = (props: BlockToolbarProps) => {
 
-    const { blockId, block } = props;
+    const { blockId, block, setVisibilityOfModalColumnEditor } = props;
     const blockDOM = document.querySelector(`[data-draggable-id='${blockId}']`);
 
     // Get state
     const {
-        blocks
+        blocks,
+        pageBuilderInstance
     } = useSelector(( state ) => ({
-        blocks: state.block.blocks
+        blocks: state.block.blocks,
+        pageBuilderInstance: state.pageBuilder.instance
     }));
     
     const dispatch = useDispatch();
@@ -243,44 +247,71 @@ const BlockToolbar = (props: BlockToolbarProps) => {
             {/* {typeof block.design == "undefined" || block.design.cssCustomizable != false &&
                 <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>
             }
+ */}
             {typeof block.design == "undefined" || block.design.editable != false &&
-                <a onClick={()=>props._setVisibilityOfModalColumnEditor(true)}><i className="mi mi-AspectRatio"></i></a>
+                <a onClick={()=>setVisibilityOfModalColumnEditor(true)}><i className="mi mi-AspectRatio"></i></a>
             }
 
             {typeof block.design == "undefined" || block.design.canAddClass != false &&
-                <Dropdown getPopupContainer={()=> props.blockRef as HTMLElement} overlay={<DropdownMenuClass addClassToBlock={props.addClassToBlock} block={props.block} pageBuilder={props.pageBuilder}/>} placement="bottomCenter">
+                <Dropdown
+                    getPopupContainer={()=> blockDOM as HTMLElement}
+                    overlay={
+                        <Menu>
+                            <Menu.Item className={block.class == '' || !block.class ? 'pg-build__ant-menu-item-selected' : ''}>
+                                <a onClick={()=> dispatch({
+                                    type: 'Block/AddClassBlock',
+                                    blockId,
+                                    className: ''
+                                })} >No class</a>
+                            </Menu.Item>
+                            {
+                               pageBuilderInstance!.__options!.blockClassList &&pageBuilderInstance!.__options!.blockClassList.map((classItem, index)=> classItem.type != 'block-inside' && (
+                                    <Menu.Item key={index} className={classItem.class == block.class ? 'pg-build__ant-menu-item-selected' : ''}>
+                                        <a onClick={()=> dispatch({
+                                            type: 'Block/AddClassBlock',
+                                            blockId,
+                                            className: classItem.class
+                                        })}>{classItem.label}</a>
+                                    </Menu.Item>
+                                ))
+                            }
+                        </Menu>
+                    } placement="bottomCenter"
+                >
                     <a><i className="mi mi-AsteriskBadge12"></i></a>
                 </Dropdown>
             }
 
+            
+
             {typeof block.design == "undefined" || block.design.duplicable != false &&
-                <a onClick={() => props.duplicateBlock(blockId)}><i className="mi mi-Copy"></i></a>
+                <a onClick={()=> dispatch({
+                    type: 'Block/DuplicateBlock',
+                    blockId
+                })}><i className="mi mi-Copy"></i></a>
             }
+
             {typeof block.design == "undefined" || block.design.removeable != false &&
-                <a onClick={() => props.removeBlock(blockId)}><i className="mi mi-Delete"></i></a>
-            } */}
+                <a onClick={()=> dispatch({
+                    type: 'Block/RemoveBlock',
+                    blockId
+                })} ><i className="mi mi-Delete"></i></a>
+            }
 
             {(typeof block.design == "undefined" || block.design.moveable != false && utils.getIndex(blocks, blockId) != 0) &&
-                <a onClick={
-                    ()=> dispatch({
-                        type: 'Block/MoveBlock',
-                        blockId,
-                        position: 'up'
-                    })
-                } ><i className="mi mi-Up"></i></a>
+                <a onClick={()=> dispatch({
+                    type: 'Block/MoveBlock',
+                    blockId,
+                    position: 'up'
+                })} ><i className="mi mi-Up"></i></a>
             }
             {(typeof block.design == "undefined" || block.design.moveable != false && utils.getIndex(blocks, blockId) != (blocks.length - 1)) &&
-                <a onClick={
-                    ()=> dispatch({
-                        type: 'Block/MoveBlock',
-                        blockId,
-                        position: 'down'
-                    })
-                } ><i className="mi mi-Down"></i></a>
+                <a onClick={()=> dispatch({
+                    type: 'Block/MoveBlock',
+                    blockId,
+                    position: 'down'
+                })} ><i className="mi mi-Down"></i></a>
             }
-            {/* {(typeof block.design == "undefined" || block.design.moveable != false && getBlockIndex(props.blocks, blockId) != (props.blocks.length - 1)) &&
-                <a onClick={() => props.moveBlock(blockId, 'down')}><i className="mi mi-Down"></i></a>
-            } */}
 
         </div>
     );
@@ -299,51 +330,52 @@ const Block = (props: BlockProps) => {
     const blockDOM = document.querySelector(`[data-draggable-id='${blockId}']`);
 
     // Methods
-    const handleClickOutside = (e: any) => {
 
-        if(blockDOM != null && !blockDOM.contains(e.target))
-            toggleClickOutside(true);
-            
+    const setVisibilityOfModalColumnEditor = (type: boolean) => {
+        dispatch({
+            type: 'Menu/ToggleVisibility',
+            toggleVisibility: false
+        })
+        toggleVisibilityOfModalColumnEditor(type);
     };
 
-    // DidMount
-    useEffect(() => {
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        // UnMount
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-
-    });
-
     // State
-    const [blockClickedOutside, toggleClickOutside] = useState<boolean>(true);
+    const [modalColumnEditorVisible, toggleVisibilityOfModalColumnEditor] = useState<boolean>(false);
 
     // Get state
     const {
-        cssViewShow
+        cssViewShow,
+        selectedBlock
     } = useSelector(( state ) => ({
-        cssViewShow: state.pageBuilder.cssViewShow
+        cssViewShow: state.pageBuilder.cssViewShow,
+        selectedBlock: state.block.selectedBlock
     }));
+
+    const dispatch = useDispatch();
 
     // Render
     return (
         <div
-            data-draggable-id={props.block.id}
-            onFocus={() => toggleClickOutside(false)}
-            onBlur={() => toggleClickOutside(true)}
-            onClick={() => toggleClickOutside(false)}
-            className={`pg-build__block ${(!blockClickedOutside ? 'pg-build__block-active' : '')}`}
+            data-draggable-id={block.id}
+            onClick={(e: any) => !Boolean(e.target.closest('.pg-build__block-inside')) && dispatch({
+                type: 'Block/SetSelection',
+                selectedBlock: block
+            })}
+
+            // onFocus={() => toggleClickOutside(false)}
+            // onBlur={() => toggleClickOutside(true)}
+            // onClick={() => toggleClickOutside(false)}
+            className={`pg-build__block ${(selectedBlock == block ? 'pg-build__block-active' : '')}`}
         >
             <div
-                className={cssViewShow ? props.block.class : ''}
-                style={cssViewShow ? props.block.style || {} : {}}
+                className={cssViewShow ? block.class : ''}
+                style={cssViewShow ? block.style || {} : {}}
             >
                 <BlockToolbar
                     blockId={blockId}
                     block={block}
+                    setVisibilityOfModalColumnEditor={setVisibilityOfModalColumnEditor}
+                    //handle={props.handle}
                     // blocks={this.props.blocks}
                     // pageBuilder={this.props.pageBuilder}
                     // blockRef={this.blockRef}
@@ -355,25 +387,28 @@ const Block = (props: BlockProps) => {
                     // addClassToBlock={this.props.addClassToBlock}
                     // moveBlock={this.props.moveBlock}
                 />
-
+                <ModalColumnEditor blockId={blockId} block={block} setVisibilityOfModalColumnEditor={setVisibilityOfModalColumnEditor} modalShow={modalColumnEditorVisible} blockRef={blockDOM}/>
+                
                 <div className="pg-build__row">
                     {block.columns.map((column) => {
-
-                        return <div key={column.id}>{column.id}</div>;
-                        // return(
-                        //     <ReactSortable handle=".pg-build__block-inside-tool-move" key={column.id} className={'pg-build__col pg-build__col-' + column.detail.size.pc} list={column.contents} setList={newState =>
-                        //         this.props.updateListBlockInside(
-                        //             newState,
-                        //             this.props.item.id,
-                        //             column.id,
-                        //         )} group="COLUMN" animation={150}>
-                        //         {column.contents.map((content: any) => {
-                                    
-                        //             return <BlockInside blockId={this.blockId} colId={column.id} item={content} key={content.id}/>;
-                        //             //return <div key={content.id}>fsfeesfs</div>;
-                        //         })}
-                        //     </ReactSortable>
-                        // );
+                        return(
+                            <ReactSortable
+                                handle=".pg-build__block-inside-tool-move"
+                                key={column.id}
+                                className={`pg-build__col pg-build__col-${column.detail.size.pc}`}
+                                list={column.contents}
+                                setList={(newState) => dispatch({
+                                    type: 'Block/SortableListBodyContent',
+                                    blocksContent: newState,
+                                    blockId,
+                                    colId: column.id
+                                })}
+                                group="COLUMN"
+                                animation={150}
+                            >
+                                {column.contents.map((content: any) => (<BlockInside blockId={blockId} colId={column.id} blockContent={content} blockContentId={content.id} key={content.id}/>))}
+                            </ReactSortable>
+                        );
                     })}
                 </div>
 

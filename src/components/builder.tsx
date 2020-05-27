@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from '../redux/store';
 import { PageBuilderStateListener } from './PageBuilderStateListener';
 import { PageBuilder } from '../PageBuilder';
@@ -6,6 +6,7 @@ import { BlockStateListener } from '../components/BlockStateListener';
 import { MenuStateListener } from './MenuStateListener';
 import { Menu } from './menu/menu';
 import { Body } from './body';
+
 // import {PageBuilder} from '../PageBuilder';
 // import { BodyType, MenuType } from '../types/blockType';
 // import uuid from 'uuid/v4';
@@ -28,6 +29,29 @@ const Builder = (props: BuilderProps) => {
     } = useSelector(( state ) => ({
         pageBuilderInstance: state.pageBuilder.instance
     }));
+
+    // Methods
+    const handleClickOutside = (e: any) => {
+        if(!Boolean(e.target.closest('.pg-build__menu')) && !Boolean(e.target.closest('.pg-build__block')))
+            dispatch({
+                type: 'Block/SetSelection',
+                selectedBlock: null
+            });
+    };
+
+    // DidMount
+    useEffect(() => {
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        // UnMount
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+
+    });
+
+    const dispatch = useDispatch();
 
     return(
         <div className={`pg-build pg-build__${pageBuilderInstance?.__options?.menuPosition}`}>

@@ -13,7 +13,8 @@ import { BlockType, MenuType } from './types/blockType';
 
 // import Root from './components/root';
 // import { BodyType, MenuType } from './types/blockType';
-// import { defaultBlocks, defaultMenuItems } from './utils/default-data';
+import { defaultBlocks, defaultMenuItems } from './utils/default-data';
+import blocks from './redux/reducers/blockReducer';
 // //import store from './redux/store';
 
 // //redux
@@ -61,6 +62,13 @@ export interface Options {
     blocks: Array<BlockType>;
     menuItems: Array<MenuType>;
     menuPosition: 'right' | 'left';
+    blockClassList?: Array <BlockClassList>;
+    language: string;
+}
+
+export interface BlockClassList {
+    class: string;
+    type?: 'block' | 'block-inside';
 }
 
 // export interface Options {
@@ -144,11 +152,7 @@ export interface Options {
 //     name: string;
 // }
 
-// export interface BlockClassList {
-//     label: string;
-//     class: string;
-//     type?: 'block' | 'block-inside';
-// }
+
 
 // export interface TranslateTemplator {
 //     start: string;
@@ -157,7 +161,9 @@ export interface Options {
 
 export const optionsExtends = (options: Options): Options => (
     Object.assign({
-        menuPosition: 'left'
+        menuPosition: 'left',
+        blocks: defaultBlocks,
+        menuItems: defaultMenuItems,
     }, options)
 )
 

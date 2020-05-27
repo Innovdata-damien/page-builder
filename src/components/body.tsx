@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from '../redux/store';
 import { ReactSortable } from 'react-sortablejs';
 import { BlockType } from '../types/blockType';
 
-
 // // Redux
 // import { connect } from 'react-redux';
 // import {
@@ -38,8 +37,33 @@ const Body = () => {
         blocks: state.block.blocks,
         cssViewShow: state.pageBuilder.cssViewShow
     }));
-
     const dispatch = useDispatch();
+
+    // return (
+    //     <DragDropContext onDragEnd={()=>{}}>
+    //         <Droppable droppableId="droppable">
+    //             {(provided, snapshot) => (
+    //                 <div
+    //                     ref={provided.innerRef}
+    //                 >
+    //                     {blocks.map((block, index) => (
+    //                         <Draggable
+    //                             key={block.id}
+    //                             draggableId={block.id}
+    //                             index={index}>
+    //                             {(provided, snapshot) => (
+    //                                 <div ref={provided.innerRef} 
+    //                                 {...provided.draggableProps}>
+    //                                 <Block blockId={block.id} block={block} key={block.id} handle={provided.dragHandleProps}/></div>
+    //                             )}
+    //                         </Draggable>
+    //                     ))}
+    //                     {provided.placeholder}
+    //                 </div>
+    //             )}
+    //         </Droppable>
+    //     </DragDropContext>
+    // );
 
     return (
         <div className={`pg-build__body ${cssViewShow ? 'pg-build__cssView' : ''}`}>
@@ -48,17 +72,13 @@ const Body = () => {
                 className="pg-build__body-child"
                 list={blocks}
                 handle=".pg-build__block-tool-move"
-                setList={(newState: Array<BlockType>) => dispatch({
+                setList={(newState) => dispatch({
                     type: 'Block/SortableListBody',
                     blocks: newState
                 })}
                 group="BODY"
                 animation={150}
-            >
-                <button onClick={()=>dispatch({
-                    type: 'Block/Set',
-                    blocks: []
-                })}>ffesf</button>
+            > 
             {blocks.map((block) => (<Block blockId={block.id} block={block} key={block.id}/>))}
             </ReactSortable>
 
