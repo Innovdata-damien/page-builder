@@ -67,7 +67,8 @@ class TinyMCEditor  extends Component<Props> {
             inline: true,
             fixed_toolbar_container: `[data-draggable-id='${this.props.item.id}']`,
             forced_root_block : 'p',
-            extended_valid_elements: 'button[class|target|href|dir<ltr?rtl|disabled<disabled|id|lang|name|onclick|style|title|type|value],script[src]'
+            extended_valid_elements: 'button[class|target|href|dir<ltr?rtl|disabled<disabled|id|lang|name|onclick|style|title|type|value],script[src]',
+            verify_html: false
         };
 
     }

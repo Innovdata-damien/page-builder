@@ -84,7 +84,13 @@ class Menu extends Component<Props, State>{
 
                             <Collapse className="pg-build__menu-group" isOpen={itemHead.collapse ? (this.state.toggleCollapseIndex === itemHead.id) : true}>
 
-                                <ReactSortable className="pg-build__menu-list" list={itemHead.blocks} setList={(newState: Array<BlockMenuType>) =>
+                                <ReactSortable onEnd={
+                                    (e) => {
+                                        
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    }
+                                } className="pg-build__menu-list" list={itemHead.blocks} setList={(newState: Array<BlockMenuType>) =>
                                     this.props.updateListMenu(
                                         newState,
                                         itemHead.id
