@@ -6,7 +6,7 @@ import * as utils from '../../utils/utils';
 
 // ----------------------- TYPE STATE
 
-type BlockSelected = BlockType | ContentType | null;
+export type BlockSelected = BlockType | ContentType | null;
 
 export type State = {
     blocks: Array<BlockType>;

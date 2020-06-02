@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from '../../redux/store';
 import { TabOpen } from '../../redux/actions/Menu';
 import Collapse from '@kunukn/react-collapse';
-import { BlockMenuType } from '../../types/blockType';
+import { BlockMenuType, BlockType, ContentType } from '../../types/blockType';
+import { BlockSelected } from '../../redux/actions/Block';
 import { Select, Form } from 'antd';
-import { FormInstance } from 'antd/lib/form';
 import { ReactSortable } from 'react-sortablejs';
 import uuid from 'uuid/v4';
 
@@ -142,61 +142,78 @@ const MenuTabBlocks = () => {
 
 };
 
+const getBlockType = (block: BlockType | ContentType) => {
+    if(block.design.type == 'column')
+        return 'block';
+    else 
+        return 'block-inside';
+};
+
 // ------------------------------ MENU TAB STYLE
 
 const MenuTabStyle = () => {
 
     const blockDOM = document.querySelector('.pg-build__menu');
-    const formRef = React.createRef<FormInstance>();
+    const [form] = Form.useForm();
     
     // Get state
     const {
         pageBuilderInstance,
-        selectedBlock,
+        newSelectedBlock,
     } = useSelector(( state ) => ({
         pageBuilderInstance: state.pageBuilder.instance,
-        selectedBlock: state.block.selectedBlock
+        newSelectedBlock: state.block.selectedBlock
     }));
 
-    useEffect(() => {
-
-    });
-
-    // Form data
-    let formInitialValues = {};
-
-    if(selectedBlock)
-        formInitialValues = {
-            class: (selectedBlock.class ? selectedBlock.class.split(' ') : undefined)
-        };
-
+    const [currentSelectedBlock, setCurrentSelectedBlock] = useState<BlockSelected>(null);
     
-
     // Methods
     const handleChangeStyle = () => {
 
     };
-    
+
+
+    // DidMount
+    useEffect(() => {
+        if(currentSelectedBlock != newSelectedBlock && newSelectedBlock){
+            // Set form data
+            setCurrentSelectedBlock(newSelectedBlock);
+            form.setFieldsValue({
+                class: (newSelectedBlock.class ? newSelectedBlock.class.split(' ') : undefined)
+            });
+        }
+    });
+
+
+    const dispatch = useDispatch();
+
+   
     return (
-        <>
-            {selectedBlock == null && <div className="pg-build__menu-style-msg">Select a block to change style</div>}
-            {selectedBlock && 
+        <Form form={form} name="formStyle" onValuesChange={handleChangeStyle}>
+            {currentSelectedBlock == null && <div className="pg-build__menu-style-msg">Select a block to change style</div>}
+            {currentSelectedBlock != null && 
                 <div className="pg-build__menu-style">
-                    <Form ref={formRef} name="formStyle" initialValues={formInitialValues} onValuesChange={handleChangeStyle}>
 
-                        <Form.Item label="Classes" name="class">
-                            <Select getPopupContainer={()=> blockDOM as HTMLElement} mode="tags" style={{ width: '100%' }} placeholder="class">
-                                {pageBuilderInstance!.__options!.blockClassList && pageBuilderInstance!.__options!.blockClassList.map((classItem, index)=>
-                                    ((selectedBlock.design.type == 'column' && classItem.type == 'block') || (selectedBlock.design.type != 'column' && classItem.type == 'block-inside') || typeof classItem.type === 'undefined') && (
-                                        <Select.Option key={index} value={classItem.class}>{classItem.class}</Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                    <Form.Item label="Classes" name="class">
+                        <Select onChange={(value)=> {
+                            if(getBlockType(currentSelectedBlock) == 'block')
+                                dispatch({
+                                    type: 'Block/AddClassBlock',
+                                    blockId: currentSelectedBlock.id,
+                                    className: ''
+                                });
+                            else;
+                        }} getPopupContainer={()=> blockDOM as HTMLElement} mode="tags" style={{ width: '100%' }} placeholder="class">
+                            {pageBuilderInstance!.__options!.blockClassList && pageBuilderInstance!.__options!.blockClassList.map((classItem, index)=>
+                                ((getBlockType(currentSelectedBlock) == classItem.type) || (getBlockType(currentSelectedBlock) == classItem.type) || typeof classItem.type === 'undefined') && (
+                                    <Select.Option key={index} value={classItem.class}>{classItem.class}</Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
 
-                    </Form>
                 </div>
             }
-        </>
+        </Form>
     );
 };
 
