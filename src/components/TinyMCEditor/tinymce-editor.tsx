@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import loadCustomPlugins from './plugins/loadCustomPlugins';
-import { ContentType, BodyType, ColumnType } from '../../types/blockType';
+import { ContentType, BodyType, ColumnType, LanguageBlocks } from '../../types/blockType';
+import translationFr from '../../translations/fr.json';
 //import tinymce from '@innovdata-damien/tinymce/js/tinymce/tinymce';
 import { Editor } from '@innovdata-damien/tinymce-react';
 //import 'tinymce/themes/silver';
@@ -16,22 +17,24 @@ import getTemplate from './templates';
 const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
     pageBuilder: state.pageBuilder,
-    iframeWindow: state.iframeWindow
+    iframeWindow: state.iframeWindow,
+    locale: state.locale
 });
   
 const mapDispatchToProps = (dispatch: any) => ({
-    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => dispatch(updateListBlockInside(blocksInside, blockId, colId)),
+    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string, locale: string) => dispatch(updateListBlockInside(blocksInside, blockId, colId, locale)),
     handleToggleMenu: (type: boolean) => dispatch(toggleMenu(type))
 });
 
 type Props = {
     blockId: string;
     colId: string;
+    locale: string;
     item: ContentType;
-    blocks: Array<BodyType>;
+    blocks: LanguageBlocks;
     pageBuilder: PageBuilder;
     iframeWindow: Window;
-    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => void;
+    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string, locale: string) => void;
     handleToggleMenu: (type: boolean) => void;
 }
 
@@ -49,9 +52,9 @@ class TinyMCEditor  extends Component<Props> {
             language: this.props.pageBuilder.__options?.language,
             setup: this._setupTinyMCEditor,
             init_instance_callback: this._initTinyMCEditor,
-            plugins: 'codeeditor imageplus translationvars linkplus multilanguage componenthtml videoembed importcss searchreplace directionality visualblocks visualchars fullscreen image media codesample table charmap hr nonbreaking toc insertdatetime advlist lists wordcount textpattern noneditable help charmap quickbars emoticons',
+            plugins: 'codeeditor imageplus linkplus componenthtml videoembed importcss searchreplace directionality visualblocks visualchars fullscreen image media codesample table charmap hr nonbreaking toc insertdatetime advlist lists wordcount textpattern noneditable help charmap quickbars emoticons',
             menubar: '',
-            toolbar: (this.props.item.design.value?.toolbar || this.props.item.design.value?.toolbar == '' ? this.props.item.design.value?.toolbar : ' codeeditor translationvars imageplus linkplus multilanguage componenthtml videoembed undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify |  numlist bullist checklist | forecolor backcolor permanentpen | charmap emoticons'),
+            toolbar: (this.props.item.design.value?.toolbar || this.props.item.design.value?.toolbar == '' ? this.props.item.design.value?.toolbar : ' codeeditor imageplus linkplus componenthtml videoembed undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify |  numlist bullist checklist | forecolor backcolor permanentpen | charmap emoticons'),
             importcss_append: true,
             height: 400,
             autosave_ask_before_unload: false,
@@ -83,22 +86,24 @@ class TinyMCEditor  extends Component<Props> {
 
     }
 
-    _initTinyMCEditor = (_editor: any) => {
+    _initTinyMCEditor = (editor: any) => {
+        this.props.iframeWindow.tinymce.addI18n('fr', translationFr);
     };
 
     _handleEditorChange = (content: any) => {
 
-        let blockIndex = this.props.blocks.findIndex((item: BodyType) => item.id === this.props.blockId);
-        let colIndex = this.props.blocks[blockIndex].columns.findIndex((item: ColumnType) => item.id === this.props.colId);
-        let blockInsideIndex = this.props.blocks[blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === this.props.item.id);
+        let blockIndex = this.props.blocks[this.props.locale].findIndex((item: BodyType) => item.id === this.props.blockId);
+        let colIndex = this.props.blocks[this.props.locale][blockIndex].columns.findIndex((item: ColumnType) => item.id === this.props.colId);
+        let blockInsideIndex = this.props.blocks[this.props.locale][blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === this.props.item.id);
 
-        const newState = [...this.props.blocks[blockIndex].columns[colIndex].contents]
+        const newState = [...this.props.blocks[this.props.locale][blockIndex].columns[colIndex].contents]
         newState[blockInsideIndex].content = content;
-        
+
         this.props.updateListBlockInside(
             newState,
             this.props.blockId,
-            this.props.colId
+            this.props.colId,
+            this.props.locale
         );
 
     }

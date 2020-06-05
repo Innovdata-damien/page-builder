@@ -2,6 +2,7 @@ import EditorTinymce from 'tinymce';
 import { Options } from '../../../../../PageBuilder';
 import js_beautify from 'js-beautify';
 import monacoEditorHTML from 'monaco-editor.html';
+import i18n from '../../../../../translations/i18n';
 
 
 const getIframe = (editor: EditorTinymce) => {
@@ -23,7 +24,7 @@ const onSubmit = (editor: EditorTinymce, _options: Options) => (api: any) => {
 
 // Build dialog spec
 const dialogSpec = (_bodyItems: any, initialData: any, editor: EditorTinymce, options: Options) => ({
-    title: 'Insert component',
+    title: i18n.trans('html_editor'),
     size: 'large',
     body: {
         type: 'panel',
@@ -31,7 +32,7 @@ const dialogSpec = (_bodyItems: any, initialData: any, editor: EditorTinymce, op
             {
                 type: 'iframe',
                 name: 'preview',
-                label: 'Preview',
+                label: i18n.trans('preview','capitalize'),
                 sandboxed: true
             }
         ]
@@ -40,11 +41,11 @@ const dialogSpec = (_bodyItems: any, initialData: any, editor: EditorTinymce, op
     buttons: [
         {
             type: 'cancel',
-            text: 'Close'
+            text: i18n.trans('close','capitalize')
         },
         {
             type: 'submit',
-            text: 'Save',
+            text: i18n.trans('save','capitalize'),
             primary: true
         }
     ],
@@ -136,7 +137,7 @@ const open = function (editor: EditorTinymce, options: Options) {
     window.truc = editor;
     
     const dialogApi: any = editor.windowManager.open(dialogSpec([], getInitialData(editor), editor, options));
-    dialogApi.block('Loading...');
+    dialogApi.block(`${i18n.trans('loading')}...`);
 
     getIframe(editor).iframe.onload = function() {
         dialogApi.unblock();

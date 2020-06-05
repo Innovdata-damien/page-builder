@@ -1,38 +1,48 @@
-import { BodyType, ContentType, ColumnType, BlockMenuType } from '../../types/blockType';
+import { BodyType, ContentType, ColumnType, BlockMenuType, LanguageBlocks } from '../../types/blockType';
 import { addAfter, BlockPosition, moveToPosition } from '../../utils/utils';
 import uuid from 'uuid/v4';
+import { LanguagesList } from 'PageBuilder';
 
 // ---------- Block ---------- 
 
 
 //Set block
 
-export const setBlock = (blocks: Array<BodyType>) => ({
+export const setBlock = (blocks: Array<BodyType>, languageList: LanguagesList[]) => ({
     type: 'SET_BLOCK',
-    blocks
+    blocks,
+    languageList
+});
+
+//Set block by language
+
+export const setBlockByLanguage = (blocks: Array<BodyType>, locale: string) => ({
+    type: 'SET_BLOCK_BY_LANGUAGE',
+    blocks,
+    locale
 });
 
 //Duplicate block
 
-export const duplicateBlock = (blockId: string) => ({
+export const duplicateBlock = (blockId: string, locale: string) => ({
     type: 'DUPLICATE_BLOCK',
     payload: (state: any, action: any) => {
-
-        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
+        
+        let blockIndex = state[action.locale].findIndex((item: BodyType) => item.id === action.blockId);
 
         // Clone block
-        const data = {...state[blockIndex]};
-        var newState: Array<any> = addAfter(state, blockIndex, data);
-        
+        const data = {...state[action.locale][blockIndex]};
+        var newState: Array<any> = state;
+        newState[action.locale] = addAfter(state[action.locale], blockIndex, data);
         // Update id
         
         var newBlockState: any = {};
         newBlockState.id = uuid();
-        newBlockState.style = {...newState[(blockIndex + 1)].style || {}};
-        newBlockState.design = {...newState[(blockIndex + 1)].design || {}};
+        newBlockState.style = {...newState[action.locale][(blockIndex + 1)].style || {}};
+        newBlockState.design = {...newState[action.locale][(blockIndex + 1)].design || {}};
         newBlockState.columns = [];
 
-        newState[(blockIndex + 1)].columns.forEach((column: any) => {
+        newState[action.locale][(blockIndex + 1)].columns.forEach((column: any) => {
 
             var newColumn = {...column};
             newColumn.id = uuid();
@@ -48,23 +58,26 @@ export const duplicateBlock = (blockId: string) => ({
 
         });
 
-        newState[(blockIndex + 1)] = newBlockState;
+        newState[action.locale][(blockIndex + 1)] = newBlockState;
+        
 
-        return newState;
+        return {...newState};
     },
-    blockId
+    blockId,
+    locale
 });
 
 //Add class to block 
 
-export const addClassToBlock = (blockId: string, className: string) => ({
+export const addClassToBlock = (blockId: string, className: string, locale: string) => ({
     type: 'ADD_CLASS_BLOCK',
     blockId,
     className,
+    locale,
     payload: (state: any, action: any) => {
 
-        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
-        const data = state[blockIndex];
+        let blockIndex = state[action.locale].findIndex((item: BodyType) => item.id === action.blockId);
+        const data = state[action.locale][blockIndex];
 
         data.class = action.className;
 
@@ -74,15 +87,12 @@ export const addClassToBlock = (blockId: string, className: string) => ({
 
 //Remove block
 
-export const removeBlock = (blockId: string) => ({
+export const removeBlock = (blockId: string, locale: string) => ({
     type: 'REMOVE_BLOCK',
-    blockId
+    blockId,
+    locale
 });
 
-//Update list body
-type UpdateListBodyAction = {
-    blocks: Array<BodyType>;
-}
 
 const formateBlockContainer = (block: BodyType):BodyType => {
     let columns: any = [12];
@@ -132,11 +142,12 @@ const formateBlockContainer = (block: BodyType):BodyType => {
     return block;
 }
 
-export const updateListBody = (blocks: Array<BodyType>) => ({
+export const updateListBody = (blocks: Array<BodyType>, locale: string) => ({
     type: 'UPDATE_LIST_BODY',
-    payload: (_state: any, action: UpdateListBodyAction) => {
+    payload: (state: any, action: any) => {
 
         const blockAdded = action.blocks.findIndex((item: BodyType) => item.columns === undefined);
+        const newState = {...state};
 
         if(blockAdded != -1){
 
@@ -145,24 +156,29 @@ export const updateListBody = (blocks: Array<BodyType>) => ({
             action.blocks[blockAdded] = block;
         }
 
-        return [...action.blocks];
+        newState[action.locale] = action.blocks;
+
+        return newState;
     },
-    blocks
+    blocks,
+    locale
 });
 
 //Move block to position up / down
 
-export const moveBlock = (blockId: string, position: BlockPosition) => ({
+export const moveBlock = (blockId: string, position: BlockPosition, locale: string) => ({
     type: 'MOVE_BLOCK',
     payload: (state: any, action: any) => {
 
-        const blockIndex = state.findIndex((item: BodyType) => item.id == action.blockId);
-        const newBlocksState = moveToPosition(state, blockIndex, position);
+        const blockIndex = state[action.locale].findIndex((item: BodyType) => item.id == action.blockId);
+        const newState = {...state};
+        newState[action.locale] = moveToPosition(state[action.locale], blockIndex, position);
 
-        return [...newBlocksState];
+        return {...newState};
     },
     blockId,
-    position
+    position,
+    locale
 });
 
 
@@ -170,62 +186,67 @@ export const moveBlock = (blockId: string, position: BlockPosition) => ({
 
 //Update list block inside
 
-export const updateListBlockInside = (blocksInside: Array<ContentType>, blockId: string, colId: string) => ({
+export const updateListBlockInside = (blocksInside: Array<ContentType>, blockId: string, colId: string, locale: string) => ({
     type: 'UPDATE_LIST_BLOCK_INSIDE',
     payload: (state: any, action: any) => {
+
+        const newState = {...state}
         
-        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
-        let colIndex = state[blockIndex].columns.findIndex((item: BodyType) => item.id === action.colId);
+        let blockIndex = newState[action.locale].findIndex((item: BodyType) => item.id === action.blockId);
+        let colIndex = newState[action.locale][blockIndex].columns.findIndex((item: BodyType) => item.id === action.colId);
 
-        state[blockIndex].columns[colIndex].contents = action.blocksInside;
+        newState[action.locale][blockIndex].columns[colIndex].contents = action.blocksInside;
 
-        return [...state];
+        return newState;
     },
     blocksInside,
     blockId,
-    colId
+    colId,
+    locale
 });
 
 //Duplicate block inside
 
-export const duplicateBlockInside = (blockId: string, colId: string, blockInsideId: string) => ({
+export const duplicateBlockInside = (blockId: string, colId: string, blockInsideId: string, locale: string) => ({
     type: 'DUPLICATE_BLOCK_INSIDE',
     payload: (state: any, action: any) => {
 
-        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
-        let colIndex = state[blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
-        let blockInsideIndex = state[blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
+        let blockIndex = state[action.locale].findIndex((item: BodyType) => item.id === action.blockId);
+        let colIndex = state[action.locale][blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
+        let blockInsideIndex = state[action.locale][blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
 
-        const data = {...state[blockIndex].columns[colIndex].contents[blockInsideIndex]};
+        const data = {...state[action.locale][blockIndex].columns[colIndex].contents[blockInsideIndex]};
         data.id = uuid();
 
         var newState: Array<any> = state;
-        newState[blockIndex].columns[colIndex].contents = addAfter(state[blockIndex].columns[colIndex].contents, blockInsideIndex, data);
+        newState[action.locale][blockIndex].columns[colIndex].contents = addAfter(state[action.locale][blockIndex].columns[colIndex].contents, blockInsideIndex, data);
 
         return newState;
 
     },
     blockId,
     colId,
-    blockInsideId
+    blockInsideId,
+    locale
 });
 
 
 //Add class to block inside 
 
-export const addClassToBlockInside = (blockId: string, colId: string, blockInsideId: string, className: string) => ({
+export const addClassToBlockInside = (blockId: string, colId: string, blockInsideId: string, className: string, locale: string) => ({
     type: 'ADD_CLASS_BLOCK_INSIDE',
     blockId,
     colId,
     blockInsideId,
     className,
+    locale,
     payload: (state: any, action: any) => {
 
-        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
-        let colIndex = state[blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
-        let blockInsideIndex = state[blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
+        let blockIndex = state[action.locale].findIndex((item: BodyType) => item.id === action.blockId);
+        let colIndex = state[action.locale][blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
+        let blockInsideIndex = state[action.locale][blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
 
-        const data = state[blockIndex].columns[colIndex].contents[blockInsideIndex];
+        const data = state[action.locale][blockIndex].columns[colIndex].contents[blockInsideIndex];
         data.class = action.className;
 
         return state;
@@ -234,40 +255,41 @@ export const addClassToBlockInside = (blockId: string, colId: string, blockInsid
 
 //Remove block inside
 
-export const removeBlockInside = (blockId: string, colId: string, blockInsideId: string) => ({
+export const removeBlockInside = (blockId: string, colId: string, blockInsideId: string, locale: string) => ({
     type: 'REMOVE_BLOCK_INSIDE',
     payload : (state: any, action: any) => {
 
-        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
-        let colIndex = state[blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
-        let blockInsideIndex = state[blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
+        let blockIndex = state[action.locale].findIndex((item: BodyType) => item.id === action.blockId);
+        let colIndex = state[action.locale][blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
+        let blockInsideIndex = state[action.locale][blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
 
-        const data = [...state];
-        data[blockIndex].columns[colIndex].contents = data[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+        const data = {...state};
+        data[action.locale][blockIndex].columns[colIndex].contents = data[action.locale][blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
 
         return data;
     },
     blockId,
     colId,
-    blockInsideId
+    blockInsideId,
+    locale
 });
 
 //Move block inside to position up / down
 
-export const moveBlockInside = (blockId: string, colId: string, blockInsideId: string, position: BlockPosition) => ({
+export const moveBlockInside = (blockId: string, colId: string, blockInsideId: string, position: BlockPosition, locale: string) => ({
     type: 'MOVE_BLOCK_INSIDE',
-    payload: (state: Array<BodyType>, action: any) => {
+    payload: (state: LanguageBlocks, action: any) => {
 
-        let blockIndex = state.findIndex((item: BodyType) => item.id === action.blockId);
-        let colIndex = state[blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
-        let blockInsideIndex = state[blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
+        let blockIndex = state[action.locale].findIndex((item: BodyType) => item.id === action.blockId);
+        let colIndex = state[action.locale][blockIndex].columns.findIndex((item: ColumnType) => item.id === action.colId);
+        let blockInsideIndex = state[action.locale][blockIndex].columns[colIndex].contents.findIndex((item: ContentType) => item.id === action.blockInsideId);
 
 
         // Get content length by block and col
         const contentLengthByBlockAndCol: any = {};
-        const newState = [...state]
+        const newState = {...state}
 
-        state.forEach((block, indexBlock)=>{
+        state[action.locale].forEach((block, indexBlock)=>{
 
             if(!contentLengthByBlockAndCol[indexBlock]){
                 contentLengthByBlockAndCol[indexBlock] = {}
@@ -290,7 +312,7 @@ export const moveBlockInside = (blockId: string, colId: string, blockInsideId: s
 
         if(blockInsideNewIndex > -1 && blockInsideNewIndex < contentLengthByBlockAndCol[blockIndex][colIndex]){
             // In same col
-            moveToPosition(newState[blockIndex].columns[colIndex].contents, blockInsideIndex, position);
+            moveToPosition(newState[action.locale][blockIndex].columns[colIndex].contents, blockInsideIndex, position);
         }else if(blockInsideNewIndex <= -1){
 
             if((colIndex - 1) >= 0){
@@ -298,34 +320,34 @@ export const moveBlockInside = (blockId: string, colId: string, blockInsideId: s
 
                 let nbrContent = contentLengthByBlockAndCol[blockIndex][colIndex - 1];
 
-                newState[blockIndex].columns[colIndex - 1].contents[nbrContent] = newState[blockIndex].columns[colIndex].contents[blockInsideIndex];
-                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+                newState[action.locale][blockIndex].columns[colIndex - 1].contents[nbrContent] = newState[action.locale][blockIndex].columns[colIndex].contents[blockInsideIndex];
+                newState[action.locale][blockIndex].columns[colIndex].contents = newState[action.locale][blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
 
             }else if((blockIndex - 1) >= 0){
                 // In prev block
 
-                let nbrCol = newState[blockIndex - 1].columns.length;
+                let nbrCol = newState[action.locale][blockIndex - 1].columns.length;
                 let nbrContent = contentLengthByBlockAndCol[blockIndex - 1][nbrCol - 1];
 
-                newState[blockIndex - 1].columns[nbrCol - 1].contents[nbrContent] = newState[blockIndex].columns[colIndex].contents[blockInsideIndex];
-                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+                newState[action.locale][blockIndex - 1].columns[nbrCol - 1].contents[nbrContent] = newState[action.locale][blockIndex].columns[colIndex].contents[blockInsideIndex];
+                newState[action.locale][blockIndex].columns[colIndex].contents = newState[action.locale][blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
 
             }
 
         }else if(blockInsideNewIndex >= contentLengthByBlockAndCol[blockIndex][colIndex]){
 
-            if((colIndex + 1) <= (newState[blockIndex].columns.length - 1)){
+            if((colIndex + 1) <= (newState[action.locale][blockIndex].columns.length - 1)){
                 // In next col
 
-                newState[blockIndex].columns[colIndex + 1].contents.unshift(newState[blockIndex].columns[colIndex].contents[blockInsideIndex]);
-                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+                newState[action.locale][blockIndex].columns[colIndex + 1].contents.unshift(newState[action.locale][blockIndex].columns[colIndex].contents[blockInsideIndex]);
+                newState[action.locale][blockIndex].columns[colIndex].contents = newState[action.locale][blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
 
-            }else if((blockIndex + 1) <= (newState.length - 1)){
+            }else if((blockIndex + 1) <= (newState[action.locale].length - 1)){
                 // In next block
 
 
-                newState[blockIndex + 1].columns[0].contents.unshift(newState[blockIndex].columns[colIndex].contents[blockInsideIndex]);
-                newState[blockIndex].columns[colIndex].contents = newState[blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
+                newState[action.locale][blockIndex + 1].columns[0].contents.unshift(newState[action.locale][blockIndex].columns[colIndex].contents[blockInsideIndex]);
+                newState[action.locale][blockIndex].columns[colIndex].contents = newState[action.locale][blockIndex].columns[colIndex].contents.filter((_el: any, key: number) => key != blockInsideIndex);
 
             }
 
@@ -336,27 +358,28 @@ export const moveBlockInside = (blockId: string, colId: string, blockInsideId: s
     blockId,
     colId,
     blockInsideId,
-    position
+    position,
+    locale
 });
 
 // ---------- Block + Block inside ---------- 
 
 // Add new block & block inside by double clicking
 
-export const doubleClickMenuBlock = (item: BlockMenuType) => ({
+export const doubleClickMenuBlock = (item: BlockMenuType, locale: string) => ({
     type: 'DOUBLE_CLICK_ADD_CONTAINER_CONTENT_BLOCKS',
-    payload: (state: Array<BodyType>, action: any) => {
+    payload: (state: LanguageBlocks, action: any) => {
 
         const itemClone: any = {...action.item};
-        const newState = [...state];
+        const newState = {...state};
 
         itemClone.id = uuid();
 
         if(itemClone.design.type == 'column'){
             let block = formateBlockContainer({...itemClone});
-            newState.push(block);
+            newState[action.locale].push(block);
         }else{
-            let lastBlock = newState[(newState.length - 1)];
+            let lastBlock = newState[action.locale][(newState[action.locale].length - 1)];
             if(lastBlock) {
                 let lastCol = lastBlock.columns[(lastBlock.columns.length - 1)];
                 if(lastCol) {
@@ -367,6 +390,7 @@ export const doubleClickMenuBlock = (item: BlockMenuType) => ({
 
         return newState;
     },
-    item
+    item,
+    locale
 });
 

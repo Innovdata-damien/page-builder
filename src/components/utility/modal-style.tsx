@@ -3,10 +3,11 @@ import { PageBuilder } from '../../PageBuilder';
 import Collapse from '@kunukn/react-collapse';
 import { FormInstance } from 'antd/lib/form';
 import Pickr from '@innovdata-damien/pickr';
-import { BodyType } from '../../types/blockType';
+import { BodyType, LanguageBlocks } from '../../types/blockType';
 import * as CSS from 'csstype';
 import uuid from 'uuid/v4';
 import { InputNumber, Input, Select, Radio, Form } from 'antd';
+import i18n from '../../translations/i18n';
 const { Option } = Select;
 
 const marginPaddingGrid: Array<string>= [
@@ -43,20 +44,22 @@ const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
     pageBuilder: state.pageBuilder,
     iframeDocument: state.iframeDocument,
-    iframeWindow: state.iframeWindow
+    iframeWindow: state.iframeWindow,
+    locale: state.locale
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    updateListBody: (blocks: Array<BodyType>) => dispatch(updateListBody(blocks))
+    updateListBody: (blocks: Array<BodyType>, locale: string) => dispatch(updateListBody(blocks, locale))
 });
 
 type Props = {
-    blocks: Array<BodyType>;
+    blocks: LanguageBlocks;
     blockId: string;
     colId?: string;
     blockInsideId?: string;
+    locale: string;
     onRef: (ref: any) => void;
-    updateListBody: (blocks: Array<BodyType>) => void;
+    updateListBody: (blocks: Array<BodyType>, locale: string) => void;
     pageBuilder: PageBuilder;
     iframeDocument: Document;
     iframeWindow: Window;
@@ -249,9 +252,9 @@ class Modal extends Component<Props, State> {
         let blockStyle: any = {};
         
         if(this.props.colId && this.props.blockInsideId){
-            blockStyle = {...this.props.blocks.filter((item)=> item.id == this.props.blockId)[0].columns.filter((item)=> item.id == this.props.colId)[0].contents.filter((item)=> item.id == this.props.blockInsideId)[0].style} || {};
+            blockStyle = {...this.props.blocks[this.props.locale].filter((item)=> item.id == this.props.blockId)[0].columns.filter((item)=> item.id == this.props.colId)[0].contents.filter((item)=> item.id == this.props.blockInsideId)[0].style} || {};
         }else{
-            blockStyle = {...this.props.blocks.filter((item)=> item.id == this.props.blockId)[0].style} || {};
+            blockStyle = {...this.props.blocks[this.props.locale].filter((item)=> item.id == this.props.blockId)[0].style} || {};
         }
 
         const styleWithType = ['width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight'];
@@ -331,10 +334,10 @@ class Modal extends Component<Props, State> {
 
         });
         
-        const newState: Array<BodyType> = [...this.props.blocks];
+        const newState: LanguageBlocks = {...this.props.blocks};
         if(this.props.colId && this.props.blockInsideId){
 
-            newState.find((item)=>{
+            newState[this.props.locale].find((item)=>{
                 if(item.id == this.props.blockId){
                     item.columns.find((col) =>{
 
@@ -355,7 +358,7 @@ class Modal extends Component<Props, State> {
             });
             
         }else{
-            newState.find((item)=>{
+            newState[this.props.locale].find((item)=>{
                 if(item.id == this.props.blockId){
                     item.style = newStyle;
                 }
@@ -394,7 +397,7 @@ class Modal extends Component<Props, State> {
             {this.state.isOpen &&
                 <div ref={elem => this.modalRef = elem} id={this.id} className={`pg-build__modal-style ${(this.props.pageBuilder.__options?.menuPosition == 'right' ? 'pg-build__modal-style-left' : 'pg-build__modal-style-right')}`}>
                     <div className="pg-build__modal-style-head">
-                        <h5>Modal title</h5>
+                        <h5>{i18n.trans('modal_style','capitalize')}</h5>
                         <button onClick={()=>this._toggleModal(false)}><i className="mi mi-Clear"></i></button>
                     </div>
                     <div className="pg-build__modal-style-body">
@@ -404,7 +407,7 @@ class Modal extends Component<Props, State> {
                             {/* Position */}
                             <div className="pg-build__modal-style-collapse">
 
-                                <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'position' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('position')}>Position</div>
+                                <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'position' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('position')}>{i18n.trans('position','capitalize')}</div>
                                 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'position'}>
                                     <PositionCollapse modalRef={this.modalRef}/>
@@ -415,7 +418,7 @@ class Modal extends Component<Props, State> {
                             {/* Dimension */}
                             <div className="pg-build__modal-style-collapse">
 
-                                <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'dimension' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('dimension')}>Dimension</div>
+                                <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'dimension' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('dimension')}>{i18n.trans('dimension','capitalize')}</div>
 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'dimension'}>
                                     <DimensionCollapse modalRef={this.modalRef} blockStyle={formInitialValues}/>
@@ -426,7 +429,7 @@ class Modal extends Component<Props, State> {
                             {/* Style */}
                             <div className="pg-build__modal-style-collapse">
 
-                                <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'style' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('style')}>Style</div>
+                                <div className={`pg-build__modal-style-collapseTitle ${this.state.toggleCollapseIndex === 'style' ? 'pg-build__modal-style-collapseTitle-open' : ''}`} onClick={()=>this._handleToggleCollapse('style')}>{i18n.trans('style','capitalize')}</div>
 
                                 <Collapse className="pg-build__modal-style-collapseGroup" isOpen={this.state.toggleCollapseIndex === 'style'}>
                                     <StyleCollapse modalRef={this.modalRef} iframeDocument={this.props.iframeDocument} iframeWindow={this.props.iframeWindow} _handleChangeStyle={this._handleChangeStyle} formRef={this.formRef.current} blockStyle={formInitialValues}/>
@@ -435,6 +438,7 @@ class Modal extends Component<Props, State> {
                             </div>
                         
                         </Form>
+                        <div className="pg-build__modal-style-description"><i className="mi mi-Info"></i>{i18n.trans('msg_modal_style')}</div>
 
                     </div>
                 </div>
@@ -455,16 +459,16 @@ const PositionCollapse = (props: PositionCollapseProps) => {
     };
 
     const radioInput: Array<{ name:string, value: string }> = [
-        { name: 'unset', value: 'null' },
-        { name: 'left auto', value: '0 0 0 auto' },
-        { name: 'center auto', value: 'auto' },
-        { name: 'right auto', value: '0 auto 0 0' },
+        { name: i18n.trans('unset','capitalize'), value: 'null' },
+        { name: i18n.trans('left_auto','capitalize'), value: '0 0 0 auto' },
+        { name: i18n.trans('center_auto','capitalize'), value: 'auto' },
+        { name: i18n.trans('right_auto','capitalize'), value: '0 auto 0 0' },
     ]
     
     return (
         <>
             <PaddingMarginGrid modalRef={props.modalRef}/>
-            <Form.Item label="Margin position" name="margin">
+            <Form.Item style={{padding: '15px'}} label={i18n.trans('margin_position','capitalize')} name="margin">
                 <Radio.Group>
                     {
                         radioInput.map((item, index)=>{
@@ -519,21 +523,21 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
         };
     
         const widthHeightType: Array<{ name: string, value:string }> = [
-            { name: 'Unset', value: 'unset'},
-            { name: 'Choose size', value: 'size'},
-            { name: 'Auto', value: 'auto'},
+            { name: i18n.trans('unset','capitalize'), value: 'unset'},
+            { name: i18n.trans('choose_size','capitalize'), value: 'size'},
+            { name: i18n.trans('auto','capitalize'), value: 'auto'},
         ];
 
         return (
             <>
                 {/* Width */}
-                <label>Width</label>
+                <label>{i18n.trans('width','capitalize')}</label>
                 {this.state.width_type != null && this.state.width_type == 'size' && 
                 <>
-                    <Form.Item name="width_value">
+                    <Form.Item name="width_value" style={{padding: '15px'}}>
                         <InputNumber/>
                     </Form.Item>
-                    <Form.Item name="width_unite">
+                    <Form.Item name="width_unite" style={{padding: '15px'}}>
                         <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
@@ -542,7 +546,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                     </Form.Item>
                 </>
                 }
-                <Form.Item name="width_type">
+                <Form.Item name="width_type" style={{padding: '15px'}}>
                     <Radio.Group name="width_type" onChange={this._radioChange}>
                         {
                             widthHeightType.map((item, index)=>{
@@ -553,13 +557,13 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </Form.Item>
     
                 {/* Min Width */}
-                <label>Min width</label>
+                <label>{i18n.trans('min_width','capitalize')}</label>
                 {this.state.minWidth_type != null && this.state.minWidth_type == 'size' && 
                 <>
-                    <Form.Item name="minWidth_value">
+                    <Form.Item name="minWidth_value" style={{padding: '15px'}}>
                         <InputNumber/>
                     </Form.Item>
-                    <Form.Item name="minWidth_unite">
+                    <Form.Item name="minWidth_unite" style={{padding: '15px'}}>
                         <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
@@ -569,7 +573,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </>
                 }
                 
-                <Form.Item name="minWidth_type">
+                <Form.Item name="minWidth_type" style={{padding: '15px'}}>
                     <Radio.Group name="minWidth_type" onChange={this._radioChange}>
                         {
                             widthHeightType.map((item, index)=>{
@@ -580,13 +584,13 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </Form.Item>
     
                 {/* Max Width */}
-                <label>Max width</label>
+                <label>{i18n.trans('max_width','capitalize')}</label>
                 {this.state.maxWidth_type != null && this.state.maxWidth_type == 'size' && 
                 <>
-                    <Form.Item name="maxWidth_value">
+                    <Form.Item name="maxWidth_value" style={{padding: '15px'}}>
                         <InputNumber/>
                     </Form.Item>
-                    <Form.Item name="maxWidth_unite">
+                    <Form.Item name="maxWidth_unite" style={{padding: '15px'}}>
                         <Select size="small" getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
@@ -596,7 +600,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </>
                 }
                 
-                <Form.Item name="maxWidth_type">
+                <Form.Item name="maxWidth_type" style={{padding: '15px'}}>
                     <Radio.Group name="maxWidth_type" onChange={this._radioChange}>
                         {
                             widthHeightType.map((item, index)=>{
@@ -607,13 +611,13 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </Form.Item>
     
                 {/* Height */}
-                <label>Height</label>
+                <label>{i18n.trans('height','capitalize')}</label>
                 {this.state.height_type != null && this.state.height_type == 'size' && 
                 <>
-                    <Form.Item name="height_value">
+                    <Form.Item name="height_value" style={{padding: '15px'}}>
                         <InputNumber/>
                     </Form.Item>
-                    <Form.Item name="height_unite">
+                    <Form.Item name="height_unite" style={{padding: '15px'}}>
                         <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
@@ -623,7 +627,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </>
                 }
                 
-                <Form.Item name="height_type">
+                <Form.Item name="height_type" style={{padding: '15px'}}>
                     <Radio.Group name="height_type" onChange={this._radioChange}>
                         {
                             widthHeightType.map((item, index)=>{
@@ -634,13 +638,13 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </Form.Item>
     
                 {/* Min Height */}
-                <label>Min height</label>
+                <label>{i18n.trans('min_height','capitalize')}</label>
                 {this.state.minHeight_type != null && this.state.minHeight_type == 'size' && 
                 <>
-                    <Form.Item name="minHeight_value">
+                    <Form.Item name="minHeight_value" style={{padding: '15px'}}>
                         <InputNumber/>
                     </Form.Item>
-                    <Form.Item name="minHeight_unite">
+                    <Form.Item name="minHeight_unite" style={{padding: '15px'}}>
                         <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
@@ -650,7 +654,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </>
                 }
                 
-                <Form.Item name="minHeight_type">
+                <Form.Item name="minHeight_type" style={{padding: '15px'}}>
                     <Radio.Group name="minHeight_type" onChange={this._radioChange}>
                         {
                             widthHeightType.map((item, index)=>{
@@ -661,13 +665,13 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </Form.Item>
     
                 {/* Max Height */}
-                <label>Max height</label>
+                <label>{i18n.trans('max_height','capitalize')}</label>
                 {this.state.maxHeight_type != null && this.state.maxHeight_type == 'size' && 
                 <>
-                    <Form.Item name="maxHeight_value">
+                    <Form.Item name="maxHeight_value" style={{padding: '15px'}}>
                         <InputNumber/>
                     </Form.Item>
-                    <Form.Item name="maxHeight_unite">
+                    <Form.Item name="maxHeight_unite" style={{padding: '15px'}}>
                         <Select size="small" getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                             {
                                 sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
@@ -677,7 +681,7 @@ class DimensionCollapse  extends Component<DimensionCollapseProps, DimensionColl
                 </>
                 }
                 
-                <Form.Item name="maxHeight_type">
+                <Form.Item name="maxHeight_type" style={{padding: '15px'}}>
                     <Radio.Group name="maxHeight_type" onChange={this._radioChange}>
                         {
                             widthHeightType.map((item, index)=>{
@@ -742,24 +746,24 @@ class StyleCollapse extends Component<StyleCollapseProps, StyleCollapseState> {
     render(){
 
         const borderStyle: Array<{ name: string, value: string }> = [
-            { name: 'None', value: 'none' },
-            { name: 'Solid', value: 'solid' },
-            { name: 'Dotted', value: 'dotted' },
-            { name: 'Dashed', value: 'dashed' },
-            { name: 'Double', value: 'double' },
-            { name: 'Groove', value: 'groove' },
-            { name: 'Ridge', value: 'ridge' },
-            { name: 'Inset', value: 'inset' },
-            { name: 'Outset', value: 'outset' },
+            { name: i18n.trans('none','capitalize'), value: 'none' },
+            { name: i18n.trans('solid','capitalize'), value: 'solid' },
+            { name: i18n.trans('dotted','capitalize'), value: 'dotted' },
+            { name: i18n.trans('dashed','capitalize'), value: 'dashed' },
+            { name: i18n.trans('double','capitalize'), value: 'double' },
+            { name: i18n.trans('groove','capitalize'), value: 'groove' },
+            { name: i18n.trans('ridge','capitalize'), value: 'ridge' },
+            { name: i18n.trans('inset','capitalize'), value: 'inset' },
+            { name: i18n.trans('outset','capitalize'), value: 'outset' },
         ];
         return (
             <>
 
-                <Form.Item label="Border width" name="borderWidth">
+                <Form.Item label={i18n.trans('border_width','capitalize')} name="borderWidth" style={{padding: '15px'}}>
                     <InputNumber/>
                 </Form.Item>
 
-                <Form.Item label="Border style" name="borderStyle">
+                <Form.Item label={i18n.trans('border_style','capitalize')} name="borderStyle" style={{padding: '15px'}}>
                     <Select getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                         {
                             borderStyle.map((item, index) => (<Option key={index} value={item.value}>{item.name}</Option>))
@@ -768,7 +772,7 @@ class StyleCollapse extends Component<StyleCollapseProps, StyleCollapseState> {
                 </Form.Item>
 
                 <div className="pg-build__modal-style-row">
-                    <div><label>Border radius</label></div>
+                    <div><label>{i18n.trans('border_radius','capitalize')}</label></div>
                     <div className="pg-build__border-square">
                         {
                             borderRadiusGrid.map((styleName, index) => {
@@ -776,10 +780,10 @@ class StyleCollapse extends Component<StyleCollapseProps, StyleCollapseState> {
                                 return (
                                     <div key={index} className={`input-container ${styleName}`}>
 
-                                        <Form.Item name={`${styleName}_value`}>
+                                        <Form.Item name={`${styleName}_value`} style={{padding: '15px'}}>
                                             <InputNumber style={{ width: '60px' }}  size="small"/>
                                         </Form.Item>
-                                        <Form.Item name={`${styleName}_unite`}>
+                                        <Form.Item name={`${styleName}_unite`} style={{padding: '15px'}}>
                                             <Select size="small" getPopupContainer={()=> this.props.modalRef as HTMLElement}>
                                                 {
                                                     sizeUnite.map((value, index) => (<Option key={index} value={value}>{value}</Option>))
@@ -794,16 +798,16 @@ class StyleCollapse extends Component<StyleCollapseProps, StyleCollapseState> {
                     </div>
                 </div>
                 
-                <div className="pg-build__modal-style-row">
-                    <div><label>Border color</label></div>
+                <div className="pg-build__modal-style-row" style={{padding: '15px'}}>
+                    <div><label>{i18n.trans('border_color','capitalize')}</label></div>
                     <div datatype="borderColor" defaultcolor={this.props.blockStyle!.borderColor || 'transparent'} className="color-picker"></div>
                     <Form.Item name="borderColor" style={{ display: 'none' }}>
                         <Input type="text"/>
                     </Form.Item>
                 </div>
 
-                <div className="pg-build__modal-style-row">
-                    <div><label>Background color</label></div>
+                <div className="pg-build__modal-style-row" style={{padding: '15px'}}>
+                    <div><label>{i18n.trans('background_color','capitalize')}</label></div>
                     <div datatype="backgroundColor" defaultcolor={this.props.blockStyle!.backgroundColor || 'transparent'} className="color-picker" ></div>
                     <Form.Item name="backgroundColor" style={{ display: 'none' }}>
                         <Input type="text"/>

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import { ContentType, BodyType, ColumnType } from '../../types/blockType';
-import { Menu, Dropdown } from 'antd';
-import { PageBuilder } from 'PageBuilder';
+import { ContentType, BodyType, ColumnType, LanguageBlocks } from '../../types/blockType';
+import { Menu, Dropdown, Tooltip } from 'antd';
+import { PageBuilder, LanguagesList } from 'PageBuilder';
 
 // Redux
 
@@ -13,17 +13,19 @@ import {
     moveBlockInside
 } from '../../redux/actions/blockAction';
 import { BlockPosition } from 'utils/utils';
+import i18n from '../../translations/i18n';
 
 const mapStateToProps = (state: any) => ({
     pageBuilder: state.pageBuilder,
-    blocks: state.blocks
+    blocks: state.blocks,
+    locale: state.locale
 });
   
 const mapDispatchToProps = (dispatch: any) => ({
-    removeBlockInside: (blockId: string, colId: string, blockInsideId: string) => dispatch(removeBlockInside(blockId, colId, blockInsideId)),
-    duplicateBlockInside: (blockId: string, colId: string, blockInsideId: string) => dispatch(duplicateBlockInside(blockId, colId, blockInsideId)),
-    addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string) => dispatch(addClassToBlockInside(blockId, colId, blockInsideId, className)),
-    moveBlockInside: (blockId: string, colId: string, blockInsideId: string, position: BlockPosition) => dispatch(moveBlockInside(blockId, colId, blockInsideId, position)),
+    removeBlockInside: (blockId: string, colId: string, blockInsideId: string, locale: string) => dispatch(removeBlockInside(blockId, colId, blockInsideId, locale)),
+    duplicateBlockInside: (blockId: string, colId: string, blockInsideId: string, locale: string) => dispatch(duplicateBlockInside(blockId, colId, blockInsideId, locale)),
+    addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string, locale: string) => dispatch(addClassToBlockInside(blockId, colId, blockInsideId, className, locale)),
+    moveBlockInside: (blockId: string, colId: string, blockInsideId: string, position: BlockPosition, locale: string) => dispatch(moveBlockInside(blockId, colId, blockInsideId, position, locale)),
 });
 
 
@@ -34,19 +36,20 @@ type PropsDropdownMenuClass = {
     pageBuilder: PageBuilder;
     colId: string;
     blockId: string;
-    addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string) => void;
+    locale: string;
+    addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string, locale: string) => void;
     _handleMouseDown: any;
 }
 
 const DropdownMenuClass = (props: PropsDropdownMenuClass) => (
     <Menu>
         <Menu.Item className={props.item.class == 'props.item.class' || !props.item.class ? 'pg-build__ant-menu-item-selected' : ''}>
-            <a onClick={() => props.addClassToBlockInside(props.blockId, props.colId, props.item.id, '')} >No class</a>
+            <a onClick={() => props.addClassToBlockInside(props.blockId, props.colId, props.item.id, '', props.locale)} >{i18n.trans('no_class','capitalize')}</a>
         </Menu.Item>
         {
             props.pageBuilder.__options!.blockClassList && props.pageBuilder.__options!.blockClassList.map((classItem, index)=> classItem.type != 'block' && (
                 <Menu.Item key={index} className={classItem.class == props.item.class ? 'pg-build__ant-menu-item-selected' : ''}>
-                    <a onMouseDown={props._handleMouseDown} onClick={() => props.addClassToBlockInside(props.blockId, props.colId, props.item.id, classItem.class)}>{classItem.label}</a>
+                    <a onMouseDown={props._handleMouseDown} onClick={() => props.addClassToBlockInside(props.blockId, props.colId, props.item.id, classItem.class, props.locale)}>{classItem.label}</a>
                 </Menu.Item>
             ))
         }
@@ -58,15 +61,16 @@ const DropdownMenuClass = (props: PropsDropdownMenuClass) => (
 type Props = {
     colId: string;
     blockId: string;
-    blocks: Array<BodyType>;
+    blocks: LanguageBlocks;
+    locale: string;
     blockInsideRef?: HTMLDivElement | null;
     item: ContentType;
     pageBuilder: PageBuilder;
     _showModalStyle: () => void;
-    removeBlockInside: (blockId: string, colId: string, blockInsideId: string) => void;
-    duplicateBlockInside: (blockId: string, colId: string, blockInsideId: string) => void;
+    removeBlockInside: (blockId: string, colId: string, blockInsideId: string, locale: string) => void;
+    duplicateBlockInside: (blockId: string, colId: string, blockInsideId: string, locale: string) => void;
     addClassToBlockInside: (blockId: string, colId: string, blockInsideId: string, className: string) => void;
-    moveBlockInside: (blockId: string, colId: string, blockInsideId: string, position: BlockPosition) => void;
+    moveBlockInside: (blockId: string, colId: string, blockInsideId: string, position: BlockPosition, locale: string) => void;
     _handleMouseDown: any;
 };
 
@@ -129,28 +133,59 @@ class BlockInsideToolbar extends Component<Props, State> {
     }
 
     render () {
-        const btnMoveableUp = checkBlockInsidePosition(this.props.blocks, this.props.blockId, this.props.colId, this.props.item.id, 'up');
-        const btnMoveableDown = checkBlockInsidePosition(this.props.blocks, this.props.blockId, this.props.colId, this.props.item.id, 'down');
+        const btnMoveableUp = checkBlockInsidePosition(this.props.blocks[this.props.locale], this.props.blockId, this.props.colId, this.props.item.id, 'up');
+        const btnMoveableDown = checkBlockInsidePosition(this.props.blocks[this.props.locale], this.props.blockId, this.props.colId, this.props.item.id, 'down');
+
+        const toolTipPlacement = this.props.pageBuilder.__options?.menuPosition == 'right' ? 'left' : 'right';
 
         return (
             <>
 
-                {typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && <a onMouseDown={this.props._handleMouseDown} className="pg-build__block-inside-tool-move"><i className="mi mi-SIPMove"></i></a>}
-                {typeof this.props.item.design == "undefined" || this.props.item.design.cssCustomizable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props._showModalStyle()}><i className="mi mi-Edit"></i></a>}
+                {typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && (
+                    <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_move','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                        <a onMouseDown={this.props._handleMouseDown} className="pg-build__block-inside-tool-move"><i className="mi mi-SIPMove"></i></a>
+                    </Tooltip>
+                )}
+
+                {typeof this.props.item.design == "undefined" || this.props.item.design.cssCustomizable != false && (
+                    <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_style','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                        <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props._showModalStyle()}><i className="mi mi-Edit"></i></a>
+                    </Tooltip>
+                )}
+
                 {typeof this.props.item.design == "undefined" || this.props.item.design.canAddClass != false &&
-                    <Dropdown getPopupContainer={()=> this.props.blockInsideRef as HTMLElement} overlay={
+                    <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_class','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                        <Dropdown getPopupContainer={()=> this.props.blockInsideRef as HTMLElement} overlay={
 
-                        <DropdownMenuClass _handleMouseDown={this.props._handleMouseDown} addClassToBlockInside={this.props.addClassToBlockInside} item={this.props.item} pageBuilder={this.props.pageBuilder} blockId={this.props.blockId}  colId={this.props.colId}/>
+                            <DropdownMenuClass locale={this.props.locale} _handleMouseDown={this.props._handleMouseDown} addClassToBlockInside={this.props.addClassToBlockInside} item={this.props.item} pageBuilder={this.props.pageBuilder} blockId={this.props.blockId}  colId={this.props.colId}/>
 
-                    } placement="bottomCenter">
-                        <a onMouseDown={this.props._handleMouseDown}><i className="mi mi-AsteriskBadge12"></i></a>
-                    </Dropdown>
+                        } placement="bottomCenter">
+                            <a onMouseDown={this.props._handleMouseDown}><i className="mi mi-AsteriskBadge12"></i></a>
+                        </Dropdown>
+                    </Tooltip>
                 }
-                {typeof this.props.item.design == "undefined" || this.props.item.design.duplicable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.duplicateBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Copy"></i></a>}
-                {typeof this.props.item.design == "undefined" || this.props.item.design.removeable != false && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.removeBlockInside(this.props.blockId, this.props.colId, this.props.item.id)}><i className="mi mi-Delete"></i></a>}
+                {typeof this.props.item.design == "undefined" || this.props.item.design.duplicable != false && (
+                    <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_duplicate','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                        <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.duplicateBlockInside(this.props.blockId, this.props.colId, this.props.item.id, this.props.locale)}><i className="mi mi-Copy"></i></a>
+                    </Tooltip>
+                )}
+                {typeof this.props.item.design == "undefined" || this.props.item.design.removeable != false && (
+                    <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_remove','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                        <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.removeBlockInside(this.props.blockId, this.props.colId, this.props.item.id, this.props.locale)}><i className="mi mi-Delete"></i></a>
+                    </Tooltip>
+                )}
 
-                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && btnMoveableUp) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'up')}><i className="mi mi-Up"></i></a>}
-                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && btnMoveableDown) && <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'down')}><i className="mi mi-Down"></i></a>}
+                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && btnMoveableUp) && (
+                    <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_top','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                        <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'up', this.props.locale)}><i className="mi mi-Up"></i></a>
+                    </Tooltip>
+                )}
+
+                {(typeof this.props.item.design == "undefined" || this.props.item.design.moveable != false && btnMoveableDown) && (
+                    <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_bottom','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                        <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props.moveBlockInside(this.props.blockId, this.props.colId, this.props.item.id, 'down', this.props.locale)}><i className="mi mi-Down"></i></a>
+                    </Tooltip>
+                )}
             </>
         );
     }

@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import blocks from './blockReducer';
 import { toggleMenu, menuItems } from './menuReducer';
-import { pageBuilder, cssViewShow, iframeDocument, iframeWindow } from './pageBuilderReducer';
+import { pageBuilder, cssViewShow, iframeDocument, iframeWindow, locale } from './pageBuilderReducer';
 
 export default combineReducers({
     blocks,
@@ -10,5 +10,6 @@ export default combineReducers({
     pageBuilder,
     cssViewShow,
     iframeDocument,
-    iframeWindow
+    iframeWindow,
+    locale
 });

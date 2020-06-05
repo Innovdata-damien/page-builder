@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import { ReactSortable } from 'react-sortablejs';
-import { BodyType, ColumnType, ContentType } from '../../types/blockType';
+import { BodyType, ColumnType, ContentType, LanguageBlocks } from '../../types/blockType';
 import ModalColumnEditor from '../utility/modal-column-editor';
 import BlockInside from './block-inside';
-import { Menu, Dropdown } from 'antd';
+import { Menu, Dropdown, Tooltip } from 'antd';
 import { connect } from 'react-redux';
 import { toggleMenu } from '../../redux/actions/menuAction';
 import {
-    setBlock,
     removeBlock,
     duplicateBlock,
     updateListBlockInside,
@@ -17,23 +16,24 @@ import {
 import Modal from '../utility/modal-style';
 import { PageBuilder } from 'PageBuilder';
 import { BlockPosition } from '../../utils/utils';
+import i18n from '../../translations/i18n';
 
 
 const mapStateToProps = (state: any) => ({
     blocks: state.blocks,
     cssViewShow: state.cssViewShow,
     iframeDocument: state.iframeDocument,
-    pageBuilder: state.pageBuilder
+    pageBuilder: state.pageBuilder,
+    locale: state.locale
 });
   
 const mapDispatchToProps = (dispatch: any) => ({
-    setBlock: (blocks: Array<BodyType>) => dispatch(setBlock(blocks)),
-    removeBlock: (blockId: string) => dispatch(removeBlock(blockId)),
-    duplicateBlock: (blockId: string) => dispatch(duplicateBlock(blockId)),
-    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => dispatch(updateListBlockInside(blocksInside, blockId, colId)),
-    addClassToBlock: (blockId: string, className: string) => dispatch(addClassToBlock(blockId, className)),
+    removeBlock: (blockId: string, locale: string) => dispatch(removeBlock(blockId, locale)),
+    duplicateBlock: (blockId: string, locale: string) => dispatch(duplicateBlock(blockId, locale)),
+    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string, locale: string) => dispatch(updateListBlockInside(blocksInside, blockId, colId, locale)),
+    addClassToBlock: (blockId: string, className: string, locale: string) => dispatch(addClassToBlock(blockId, className, locale)),
     handleToggleMenu: (type: boolean) => dispatch(toggleMenu(type)),
-    moveBlock: (blockId: string, position: BlockPosition) => dispatch(moveBlock(blockId, position))
+    moveBlock: (blockId: string, position: BlockPosition, locale: string) => dispatch(moveBlock(blockId, position, locale))
 });
 
 //Dropdown menu class
@@ -41,18 +41,19 @@ const mapDispatchToProps = (dispatch: any) => ({
 type PropsDropdownMenuClass = {
     item: BodyType;
     pageBuilder: PageBuilder;
-    addClassToBlock: (blockId: string, className: string) => void;
+    locale: string;
+    addClassToBlock: (blockId: string, className: string,locale: string) => void;
 }
 
 const DropdownMenuClass = (props: PropsDropdownMenuClass) => (
     <Menu>
         <Menu.Item className={props.item.class == 'props.item.class' || !props.item.class ? 'pg-build__ant-menu-item-selected' : ''}>
-            <a onClick={() => props.addClassToBlock(props.item.id, '')} >No class</a>
+            <a onClick={() => props.addClassToBlock(props.item.id, '', props.locale)} >{i18n.trans('no_class','capitalize')}</a>
         </Menu.Item>
         {
             props.pageBuilder.__options!.blockClassList && props.pageBuilder.__options!.blockClassList.map((classItem, index)=> classItem.type != 'block-inside' && (
                 <Menu.Item key={index} className={classItem.class == props.item.class ? 'pg-build__ant-menu-item-selected' : ''}>
-                    <a onClick={() => props.addClassToBlock(props.item.id, classItem.class)}>{classItem.label}</a>
+                    <a onClick={() => props.addClassToBlock(props.item.id, classItem.class, props.locale)}>{classItem.label}</a>
                 </Menu.Item>
             ))
         }
@@ -62,16 +63,17 @@ const DropdownMenuClass = (props: PropsDropdownMenuClass) => (
 //Block toolbar
 
 type PropsBlockToolbar = {
-    blocks: Array<BodyType>;
+    blocks: LanguageBlocks;
+    locale: string;
     item: BodyType;
     blockRef?: HTMLDivElement | null;
     pageBuilder: PageBuilder;
-    duplicateBlock: (blockId: string) => void;
-    removeBlock: (blockId: string) => void;
+    duplicateBlock: (blockId: string, locale: string) => void;
+    removeBlock: (blockId: string, locale: string) => void;
     addClassToBlock: (blockId: string, className: string) => void;
     _showModalStyle: () => void;
     _setVisibilityOfModalColumnEditor: (type: boolean) => void;
-    moveBlock: (blockId: string, position: BlockPosition) => void;
+    moveBlock: (blockId: string, position: BlockPosition, locale: string) => void;
 }
 
 const getBlockIndex = (blocks: Array<BodyType>, blockId: string): number => {
@@ -79,25 +81,59 @@ const getBlockIndex = (blocks: Array<BodyType>, blockId: string): number => {
 };
 
 const BlockToolbar = (props: PropsBlockToolbar) => {
-
+    
     return  <div className="pg-build__block-tool">
                 
                 
-                {typeof props.item.design == "undefined" || props.item.design.moveable != false && <a className="pg-build__block-tool-move"><i className="mi mi-SIPMove"></i></a>}
-                {typeof props.item.design == "undefined" || props.item.design.cssCustomizable != false && <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>}
-                {typeof props.item.design == "undefined" || props.item.design.editable != false &&  <a onClick={()=>props._setVisibilityOfModalColumnEditor(true)}><i className="mi mi-AspectRatio"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.moveable != false && (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_move','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <a className="pg-build__block-tool-move"><i className="mi mi-SIPMove"></i></a>
+                    </Tooltip>
+                )}
 
-                {typeof props.item.design == "undefined" || props.item.design.canAddClass != false &&
-                    <Dropdown getPopupContainer={()=> props.blockRef as HTMLElement} overlay={<DropdownMenuClass addClassToBlock={props.addClassToBlock} item={props.item} pageBuilder={props.pageBuilder}/>} placement="bottomCenter">
-                        <a><i className="mi mi-AsteriskBadge12"></i></a>
-                    </Dropdown>
-                }
+                {typeof props.item.design == "undefined" || props.item.design.cssCustomizable != false && (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_style','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <a onClick={() => props._showModalStyle()}><i className="mi mi-Edit"></i></a>
+                    </Tooltip>
+                )}
 
-                {typeof props.item.design == "undefined" || props.item.design.duplicable != false && <a onClick={() => props.duplicateBlock(props.item.id)}><i className="mi mi-Copy"></i></a>}
-                {typeof props.item.design == "undefined" || props.item.design.removeable != false && <a onClick={() => props.removeBlock(props.item.id)}><i className="mi mi-Delete"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.editable != false &&  (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_column','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <a onClick={()=>props._setVisibilityOfModalColumnEditor(true)}><i className="mi mi-AspectRatio"></i></a>
+                    </Tooltip>
+                )}
 
-                {(typeof props.item.design == "undefined" || props.item.design.moveable != false && getBlockIndex(props.blocks, props.item.id) != 0) && <a onClick={() => props.moveBlock(props.item.id, 'up')}><i className="mi mi-Up"></i></a>}
-                {(typeof props.item.design == "undefined" || props.item.design.moveable != false && getBlockIndex(props.blocks, props.item.id) != (props.blocks.length - 1)) && <a onClick={() => props.moveBlock(props.item.id, 'down')}><i className="mi mi-Down"></i></a>}
+                {typeof props.item.design == "undefined" || props.item.design.canAddClass != false && (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_class','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <Dropdown getPopupContainer={()=> props.blockRef as HTMLElement} overlay={<DropdownMenuClass locale={props.locale} addClassToBlock={props.addClassToBlock} item={props.item} pageBuilder={props.pageBuilder}/>} placement="bottomCenter">
+                            <a><i className="mi mi-AsteriskBadge12"></i></a>
+                        </Dropdown>
+                    </Tooltip>
+                )}
+
+                {typeof props.item.design == "undefined" || props.item.design.duplicable != false && (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_duplicate','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <a onClick={() => props.duplicateBlock(props.item.id, props.locale)}><i className="mi mi-Copy"></i></a>
+                    </Tooltip>
+                )}
+
+                {typeof props.item.design == "undefined" || props.item.design.removeable != false && (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_remove','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <a onClick={() => props.removeBlock(props.item.id, props.locale)}><i className="mi mi-Delete"></i></a>
+                    </Tooltip>
+                )}
+
+                {(typeof props.item.design == "undefined" || props.item.design.moveable != false && getBlockIndex(props.blocks[props.locale], props.item.id) != 0) && (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_top','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <a onClick={() => props.moveBlock(props.item.id, 'up', props.locale)}><i className="mi mi-Up"></i></a>
+                    </Tooltip>
+                )}
+
+                {(typeof props.item.design == "undefined" || props.item.design.moveable != false && getBlockIndex(props.blocks[props.locale], props.item.id) != (props.blocks[props.locale].length - 1)) && (
+                    <Tooltip placement="top" title={i18n.trans('tooltip_bottom','capitalize')} getPopupContainer={()=> props.blockRef as HTMLElement}>
+                        <a onClick={() => props.moveBlock(props.item.id, 'down', props.locale)}><i className="mi mi-Down"></i></a>
+                    </Tooltip>
+                )}
 
             </div>;
 };
@@ -105,7 +141,8 @@ const BlockToolbar = (props: PropsBlockToolbar) => {
 // Block
 
 type Props = {
-    blocks: Array<BodyType>;
+    locale: string;
+    blocks: LanguageBlocks;
     cssViewShow: boolean;
     blockId: string;
     iframeDocument: Document;
@@ -113,7 +150,7 @@ type Props = {
     item: BodyType;
     duplicateBlock: (blockId: string) => void;
     removeBlock: (blockId: string) => void;
-    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string) => void;
+    updateListBlockInside: (blocksInside: Array<ContentType>, blockId: string, colId: string, locale: string) => void;
     addClassToBlock: (blockId: string, className: string) => void;
     handleToggleMenu: (type: boolean) => void;
     moveBlock: (blockId: string, position: BlockPosition) => void;
@@ -179,7 +216,7 @@ class Block extends Component<Props, State> {
         return (
             <div ref={elem => this.blockRef = elem} onFocus={this._handleInside} onBlur={()=>this.setState({ blockClickedOutside: true })} onClick={this._handleInside} data-draggable-id={this.props.item.id} className={'pg-build__block ' + (!this.state.blockClickedOutside ? 'pg-build__block-active' : '') }>
                 <div className={this.props.cssViewShow ? this.props.item.class : ''} style={this.props.cssViewShow ? this.props.item.style || {} : {}}>
-                    <BlockToolbar blocks={this.props.blocks} pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock} moveBlock={this.props.moveBlock}/>
+                    <BlockToolbar locale={this.props.locale} blocks={this.props.blocks} pageBuilder={this.props.pageBuilder} blockRef={this.blockRef} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} _showModalStyle={this._showModalStyle} item={this.props.item} removeBlock={this.props.removeBlock} duplicateBlock={this.props.duplicateBlock} addClassToBlock={this.props.addClassToBlock} moveBlock={this.props.moveBlock}/>
                     
                     <Modal onRef={ref => (this.modalStyle = ref)} blockId={this.props.item.id} />
                     <ModalColumnEditor blockId={this.props.item.id} block={this.props.item} _setVisibilityOfModalColumnEditor={this._setVisibilityOfModalColumnEditor} visible={this.state.modalColumnEditorVisible} blockRef={this.blockRef}/>
@@ -193,6 +230,7 @@ class Block extends Component<Props, State> {
                                         newState,
                                         this.props.item.id,
                                         column.id,
+                                        this.props.locale
                                     )} group="COLUMN" animation={150}>
                                     {column.contents.map((content: any) => {
                                         

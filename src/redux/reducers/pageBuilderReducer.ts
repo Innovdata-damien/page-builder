@@ -39,6 +39,15 @@ const iframeWindow = (state: boolean | null = false, action: any) => {
             return state;
     }
 }
+const locale = (state: string | null = null, action: any) => {
+        switch (action.type) {
+
+            case 'SET_LOCALE':
+                return action.locale;
+            default:
+                return state
+        }
+}
   
-export { pageBuilder, cssViewShow, iframeDocument, iframeWindow };
+export { pageBuilder, cssViewShow, iframeDocument, iframeWindow, locale };
   

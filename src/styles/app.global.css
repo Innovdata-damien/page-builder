@@ -41,16 +41,26 @@
 }
 
 .pg-build .pg-build__menu .pg-build__menu-title{
+    cursor: pointer;
     transition: .3s background-color;
     padding: 15px 0;
     width: 100%;
+    text-align: center;
+    background-color: rgba(0,0,0,0.05);
+    margin-bottom: 5px;
+}
+
+.pg-build .pg-build__menu .pg-build__menu-info{
+    display: flex;
+    padding: 15px;
+    font-size: 12px;
     text-align: center;
 }
 
 .pg-build .pg-build__menu .pg-build__menu-title.pg-build__menu-title-collapse__open,
 .pg-build .pg-build__menu .pg-build__menu-title.pg-build__menu-title-collapse__open:hover{
     user-select: none;
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0,0,0,0.20);
 }
 
 .pg-build .pg-build__menu .pg-build__menu-list{
@@ -65,6 +75,7 @@
 }
 
 .pg-build .pg-build__menu .pg-build__menu-list .pg-build__menu-item{
+    text-align: center;
     cursor: move;
     user-select: none;
     background-color: #fff;
@@ -125,6 +136,10 @@
     transition:height .28s cubic-bezier(.4,0,.2,1);
 }
 
+.pg-build .pg-build__menu .pg-build__menu-language{
+    padding: 15px;
+}
+
 /* --- BODY --- */
 
 .pg-build .pg-build__body{
@@ -133,6 +148,11 @@
 
 .pg-build .pg-build__body .pg-build__body-child{
     min-height: calc(100vh - 18px - 80px);
+}
+
+.pg-build .pg-build__body .pg-build__body-placeholder{
+    color: rgba(0, 0, 0, .5);
+    text-align: center;
 }
 
 /* --- BLOCK --- */
@@ -476,6 +496,16 @@
     width: 320px;
     position: fixed;
     height: 400px;
+}
+
+.pg-build__modal-style .pg-build__modal-style-description{
+    display: flex;
+    font-size: 11px;
+    padding: 10px;
+}
+
+.pg-build__modal-style .pg-build__modal-style-description i{
+    padding-right: 10px;
 }
 
 .pg-build__modal-style.pg-build__modal-style-left{
@@ -902,4 +932,13 @@
 .pg-build__columnEditor .pg-build__columnEditor-title span{
     padding-left: 15px;
     font-size: 20px;
+}
+
+.pg-build__columnEditor .pg-build__columnEditor-description{
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.pg-build__columnEditor .pg-build__columnEditor-description i {
+    padding-right: 15px;
 }

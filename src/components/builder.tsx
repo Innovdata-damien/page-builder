@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
 import Menu from './menu/menu';
 import Body from './body';
-import {PageBuilder} from '../PageBuilder';
+import {PageBuilder, LanguagesList} from '../PageBuilder';
 import { BodyType, MenuType } from '../types/blockType';
 import uuid from 'uuid/v4';
+import i18n from '../translations/i18n';
+
 // Redux
 import { connect } from 'react-redux';
 import { setBlock } from '../redux/actions/blockAction';
 import { setMenuItem } from '../redux/actions/menuAction';
-import { setPageBuilder, setIframeDocument, setIframeWindow } from '../redux/actions/pageBuilderAction';
+import { setPageBuilder, setIframeDocument, setIframeWindow, setLocale } from '../redux/actions/pageBuilderAction';
   
 const mapDispatchToProps = (dispatch: any) => ({
-    setBlock: (blocks: Array<BodyType>) => dispatch(setBlock(blocks)),
+    setBlock: (blocks: Array<BodyType>, languageList: LanguagesList[]) => dispatch(setBlock(blocks, languageList)),
     setMenuItem: (menuItems: Array<MenuType>) => dispatch(setMenuItem(menuItems)),
     setPageBuilder: (pageBuilder: PageBuilder) => dispatch(setPageBuilder(pageBuilder)),
     setIframeDocument: (iframeDocument: Document) => dispatch(setIframeDocument(iframeDocument)),
     setIframeWindow: (iframeWindow: Window) => dispatch(setIframeWindow(iframeWindow)),
+    setLocale: (locale: string) => dispatch(setLocale(locale)),
 });
 
 // Type for blocks
@@ -24,12 +27,15 @@ type Props = {
     pageBuilder: PageBuilder;
     iframeDocument: Document;
     iframeWindow: Window;
-    setBlock: (blocks: Array<BodyType>) => void;
+    setBlock: (blocks: Array<BodyType>, languageList: LanguagesList[]) => void;
     setMenuItem: (menuItems: Array<MenuType>) => void;
     setPageBuilder: (pageBuilder: PageBuilder) => void;
     setIframeDocument: (iframeDocument: Document) => void;
     setIframeWindow: (iframeWindow: Window) => void;
+    setLocale: (locale: string) => void;
 };
+
+// BUILDER
 
 class Builder extends Component <Props>{
     constructor (props: Props) {
@@ -66,7 +72,8 @@ class Builder extends Component <Props>{
             
         });
 
-        this.props.setBlock(this.props.pageBuilder.__options!.blocks);
+        this.props.setLocale(this.props.pageBuilder.__options!.languagesList[0]!.code);
+        this.props.setBlock(this.props.pageBuilder.__options!.blocks, this.props.pageBuilder.__options!.languagesList);
         this.props.setMenuItem(this.props.pageBuilder.__options!.menuItems);
         this.props.setPageBuilder(this.props.pageBuilder);
         this.props.setIframeDocument(this.props.iframeDocument);

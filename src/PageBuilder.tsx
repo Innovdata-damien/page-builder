@@ -3,12 +3,13 @@ import './styles/pagebuilder.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Root from './components/root';
-import { BodyType, MenuType } from './types/blockType';
+import { BodyType, MenuType, LanguageBlocks } from './types/blockType';
 import { defaultBlocks, defaultMenuItems } from './utils/default-data';
 import { getHtmlFromBlockState, getPageBuilderInstance, PageBuilderInstance } from './utils/utils';
 import uuid from 'uuid/v4';
 //import store from './redux/store';
 import js_beautify from 'js-beautify';
+import i18n from './translations/i18n';
 
 //redux
 
@@ -197,26 +198,34 @@ export class PageBuilder{
         
     }
 
-    public getHtml(): string {
+    public getHtml(): {} {
         const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
 
-        if(pagebuilderInstance)
-            if(this.__options?.container && this.__initialized)
-                return js_beautify.html(getHtmlFromBlockState(pagebuilderInstance.store.getState().blocks));
+        if(pagebuilderInstance){
+            if(this.__options?.container && this.__initialized){
+                const htmlRender: any = {};
+                const blocks = pagebuilderInstance.store.getState().blocks;
+                Object.keys(pagebuilderInstance.store.getState().blocks).forEach((locale: string)=> {
+                    htmlRender[locale] = js_beautify.html(getHtmlFromBlockState(blocks[locale]));
+                })
 
-        
-        return '';
+                return htmlRender;
+            }
+        }
+
+        return {};
     }
 
 
-    public getJson(): Array<BodyType> {
+    public getJson(): LanguageBlocks {
 
         const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
+
         if(pagebuilderInstance)
             if(this.__options?.container && this.__initialized)
                 return pagebuilderInstance.store.getState().blocks;
 
-        return [];
+        return {};
     }
 
     //Build PageBuilder
@@ -225,6 +234,8 @@ export class PageBuilder{
         if(this.__options?.container && !this.__initialized){
 
             this.__initialized = true;
+            i18n.setLanguage((this.__options?.language as string));
+
             ReactDOM.render(
                 <Root pageBuilder={this}/>
                 ,this.__options.container

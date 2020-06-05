@@ -6,6 +6,10 @@ declare module '*.png' {
     export = value;
 }
 
+declare module '*.json' {
+    const value: any;
+    export = value;
+}
 
 declare module 'react' {
     interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
