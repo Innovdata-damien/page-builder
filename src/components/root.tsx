@@ -49,6 +49,11 @@ export default class Root extends Component <Props>{
                 {
                     // Callback is invoked with iframe's window and document instances
                     (item) => {
+
+                        item.document.body.ondrop = function (event: any) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
                         
                         //item.window.tinymce = tinymce;
 

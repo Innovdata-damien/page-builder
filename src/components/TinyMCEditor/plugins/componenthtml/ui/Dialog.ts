@@ -1,6 +1,7 @@
 import EditorTinymce from 'tinymce';
 import { Options, ComponentsList } from '../../../../../PageBuilder';
 import getTemplate from '../../../templates';
+import i18n from '../../../../../translations/i18n';
 
 const getIframe = (editor: EditorTinymce) => {
     let iframe: any = editor.contentWindow.document.querySelector('.tox-dialog__body iframe');
@@ -14,14 +15,14 @@ const getIframe = (editor: EditorTinymce) => {
 const onChange = (editor: EditorTinymce, options: Options) => (dialogApi : any, details: any) => {
 
     if(details.name == 'component')
-        dialogApi.block('Loading...'),
+        dialogApi.block(`${i18n.trans('loading')}...`),
         updateDialog(dialogApi, dialogApi.getData().component, editor, options);
 
     else if(details.name == 'number')
         dialogApi.setData({ preview: componentData(dialogApi.getData().component, options, dialogApi.getData())!.content});
 
     else if(details.name == 'nbrframe')
-        dialogApi.block('Loading...'),
+        dialogApi.block(`${i18n.trans('loading')}...`),
         updateDialog(dialogApi, dialogApi.getData().component, editor, options, dialogApi.getData());
 };
 
@@ -47,13 +48,13 @@ const onAction = (editor: EditorTinymce, options: Options) => (api: any, details
        
     }
     else if (details.name == 'refresh')
-        api.block('Loading...'),
+        api.block(`${i18n.trans('loading')}...`),
         updateDialog(api, api.getData().component, editor, options, api.getData());
 }
 
 // Build dialog spec
 const dialogSpec = (bodyItems: any, initialData: any, editor: EditorTinymce, options: Options) => ({
-    title: 'Insert component',
+    title: i18n.trans('insert_component','capitalize'),
     size: 'large',
     body: {
         type: 'panel',
@@ -63,11 +64,11 @@ const dialogSpec = (bodyItems: any, initialData: any, editor: EditorTinymce, opt
     buttons: [
         {
             type: 'cancel',
-            text: 'Close'
+            text: i18n.trans('close','capitalize')
         },
         {
             type: 'submit',
-            text: 'Save',
+            text: i18n.trans('save','capitalize'),
             primary: true
         }
     ],
@@ -91,7 +92,7 @@ const updateDialog = (dialogApi: any, type: string, editor: EditorTinymce, optio
 
     const bodyItems = [
         {
-            label: 'Components',
+            label: i18n.trans('component','capitalize'),
             type: 'selectbox',
             name: 'component',
             items: selectComponentItems
@@ -105,7 +106,7 @@ const updateDialog = (dialogApi: any, type: string, editor: EditorTinymce, optio
         {
             type: 'iframe',
             name: 'preview',
-            label: 'Preview',
+            label: i18n.trans('preview','capitalize'),
             sandboxed: true
         }
     ];
@@ -121,14 +122,14 @@ const updateDialog = (dialogApi: any, type: string, editor: EditorTinymce, optio
     dialogApi.redial(dialogSpec(bodyItems, initialData, editor, options));
     dialogApi.focus('component');
 
-    getIframe(editor).iframe.onload = function() {
+    // getIframe(editor).iframe.onload = function() {
 
-        console.log(getIframe(editor).iframeDocument.querySelectorAll('.glide')[0])
-       //getIframe(editor).iframeDocument.monacoEditor.setValue(js_beautify.html(editor.getContent()));
+    //     console.log(getIframe(editor).iframeDocument.querySelectorAll('.glide')[0])
+    //    //getIframe(editor).iframeDocument.monacoEditor.setValue(js_beautify.html(editor.getContent()));
 
-       //new Glide(getIframe(editor).iframeDocument.querySelectorAll('.glide')[0]).mount();
-       // new Glide();
-    };
+    //    //new Glide(getIframe(editor).iframeDocument.querySelectorAll('.glide')[0]).mount();
+    //    // new Glide();
+    // };
 
 };
 
@@ -161,7 +162,7 @@ const componentData = (type: string, options: Options, values: any = {}) => {
 const open = function (editor: EditorTinymce, options: Options) {
 
     const dialogApi: any = editor.windowManager.open(dialogSpec([], { template: '', preview: '' }, editor, options));
-    dialogApi.block('Loading...');
+    dialogApi.block(`${i18n.trans('loading')}...`);
     updateDialog(dialogApi, options.componentsList[0].type, editor, options);
 
 };

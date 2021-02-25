@@ -1,13 +1,24 @@
-import { BodyType } from '../../types/blockType';
+import { BodyType, LanguageBlocks } from '../../types/blockType';
+import { LanguagesList } from 'PageBuilder';
 
-const blocks = (state: Array<BodyType> = [], action: any) => {
+const blocks = (state: LanguageBlocks = {}, action: any) => {
         switch (action.type) {
 
             case 'SET_BLOCK':
+                action.languageList.forEach((langue: LanguagesList)=>{
+                    if(typeof action.blocks[langue.code] == 'undefined') action.blocks[langue.code] = [];
+                })
                 return action.blocks;
 
+            case 'SET_BLOCK_BY_LANGUAGE':
+                const newState = {...state};
+                newState[action.locale] = action.blocks;
+                return newState;
+
             case 'REMOVE_BLOCK':
-                return state.filter((_el: any, key: number) => key != state.findIndex((item: BodyType) => item.id === action.blockId));
+                const newStateData = {...state};
+                newStateData[action.locale] = state[action.locale].filter((_el: any, key: number) => key != state[action.locale].findIndex((item: BodyType) => item.id === action.blockId))
+                return newStateData;
 
             case 'DUPLICATE_BLOCK':
                 return action.payload(state, action);

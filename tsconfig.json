@@ -16,6 +16,7 @@
         "strict": true,
         // Import non-ES modules as default imports.
         "esModuleInterop": true,
+        "resolveJsonModule": true,
         // use typescript to transpile jsx to js
         "jsx": "react",
         "baseUrl": "./src",

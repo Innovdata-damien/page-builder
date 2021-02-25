@@ -26,3 +26,10 @@ export const setIframeWindow = (iframeWindow: Window) => ({
     type: 'SET_IFRAME_WINDOW',
     iframeWindow
 });
+
+// Set current locale
+
+export const setLocale = (locale: string) => ({
+    type: 'SET_LOCALE',
+    locale
+});

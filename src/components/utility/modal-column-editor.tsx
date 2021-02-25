@@ -1,29 +1,29 @@
 import React, {Component} from 'react';
 import { Modal, InputNumber, Card } from 'antd';
-import { BodyType } from 'types/blockType';
+import { BodyType, LanguageBlocks } from 'types/blockType';
 import swal from 'sweetalert';
 import uuid from 'uuid/v4';
 import { connect } from 'react-redux';
-import { updateListBody } from '../../redux/actions/blockAction';
 import { BlockPosition, moveToPosition } from '../../utils/utils';
+import i18n from '../../translations/i18n';
 
 const mapStateToProps = (state: any) => ({
-    blocks: state.blocks
+    blocks: state.blocks,
+    locale: state.locale
 });
   
-const mapDispatchToProps = (dispatch: any) => ({
-    updateListBody: (blocks: Array<BodyType>) => dispatch(updateListBody(blocks))
+const mapDispatchToProps = () => ({
 });
 
 
 type Props = {
-    blocks: Array<BodyType>;
+    blocks: LanguageBlocks;
     block: BodyType;
     blockId: string;
     blockRef?: HTMLDivElement | null;
     visible: boolean;
+    locale: string;
     _setVisibilityOfModalColumnEditor: (type: boolean) => void;
-    updateListBody: (blocks: Array<BodyType>) => void;
 }
 
 
@@ -34,25 +34,8 @@ type State = {
     block: BodyType;
 }
 
-const columnEditor: Array<{ iconClass: string; title: string; device: Device; }> = [
-    {
-        iconClass: 'mi mi-TVMonitor',
-        title: 'PC',
-        device: 'pc',
-    },
-    {
-        iconClass: 'mi mi-Tablet',
-        title: 'Tablet',
-        device: 'tablet',
-    },
-    {
-        iconClass: 'mi mi-CellPhone',
-        title: 'Mobile',
-        device: 'mobile',
-    }
-];
-
 class ModalColumnEditor extends Component<Props, State> {
+    columnEditor: Array<{ iconClass: string; title: string; device: Device; }>;
 
     constructor(props: Props){
         super(props)
@@ -60,6 +43,24 @@ class ModalColumnEditor extends Component<Props, State> {
         this.state = {
             block: JSON.parse(JSON.stringify(props.block))
         }
+
+        this.columnEditor = [
+            {
+                iconClass: 'mi mi-TVMonitor',
+                title: i18n.trans('computer'),
+                device: 'pc',
+            },
+            {
+                iconClass: 'mi mi-Tablet',
+                title: i18n.trans('tablet'),
+                device: 'tablet',
+            },
+            {
+                iconClass: 'mi mi-CellPhone',
+                title: i18n.trans('mobile'),
+                device: 'mobile',
+            }
+        ];
     }
 
     handleAddColumn = () => {
@@ -104,10 +105,10 @@ class ModalColumnEditor extends Component<Props, State> {
         if(this.state.block.columns.length > 1){
 
             if(this.state.block.columns[colIndex].contents.length > 0)
-                swal('Are you sure to delete a column with contents ?', {
+                swal(i18n.trans('msg_delete_column_with_contents'), {
                     icon: 'error',
                     closeOnClickOutside: false,
-                    buttons: ['Cancel', 'Yes']
+                    buttons: [i18n.trans('cancel','capitalize'), i18n.trans('yes','capitalize')]
                 }).then((value) => {
                     if(value) this.handleRemoveColumn(colIndex);
                 });
@@ -115,7 +116,7 @@ class ModalColumnEditor extends Component<Props, State> {
                 this.handleRemoveColumn(colIndex);
 
         }else
-            swal('You cannot delete a column in a container with only one column.', {
+            swal(i18n.trans('msg_cannot_delete_column_where_only_one'), {
                 icon: 'error',
                 closeOnClickOutside: false
             });
@@ -155,9 +156,9 @@ class ModalColumnEditor extends Component<Props, State> {
     }
 
     handleModalSubmit = () =>{
-        const newState: Array<BodyType> = [...this.props.blocks];
+        const newState: LanguageBlocks = {...this.props.blocks};
 
-        newState.find((item)=>{
+        newState[this.props.locale].find((item)=>{
             if(item.id == this.props.blockId){
                 item.columns = this.state.block.columns;
             }
@@ -172,7 +173,7 @@ class ModalColumnEditor extends Component<Props, State> {
 
             <Modal
                 wrapClassName="pg-build__columnEditor"
-                title="Column editor"
+                title={i18n.trans('column_editor','capitalize')}
                 visible={this.props.visible}
                 getContainer={()=>(this.props.blockRef as HTMLElement)}
                 onCancel={()=>this.props._setVisibilityOfModalColumnEditor(false)}
@@ -180,8 +181,8 @@ class ModalColumnEditor extends Component<Props, State> {
                 okText="Save change"
                 width={1000}
             >
-
-                {columnEditor.map((item, index)=>(
+                <div className="pg-build__columnEditor-description"><i className="mi mi-Info"></i>{i18n.trans('msg_column_editor')}</div>
+                {this.columnEditor.map((item, index)=>(
 
                     <Card key={index} headStyle={{background: '#f2f2f2'}} title={
                         <div className="pg-build__columnEditor-title">

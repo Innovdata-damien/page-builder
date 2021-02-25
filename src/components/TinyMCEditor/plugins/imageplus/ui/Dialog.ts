@@ -1,6 +1,7 @@
 
 import EditorTinymce from 'tinymce';
 import { Options } from '../../../../../PageBuilder';
+import i18n from '../../../../../translations/i18n';
 
 //Action
 
@@ -40,7 +41,7 @@ const toImageDom = (data: any) => (
 // Dialog spec
 
 const dialogSpec = (editor: EditorTinymce, initialData = {}, options: Options) => ({
-    title: 'Insert/Edit Image',
+    title: i18n.trans('insert_edit_img','capitalize'),
     initialData: initialData,
     body: {
 
@@ -58,7 +59,7 @@ const dialogSpec = (editor: EditorTinymce, initialData = {}, options: Options) =
                     {
                         type: 'button',
                         name: 'button_docmanager',
-                        text: 'Doc manager',
+                        text: i18n.trans('doc_manager','capitalize'),
                         icon: 'gallery',
                         primary: true
                     }
@@ -67,7 +68,7 @@ const dialogSpec = (editor: EditorTinymce, initialData = {}, options: Options) =
             {
                 name: 'alt',
                 type: 'input',
-                label: 'Alternative description'
+                label: i18n.trans('alt_description','capitalize'),
             },
             {
                 name: 'dimensions',
@@ -83,11 +84,11 @@ const dialogSpec = (editor: EditorTinymce, initialData = {}, options: Options) =
                         value: 'pg-build__img'
                     },
                     {
-                        text: 'Full width',
+                        text: i18n.trans('full_width','capitalize'),
                         value: 'pg-build__img-full-width'
                     },
                     {
-                        text: 'Rounded',
+                        text: i18n.trans('rounded','capitalize'),
                         value: 'pg-build__img-rounded'
                     }
                 ]

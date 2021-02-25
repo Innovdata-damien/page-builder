@@ -29,16 +29,16 @@
         var pageBuilder = new PageBuilder({
             container: document.getElementById('container'),
             menuPosition: 'right',
-            language: 'en',
-            stylesUrl: 'http://virtus:8888/styles/css/pagebuilder-custom.css',
+            language: (navigator.language || navigator.userLanguage).split('-')[0],
+            stylesUrl: 'https://virtus-expertise.innov-data.com/styles/css/default.css | https://virtus-expertise.innov-data.com/styles/css/pagebuilder-custom.css',
             languagesList: [
-                {
-                    code: 'en',
-                    name: 'English'
-                },
                 {
                     code: 'fr',
                     name: 'Français'
+                },
+                {
+                    code: 'en',
+                    name: 'English'
                 }
             ],
             translationVars: ['hello','test','by'],

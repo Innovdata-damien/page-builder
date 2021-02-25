@@ -5,7 +5,7 @@ const path = require('path');
 const { TypedCssModulesPlugin } = require('typed-css-modules-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const JavaScriptObfuscator = require('webpack-obfuscator');
+//const JavaScriptObfuscator = require('webpack-obfuscator');
 
 const BUILD = process.env.BUILD;
 const banner = `${packageJson.prodName} v.${packageJson.version}`;
@@ -183,9 +183,9 @@ module.exports = (env, argv) => {
             new TypedCssModulesPlugin({
                 globPattern: 'src/**/*.css',
             }),
-            new JavaScriptObfuscator ({
-                rotateUnicodeArray: true
-            })
+            // new JavaScriptObfuscator ({
+            //     rotateUnicodeArray: true
+            // })
         ],
         optimization: {
             minimizer: [new OptimizeCSSAssetsPlugin({})]

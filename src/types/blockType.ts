@@ -1,5 +1,9 @@
 import * as CSS from 'csstype';
 
+export interface LanguageBlocks {
+    [index: string]: BodyType[]
+}
+
 export interface DesignType  {
     type: 'column' | 'html' | 'card' | 'breadcrumb' | 'tab';
     preview: string;
