@@ -44,7 +44,7 @@ export default class Root extends Component <Props>{
             </html>`;
 
         return (
-            <Frame initialContent={initialContent} width="1200" height="1200">
+            <Frame contentDidMount={() => this.props.pageBuilder!.__options!.onReady(this.props.pageBuilder) } initialContent={initialContent} width="1200" height="1200">
                 <FrameContextConsumer>
                 {
                     // Callback is invoked with iframe's window and document instances

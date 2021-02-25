@@ -83,6 +83,11 @@ export interface Options {
      * Translation vars list
     */
     translationVars?: Array<string>;
+
+    /**
+     * Call when Page builder is loading
+    */
+    onReady: (pageBuilder: PageBuilder) => void;
 }
 
 export interface ComponentsList {
@@ -191,6 +196,8 @@ export class PageBuilder{
                 reject(null);
             },
             addTranslationVarCallback: function(_data: any) {
+            },
+            onReady: function(_pageBuilder: PageBuilder) {
             },
         }, options);
 
