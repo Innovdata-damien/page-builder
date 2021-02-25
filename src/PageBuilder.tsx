@@ -88,6 +88,11 @@ export interface Options {
      * Call when Page builder is loading
     */
     onReady: (pageBuilder: PageBuilder) => void;
+
+    /**
+     * Translation vars list
+    */
+    linkUrlList: Array<LinkUrlList>;
 }
 
 export interface ComponentsList {
@@ -101,6 +106,11 @@ export interface ComponentsList {
 export interface LanguagesList {
     code: string;
     name: string;
+}
+
+export interface LinkUrlList {
+    value: string;
+    text: string;
 }
 
 export interface BlockClassList {
@@ -140,6 +150,7 @@ export class PageBuilder{
             blocks: defaultBlocks,
             menuItems: defaultMenuItems,
             languagesList:[{ code: 'en', name: 'English' }],
+            linkUrlList: [],
             componentsList: [
                 {
                     type: 'card',
@@ -201,7 +212,6 @@ export class PageBuilder{
             },
         }, options);
 
-        
     }
 
     public getHtml(): string {

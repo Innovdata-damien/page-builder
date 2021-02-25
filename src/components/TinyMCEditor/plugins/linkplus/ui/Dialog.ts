@@ -2,14 +2,36 @@ import EditorTinymce from 'tinymce';
 import { Options } from '../../../../../PageBuilder';
 
 //Change
-const onChange = (api: any, details: any) => {
-
+const onChange = (options: Options) => (api: any, details: any) => {
     const data = api.getData();
-    if(details.name == 'url' && (data.text == '' || data.url.includes(data.text))){
-        data.text = data.url;
+
+    if(details.name == 'url' && options.linkUrlList.length > 0){
+
+        var checkUrlExistInSelector = options.linkUrlList.filter((link) => link.value == data.url);
+        
+        if(checkUrlExistInSelector?.length == 0){
+            data.url_select = '';
+        }else{
+            data.url_select = data.url;
+        }
+
         api.setData(data);
     }
-    
+
+    if(details.name == 'url' && (data.text == '' || data.url.includes(data.text))){
+
+        data.text = data.url;
+
+        api.setData(data);
+
+    }else if(details.name == 'url_select'){
+
+        data.url = data.url_select;
+        if(data.text == '' || data.url_select.includes(data.text)){
+            data.text = data.url_select;
+        }
+        api.setData(data);
+    }
 }
 
 //Submit
@@ -61,7 +83,7 @@ const onSubmit = (editor: EditorTinymce) => (api: any) => {
 
 // Dialog spec
 
-const dialogSpec = (editor: EditorTinymce, initialData = {}) => ({
+const dialogSpec = (editor: EditorTinymce, initialData = {}, options: Options) => ({
     title: 'Insert/Edit Link',
     initialData: initialData,
     body: {
@@ -70,8 +92,16 @@ const dialogSpec = (editor: EditorTinymce, initialData = {}) => ({
             {
                 type: 'input',
                 name: 'url',
-                label: 'Url'
+                label: 'Enter url'
             },
+            ...(options.linkUrlList!.length > 0 ? [
+                {
+                    type: 'selectbox',
+                    name: 'url_select',
+                    label: 'Or select url',
+                    items: options.linkUrlList
+                }
+            ] : []),
             {
                 type: 'input',
                 name: 'text',
@@ -111,7 +141,7 @@ const dialogSpec = (editor: EditorTinymce, initialData = {}) => ({
                         text: 'Button'
                     }
                 ]
-            },
+            }
         ]
     },
     buttons: [
@@ -125,7 +155,7 @@ const dialogSpec = (editor: EditorTinymce, initialData = {}) => ({
             primary: true
         }
     ],
-    onChange: onChange,
+    onChange: onChange(options),
     onSubmit: onSubmit(editor)
 
 });
@@ -142,6 +172,7 @@ const getInitialData = (editor: EditorTinymce) => {
         initialData.target = node.getAttribute('target') || '';
         initialData.title = node.getAttribute('title') || '';
         initialData.url = node.getAttribute('href') || '';
+        initialData.url_select = node.getAttribute('href') || '';
         initialData.text = node.textContent;
         initialData.elem_type = node.tagName.toLowerCase();
 
@@ -152,9 +183,9 @@ const getInitialData = (editor: EditorTinymce) => {
     return initialData;
 };
 
-const open = function (editor: EditorTinymce, _options: Options) {
+const open = function (editor: EditorTinymce, options: Options) {
     editor.windowManager.open(
-        dialogSpec(editor, getInitialData(editor))
+        dialogSpec(editor, getInitialData(editor), options)
     );
     console.log('linkplus')
 };
