@@ -490,5 +490,7 @@
     "Id of video": "Id de la vid\u00e9o",
     "Plateform of video": "Plateforme de la vid\u00e9o",
     "Autoplay active": "Lanc\u00e9 la vid\u00e9o automatiquement",
-    "Repeat active": "Activer le lancement en boucle de la vid\u00e9o"
+    "Repeat active": "Activer le lancement en boucle de la vid\u00e9o",
+    "Or select url": "Ou sélectionner une url",
+    "Enter url": "Entrer une url"
 }
