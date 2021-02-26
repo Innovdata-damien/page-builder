@@ -41,6 +41,12 @@
                     name: 'English'
                 }
             ],
+            replacor: [
+                {
+                    from: 'http://odrazia.localhost:8888/',
+                    to: '{{client_url}}'
+                }
+            ],
             translationVars: ['hello','test','by'],
             imageUrlLoader: function(resolve, reject){
                 resolve('http://odrazia.localhost:8888/images/bloc-video.png');
@@ -66,7 +72,8 @@
             ]
         });
 
-
+        pageBuilder.getHtml()
+        console.log(pageBuilder.getJson())
         //var pageBuilderSecond = new PageBuilder({
         //    container: document.getElementById('truc'),
         //    menuPosition: 'right',

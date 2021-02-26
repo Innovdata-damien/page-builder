@@ -94,6 +94,11 @@ export interface Options {
      * Translation vars list
     */
     linkUrlList: Array<LinkUrlList>;
+
+    /**
+     * Replace string by another string on load and on get data
+    */
+    replacor?: Array<ReplacorList>;    
 }
 
 export interface ComponentsList {
@@ -112,6 +117,11 @@ export interface LanguagesList {
 export interface LinkUrlList {
     value: string;
     text: string;
+}
+
+export interface ReplacorList {
+    from: string;
+    to: string;
 }
 
 export interface BlockClassList {
@@ -213,6 +223,11 @@ export class PageBuilder{
             },
         }, options);
 
+        let jsonBlocks: any = JSON.stringify(this.__options.blocks);
+        this.__options?.replacor?.forEach((item)=> {
+            jsonBlocks = jsonBlocks.replaceAll(item.to, item.from)
+        });
+        this.__options.blocks = JSON.parse(jsonBlocks);
     }
 
     public getHtml(): {} {
@@ -223,7 +238,14 @@ export class PageBuilder{
                 const htmlRender: any = {};
                 const blocks = pagebuilderInstance.store.getState().blocks;
                 Object.keys(pagebuilderInstance.store.getState().blocks).forEach((locale: string)=> {
-                    htmlRender[locale] = js_beautify.html(getHtmlFromBlockState(blocks[locale]));
+                    
+                    let htmlContent: any = js_beautify.html(getHtmlFromBlockState(blocks[locale]));
+                    this.__options?.replacor?.forEach((item)=> {
+                        htmlContent = htmlContent.replaceAll(item.from, item.to)
+                    });
+
+                    htmlRender[locale] = htmlContent;
+                    console.log(htmlRender[locale])
                 })
 
                 return htmlRender;
@@ -238,9 +260,15 @@ export class PageBuilder{
 
         const pagebuilderInstance: PageBuilderInstance | null = getPageBuilderInstance(this.__id);
 
-        if(pagebuilderInstance)
-            if(this.__options?.container && this.__initialized)
-                return pagebuilderInstance.store.getState().blocks;
+        if(pagebuilderInstance){
+            if(this.__options?.container && this.__initialized){
+                let jsonBlocks: any = JSON.stringify(pagebuilderInstance.store.getState().blocks);
+                this.__options?.replacor?.forEach((item)=> {
+                    jsonBlocks = jsonBlocks.replaceAll(item.from, item.to)
+                });
+                return JSON.parse(jsonBlocks);
+            }
+        }
 
         return {};
     }

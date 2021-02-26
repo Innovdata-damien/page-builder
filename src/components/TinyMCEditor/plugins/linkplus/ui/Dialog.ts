@@ -49,15 +49,18 @@ const onSubmit = (editor: EditorTinymce) => (api: any) => {
         title: string;
     }
 
+    let oldClass = node.classList.toString().replace('pg-build__link', '');
+    oldClass = oldClass.replace('pg-build__button', '');
+
     let insertDom = (data: data) => {
 
         if(data.elem_type == 'link')
 
-            return `<a class="pg-build__link" title="${data.title}" href="${data.url}" target="${data.target}">${data.text}</a>`;
+            return `<a class="pg-build__link ${oldClass}" title="${data.title}" href="${data.url}" target="${data.target}">${data.text}</a>`;
 
         else if(data.elem_type == 'button')
 
-            return `<button class="pg-build__button" title="${data.title}" href="${data.url}" target="${data.target}" onclick="
+            return `<button class="pg-build__button ${oldClass}" title="${data.title}" href="${data.url}" target="${data.target}" onclick="
 
                     if('${data.target}' == '_blank')
                         window.open('${data.url}', '_blank');

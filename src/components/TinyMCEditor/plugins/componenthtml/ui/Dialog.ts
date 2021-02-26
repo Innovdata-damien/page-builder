@@ -139,12 +139,19 @@ const componentData = (type: string, options: Options, values: any = {}) => {
             
     let component = options.componentsList.find(item => item.type == type);
     let template = getTemplate(type, values);
+    const stylesUrl = options.stylesUrl.split(' | ');
+    let linkStyles = '';
 
+    stylesUrl.forEach((styleUrl)=> {
+        linkStyles += `<link rel="stylesheet" type="text/css" href="${styleUrl}">`
+    })
+
+console.log()
     let content = `<!DOCTYPE html>
                             <html>
                                 <head>
-                                    <link rel="stylesheet" type="text/css" href="src/styles/pagebuilder.css">
-                                    <link rel="stylesheet" type="text/css">
+                                    ${linkStyles}
+                                    <link rel="stylesheet" type="text/css" href="">
                                     <script src="https://unpkg.com/@glidejs/glide"></script>
                                 </head>
                                 <body>${template ? template.html : component!.html}</body>

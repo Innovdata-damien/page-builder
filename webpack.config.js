@@ -115,6 +115,10 @@ module.exports = (env, argv) => {
                 ...fontRules,
                 ...pageBuilderCssRules,
                 {
+                    test: /src\.css$/i,
+                    loader: 'raw-loader'
+                },
+                {
                     test: /\.(ts|js)x?$/,
                     exclude: /node_modules/,
                     use: {
