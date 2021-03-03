@@ -3,7 +3,7 @@ import './styles/pagebuilder.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Root from './components/root';
-import { BodyType, MenuType, LanguageBlocks } from './types/blockType';
+import { BodyType, MenuType, LanguageBlocks, DesignType, ContentType } from './types/blockType';
 import { defaultBlocks, defaultMenuItems } from './utils/default-data';
 import { getHtmlFromBlockState, getPageBuilderInstance, PageBuilderInstance } from './utils/utils';
 import uuid from 'uuid/v4';
@@ -99,6 +99,18 @@ export interface Options {
      * Replace string by another string on load and on get data
     */
     replacor?: Array<ReplacorList>;    
+
+    /**
+     * Custom tool bar button
+    */
+    customToolActions: CustomToolAction[];    
+}
+
+export interface CustomToolAction {
+    icon: string;
+    name: string;
+    type: string[];
+    action: (item: ContentType) => void;
 }
 
 export interface ComponentsList {
@@ -213,6 +225,7 @@ export class PageBuilder{
                     type: 'block-inside'
                 }
             ],
+            customToolActions: [],
             translateTemplator: { start: "{{'", end: "'|trans}}" },
             imageUrlLoader: function(_resolve: any, reject: any) {
                 reject(null);
@@ -245,7 +258,6 @@ export class PageBuilder{
                     });
 
                     htmlRender[locale] = htmlContent;
-                    console.log(htmlRender[locale])
                 })
 
                 return htmlRender;

@@ -122,6 +122,7 @@ const getInitialData = (editor: EditorTinymce) => {
     if(node.tagName.toLowerCase() == 'img'){
 
         initialData.src = node.getAttribute('src');
+        initialData.alt = node.getAttribute('alt');
         initialData.dimensions = {
             width: node.getAttribute('width') || '',
             height: node.getAttribute('height') || ''

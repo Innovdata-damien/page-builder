@@ -4,6 +4,7 @@ import BlockInsideContent from './block-inside-content';
 import BlockInsideToolbar from './block-inside-toolbar';
 import Modal from '../utility/modal-style';
 import { connect } from 'react-redux';
+import { PageBuilder } from 'PageBuilder';
 
 type Props = {
     cssViewShow: boolean;
@@ -11,6 +12,7 @@ type Props = {
     colId: string;
     item: ContentType;
     iframeDocument: Document;
+    pageBuilder: PageBuilder;
 };
 
 type State = {
@@ -85,7 +87,7 @@ class BlockInside extends Component<Props,State> {
                         
                     </div>
                     <Modal onRef={ref => (this.modalStyle = ref)} blockId={this.props.blockId} colId={this.props.colId} blockInsideId={this.props.item.id}/>
-                    <BlockInsideContent blockId={this.props.blockId} colId={this.props.colId} item={this.props.item}/>
+                    <BlockInsideContent blockId={this.props.blockId} colId={this.props.colId} item={this.props.item} pageBuilder={this.props.pageBuilder}/>
                 </div>
             </div>
         );

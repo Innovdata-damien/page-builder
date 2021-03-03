@@ -69,11 +69,20 @@
                     text: 'Aucune',
                     value: ''
                 }
+            ],
+            customToolActions: [
+                {
+                    icon: 'mi mi-Edit',
+                    name: 'tooltip_edit',
+                    type: ['cavasoft_bandeau.[*]'],
+                    action: (item, callback) => {
+                        console.log(item)
+                    }
+                }
             ]
         });
 
-        pageBuilder.getHtml()
-        console.log(pageBuilder.getJson())
+        document.pageBuilder = pageBuilder;
         //var pageBuilderSecond = new PageBuilder({
         //    container: document.getElementById('truc'),
         //    menuPosition: 'right',

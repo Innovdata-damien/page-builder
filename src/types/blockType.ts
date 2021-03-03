@@ -5,7 +5,7 @@ export interface LanguageBlocks {
 }
 
 export interface DesignType  {
-    type: 'column' | 'html' | 'card' | 'breadcrumb' | 'tab';
+    type: 'column' | 'html' | 'card' | 'breadcrumb' | 'tab' | 'include';
     preview: string;
     number?: number;
     value?: DesignValueType;
@@ -15,12 +15,14 @@ export interface DesignType  {
     duplicable?: boolean;
     canAddClass?: boolean;
     editable?: boolean;
+    customName?: string;
 }
 
 export interface DesignValueType  {
     columnDetails?: Array<1|2|3|4|5|6|7|8|9|10|11|12> | Array<ColumnDetail>; 
     htmlContent?: string;
     toolbar?: string;
+    clearHtml?: string;
 }
 
 export interface ColumnDetail  {

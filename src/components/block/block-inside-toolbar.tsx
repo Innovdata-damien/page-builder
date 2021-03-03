@@ -138,6 +138,21 @@ class BlockInsideToolbar extends Component<Props, State> {
 
         const toolTipPlacement = this.props.pageBuilder.__options?.menuPosition == 'right' ? 'left' : 'right';
 
+
+        let customButtons = null;
+        if(this.props.pageBuilder.__options!.customToolActions.length > 0){
+
+            const customName: any = this.props.item.design.customName?.split('.')[0];
+            const customNameAll = customName + '.[*]';
+
+            const customButtonsToshow = this.props.pageBuilder.__options!.customToolActions.filter(customAction => customAction.type.includes(customName) || customAction.type.includes(customNameAll));
+            customButtons = customButtonsToshow.map((tool, key)=>(
+                <Tooltip placement={toolTipPlacement} key={key} title={i18n.trans(tool.name,'capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
+                    <a onMouseDown={this.props._handleMouseDown} onClick={() => tool.action(this.props.item)}><i className={tool.icon}></i></a>
+                </Tooltip>
+            ))
+        }
+
         return (
             <>
 
@@ -147,11 +162,14 @@ class BlockInsideToolbar extends Component<Props, State> {
                     </Tooltip>
                 )}
 
+                {customButtons}
+
                 {typeof this.props.item.design == "undefined" || this.props.item.design.cssCustomizable != false && (
                     <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_style','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>
-                        <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props._showModalStyle()}><i className="mi mi-Edit"></i></a>
+                        <a onMouseDown={this.props._handleMouseDown} onClick={()=>this.props._showModalStyle()}><i className="mi mi-PenWorkspace"></i></a>
                     </Tooltip>
                 )}
+                
 
                 {typeof this.props.item.design == "undefined" || this.props.item.design.canAddClass != false &&
                     <Tooltip placement={toolTipPlacement} title={i18n.trans('tooltip_class','capitalize')} getPopupContainer={()=> this.props.blockInsideRef as HTMLElement}>

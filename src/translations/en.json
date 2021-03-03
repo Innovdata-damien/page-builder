@@ -61,10 +61,12 @@
     "msg_modal_style": "Here you can change the background color, add or remove the border, change the padding / margin of the selected block, and other customization features.",
     "tooltip_move": "Move",
     "tooltip_style": "Customize",
+    "tooltip_edit": "Edit",
     "tooltip_column": "Column",
     "tooltip_class": "Class",
     "tooltip_duplicate": "Duplicate",
     "tooltip_remove": "Remove",
     "tooltip_top": "Move up",
-    "tooltip_bottom": "Move down"
+    "tooltip_bottom": "Move down",
+    "bloc_not_found": "Bloc not found"
 }

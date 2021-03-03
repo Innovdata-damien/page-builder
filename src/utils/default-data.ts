@@ -175,6 +175,19 @@ const defaultBlocks: LanguageBlocks = {
                         }
                     },
                     contents: [
+                        {
+                            id: uuid(),
+                            design:{
+                                type: 'include',
+                                editable: false,
+                                customName: 'cavasoft_bandeau',
+                                preview: 'Cavasoft Bandeau',
+                                value:{
+                                    htmlContent: 'texte de test',
+                                    clearHtml: '<<<include.cavasoft_bandeau>>>'
+                                }
+                            }
+                        }
                     ]
                 }
             ]
@@ -434,6 +447,21 @@ const defaultMenuItems: Array<MenuType> = [
                                 </div>
                             </section>
                         `
+                    }
+                }
+            },
+            { 
+                id: uuid(),
+                design: {
+                    type: 'include',
+                    editable: false,
+                    customName: 'cavasoft_galerie',
+                    preview: `Cavasoft Bandeau`,
+                    value: {
+                        htmlContent:`
+                            <div>texte de test v2</div>
+                        `,
+                        clearHtml: '<<<include.cavasoft_bandeau>>>'
                     }
                 }
             }

@@ -69,9 +69,16 @@ class TinyMCEditor  extends Component<Props> {
             a11y_advanced_options: true,
             inline: true,
             fixed_toolbar_container: `[data-draggable-id='${this.props.item.id}']`,
-            forced_root_block : 'p',
+            forced_root_block : false,
+            //forced_root_block : 'p',
             extended_valid_elements: 'button[class|target|href|dir<ltr?rtl|disabled<disabled|id|lang|name|onclick|style|title|type|value],script[src]',
-            verify_html: false
+            verify_html: false,
+            
+            preformatted:true,
+            valid_children: '+a[div],+a[span]'
+
+            // valid_children : 'a[div]',
+            // allow_html_in_named_anchor: true
         };
 
     }
@@ -111,7 +118,7 @@ class TinyMCEditor  extends Component<Props> {
     render() {
         return (
             <Editor
-                initialValue={(this.props.item.content ? this.props.item.content : (this.props.item.design.type == 'html' ? this.props.item.design.value?.htmlContent : getTemplate(this.props.item.design.type, this.props.item.design.value || {})!.html))}
+                initialValue={(this.props.item.content ? this.props.item.content : (['html'].includes(this.props.item.design.type) ? this.props.item.design.value?.htmlContent : getTemplate(this.props.item.design.type, this.props.item.design.value || {})!.html))}
                 init={this.options}
                 onEditorChange={this._handleEditorChange}
                 win={this.props.iframeWindow}

@@ -61,6 +61,7 @@
     "msg_modal_style": "Ici vous avez la possibilité de changer la couleur du fond, d'ajouter ou retirer la bordure, de changer l'espacement du bloc sélectionné, ainsi que d'autres fonctionnalités de personnalisation.",
     "tooltip_move": "Déplacer",
     "tooltip_style": "Personnaliser",
+    "tooltip_edit": "Modifier",
     "tooltip_column": "Colonne",
     "tooltip_class": "Classe",
     "tooltip_duplicate": "Dupliquer",
@@ -492,5 +493,6 @@
     "Autoplay active": "Lanc\u00e9 la vid\u00e9o automatiquement",
     "Repeat active": "Activer le lancement en boucle de la vid\u00e9o",
     "Or select url": "Ou sélectionner une url",
-    "Enter url": "Entrer une url"
+    "Enter url": "Entrer une url",
+    "bloc_not_found": "Le bloc n'existe plus !"
 }

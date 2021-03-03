@@ -234,7 +234,7 @@ class Block extends Component<Props, State> {
                                     )} group="COLUMN" animation={150}>
                                     {column.contents.map((content: any) => {
                                         
-                                        return <BlockInside blockId={this.props.blockId} colId={column.id} item={content} key={content.id}/>;
+                                        return <BlockInside blockId={this.props.blockId} pageBuilder={this.props.pageBuilder} colId={column.id} item={content} key={content.id}/>;
                                         //return <div key={content.id}>fsfeesfs</div>;
                                     })}
                                 </ReactSortable>
